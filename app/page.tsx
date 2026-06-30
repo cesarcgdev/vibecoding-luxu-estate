@@ -105,18 +105,12 @@ export default function Home() {
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {marketProperties.map((property, index) => {
-              let hiddenClass = "";
-              if (index === 4) hiddenClass = "hidden xl:flex"; // Central Studio (5th item)
-              if (index === 5) hiddenClass = "hidden lg:flex"; // Garden Villa (6th item)
-              return (
-                <PropertyCard
-                  key={property.id}
-                  property={property}
-                  className={hiddenClass}
-                />
-              );
-            })}
+            {marketProperties.map((property) => (
+              <PropertyCard
+                key={property.id}
+                property={property}
+              />
+            ))}
           </div>
           <div className="mt-12 text-center">
             <button className="px-8 py-3 bg-white border border-nordic-dark/10 hover:border-mosque hover:text-mosque text-nordic-dark font-medium rounded-lg transition-all hover:shadow-md cursor-pointer">
