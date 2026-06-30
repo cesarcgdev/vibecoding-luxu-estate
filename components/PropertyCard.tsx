@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { Property } from "../data/mock-properties";
+import { Property } from "../lib/properties";
 
 interface Props {
   property: Property;
@@ -8,7 +8,8 @@ interface Props {
 }
 
 export default function PropertyCard({ property, className = "" }: Props) {
-  const tagBgClass = property.tag === "FOR RENT" ? "bg-mosque/90" : "bg-nordic-dark/90";
+  const tagBgClass =
+    property.tag === "FOR RENT" ? "bg-mosque/90" : "bg-nordic-dark/90";
 
   return (
     <article className={`bg-white rounded-xl overflow-hidden shadow-card hover:shadow-soft transition-all duration-300 group cursor-pointer h-full flex flex-col ${className}`}>
@@ -16,7 +17,7 @@ export default function PropertyCard({ property, className = "" }: Props) {
         <Image
           alt={property.title}
           className="object-cover transition-transform duration-500 group-hover:scale-110"
-          src={property.imageUrl}
+          src={property.image_url}
           fill
           unoptimized
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
@@ -33,7 +34,7 @@ export default function PropertyCard({ property, className = "" }: Props) {
       <div className="p-4 flex flex-col flex-grow">
         <div className="flex justify-between items-baseline mb-2">
           <h3 className="font-bold text-lg text-nordic-dark">
-            {property.price}
+            {property.price_display}
             {property.tag === "FOR RENT" && <span className="text-sm font-normal text-nordic-muted">/mo</span>}
           </h3>
         </div>

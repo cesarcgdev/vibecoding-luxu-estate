@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { Property } from "../data/mock-properties";
+import { Property } from "../lib/properties";
 
 interface Props {
   property: Property;
@@ -13,7 +13,7 @@ export default function FeaturedPropertyCard({ property }: Props) {
         <Image
           alt={property.title}
           className="object-cover transition-transform duration-700 group-hover:scale-105"
-          src={property.imageUrl}
+          src={property.image_url}
           fill
           unoptimized
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -39,7 +39,7 @@ export default function FeaturedPropertyCard({ property }: Props) {
             </p>
           </div>
           <span className="text-xl font-semibold text-mosque">
-            {property.price}
+            {property.price_display}
           </span>
         </div>
         <div className="flex items-center gap-6 mt-6 pt-6 border-t border-nordic-dark/5">

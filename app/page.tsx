@@ -2,9 +2,27 @@ import React from "react";
 import Navbar from "../components/Navbar";
 import FeaturedPropertyCard from "../components/FeaturedPropertyCard";
 import PropertyCard from "../components/PropertyCard";
-import { featuredProperties, marketProperties } from "../data/mock-properties";
+import Pagination from "../components/Pagination";
+import { getFeaturedProperties, getMarketProperties } from "../lib/properties";
 
-export default function Home() {
+const PAGE_SIZE = 8;
+
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const params = await searchParams;
+  const currentPage = Math.max(1, parseInt((params.page as string) ?? "1", 10));
+
+  const [featuredProperties, { data: marketProperties, count }] =
+    await Promise.all([
+      getFeaturedProperties(),
+      getMarketProperties(currentPage, PAGE_SIZE),
+    ]);
+
+  const totalPages = Math.ceil(count / PAGE_SIZE);
+
   return (
     <>
       <Navbar />
@@ -89,7 +107,8 @@ export default function Home() {
                 New in Market
               </h2>
               <p className="text-nordic-muted mt-1 text-sm">
-                Fresh opportunities added this week.
+                Fresh opportunities added this week.{" "}
+                <span className="text-mosque font-medium">{count} properties</span>
               </p>
             </div>
             <div className="hidden md:flex bg-white p-1 rounded-lg">
@@ -106,17 +125,10 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {marketProperties.map((property) => (
-              <PropertyCard
-                key={property.id}
-                property={property}
-              />
+              <PropertyCard key={property.id} property={property} />
             ))}
           </div>
-          <div className="mt-12 text-center">
-            <button className="px-8 py-3 bg-white border border-nordic-dark/10 hover:border-mosque hover:text-mosque text-nordic-dark font-medium rounded-lg transition-all hover:shadow-md cursor-pointer">
-              Load more properties
-            </button>
-          </div>
+          <Pagination currentPage={currentPage} totalPages={totalPages} />
         </section>
       </main>
     </>
