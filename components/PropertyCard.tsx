@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Property } from "../lib/properties";
 
 interface Props {
@@ -12,7 +13,7 @@ export default function PropertyCard({ property, className = "" }: Props) {
     property.tag === "FOR RENT" ? "bg-mosque/90" : "bg-nordic-dark/90";
 
   return (
-    <article className={`bg-white rounded-xl overflow-hidden shadow-card hover:shadow-soft transition-all duration-300 group cursor-pointer h-full flex flex-col ${className}`}>
+    <Link href={`/properties/${property.slug || property.id}`} className={`block bg-white rounded-xl overflow-hidden shadow-card hover:shadow-soft transition-all duration-300 group cursor-pointer h-full flex flex-col ${className}`}>
       <div className="relative aspect-[4/3] overflow-hidden">
         <Image
           alt={property.title}
@@ -54,6 +55,6 @@ export default function PropertyCard({ property, className = "" }: Props) {
           </div>
         </div>
       </div>
-    </article>
+    </Link>
   );
 }

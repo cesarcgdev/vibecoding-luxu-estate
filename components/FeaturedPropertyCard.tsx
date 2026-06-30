@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Property } from "../lib/properties";
 
 interface Props {
@@ -8,7 +9,7 @@ interface Props {
 
 export default function FeaturedPropertyCard({ property }: Props) {
   return (
-    <div className="group relative rounded-xl overflow-hidden shadow-soft bg-white cursor-pointer">
+    <Link href={`/properties/${property.slug || property.id}`} className="block group relative rounded-xl overflow-hidden shadow-soft bg-white cursor-pointer">
       <div className="aspect-[4/3] w-full overflow-hidden relative">
         <Image
           alt={property.title}
@@ -54,6 +55,6 @@ export default function FeaturedPropertyCard({ property }: Props) {
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

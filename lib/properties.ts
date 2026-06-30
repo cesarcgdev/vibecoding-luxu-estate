@@ -21,6 +21,8 @@ export interface Property {
   is_featured: boolean;
   listing_type: string | null;
   created_at: string;
+  slug: string;
+  images: string[] | null;
 }
 
 export interface PaginatedProperties {
@@ -65,4 +67,20 @@ export async function getMarketProperties(
   }
 
   return { data: (data as Property[]) ?? [], count: count ?? 0 };
+}
+
+/** Fetches a single property by its slug */
+export async function getPropertyBySlug(slug: string): Promise<Property | null> {
+  const { data, error } = await supabase
+    .from("properties")
+    .select("*")
+    .eq("slug", slug)
+    .single();
+
+  if (error) {
+    console.error(`Error fetching property with slug ${slug}:`, error);
+    return null;
+  }
+
+  return data as Property;
 }
