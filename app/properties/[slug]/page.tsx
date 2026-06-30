@@ -28,8 +28,8 @@ export default async function PropertyDetails({
     notFound();
   }
 
-  // Ensure images is an array
-  const images = property.images && property.images.length > 0 ? property.images : [property.image_url];
+  // images is now the single source of truth
+  const images = property.images?.length ? property.images : [];
 
   return (
     <>

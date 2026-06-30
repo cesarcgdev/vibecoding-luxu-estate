@@ -16,13 +16,13 @@ export interface Property {
   beds: number;
   baths: number;
   area: string;
-  image_url: string;
+  /** Array of image URLs — the single source of truth for property images */
+  images: string[];
   tag: PropertyTag;
   is_featured: boolean;
   listing_type: string | null;
   created_at: string;
   slug: string;
-  images: string[] | null;
 }
 
 export interface PaginatedProperties {

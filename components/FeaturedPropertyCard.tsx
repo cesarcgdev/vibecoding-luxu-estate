@@ -14,7 +14,7 @@ export default function FeaturedPropertyCard({ property }: Props) {
         <Image
           alt={property.title}
           className="object-cover transition-transform duration-700 group-hover:scale-105"
-          src={property.image_url}
+          src={property.images?.[0] ?? ''}
           fill
           unoptimized
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
