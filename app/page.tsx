@@ -16,10 +16,19 @@ export default async function Home({
   const params = await searchParams;
   const currentPage = Math.max(1, parseInt((params.page as string) ?? "1", 10));
 
+  const filters = {
+    q: params.q as string | undefined,
+    type: params.type as string | undefined,
+    location: params.location as string | undefined,
+    minPrice: params.minPrice as string | undefined,
+    maxPrice: params.maxPrice as string | undefined,
+  };
+  const isSearchActive = Object.values(filters).some(val => val !== undefined && val !== "");
+
   const [featuredProperties, { data: marketProperties, count }] =
     await Promise.all([
       getFeaturedProperties(),
-      getMarketProperties(currentPage, PAGE_SIZE),
+      getMarketProperties(currentPage, PAGE_SIZE, filters),
     ]);
 
   const totalPages = Math.ceil(count / PAGE_SIZE);
@@ -38,48 +47,56 @@ export default async function Home({
               </span>
               .
             </h1>
-            <div className="relative group max-w-2xl mx-auto">
+            <form action="/" method="GET" className="relative group max-w-2xl mx-auto">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <span className="material-icons text-nordic-muted text-2xl group-focus-within:text-mosque transition-colors">
                   search
                 </span>
               </div>
+              {filters.type && <input type="hidden" name="type" value={filters.type} />}
+              {filters.location && <input type="hidden" name="location" value={filters.location} />}
+              {filters.minPrice && <input type="hidden" name="minPrice" value={filters.minPrice} />}
+              {filters.maxPrice && <input type="hidden" name="maxPrice" value={filters.maxPrice} />}
               <input
+                name="q"
+                defaultValue={filters.q || ""}
                 className="block w-full pl-12 pr-4 py-4 rounded-xl border-none bg-white text-nordic-dark shadow-soft placeholder-nordic-muted/60 focus:ring-2 focus:ring-mosque focus:bg-white transition-all text-lg outline-none"
                 placeholder="Search by city, neighborhood, or address..."
                 type="text"
               />
-              <button className="absolute inset-y-2 right-2 px-6 bg-mosque hover:bg-mosque/90 text-white font-medium rounded-lg transition-colors flex items-center justify-center shadow-lg shadow-mosque/20">
+              <button type="submit" className="absolute inset-y-2 right-2 px-6 bg-mosque hover:bg-mosque/90 text-white font-medium rounded-lg transition-colors flex items-center justify-center shadow-lg shadow-mosque/20">
                 Search
               </button>
-            </div>
+            </form>
             <FilterCategoryBar />
           </div>
         </section>
 
-        <section className="mb-16">
-          <div className="flex items-end justify-between mb-8">
-            <div>
-              <h2 className="text-2xl font-light text-nordic-dark">
-                Featured Collections
-              </h2>
-              <p className="text-nordic-muted mt-1 text-sm">
-                Curated properties for the discerning eye.
-              </p>
+        {!isSearchActive && (
+          <section className="mb-16">
+            <div className="flex items-end justify-between mb-8">
+              <div>
+                <h2 className="text-2xl font-light text-nordic-dark">
+                  Featured Collections
+                </h2>
+                <p className="text-nordic-muted mt-1 text-sm">
+                  Curated properties for the discerning eye.
+                </p>
+              </div>
+              <a
+                className="hidden sm:flex items-center gap-1 text-sm font-medium text-mosque hover:opacity-70 transition-opacity"
+                href="#"
+              >
+                View all <span className="material-icons text-sm">arrow_forward</span>
+              </a>
             </div>
-            <a
-              className="hidden sm:flex items-center gap-1 text-sm font-medium text-mosque hover:opacity-70 transition-opacity"
-              href="#"
-            >
-              View all <span className="material-icons text-sm">arrow_forward</span>
-            </a>
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {featuredProperties.map((property) => (
-              <FeaturedPropertyCard key={property.id} property={property} />
-            ))}
-          </div>
-        </section>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {featuredProperties.map((property) => (
+                <FeaturedPropertyCard key={property.id} property={property} />
+              ))}
+            </div>
+          </section>
+        )}
 
         <section>
           <div className="flex items-end justify-between mb-8">
