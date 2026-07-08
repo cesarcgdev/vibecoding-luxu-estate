@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 interface PaginationProps {
   currentPage: number;
@@ -6,6 +9,8 @@ interface PaginationProps {
 }
 
 export default function Pagination({ currentPage, totalPages }: PaginationProps) {
+  const { dictionary } = useLanguage();
+
   if (totalPages <= 1) return null;
 
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -23,12 +28,12 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
           aria-label="Previous page"
         >
           <span className="material-icons text-base">chevron_left</span>
-          Prev
+          {dictionary.pagination.previous}
         </Link>
       ) : (
         <span className="flex items-center gap-1 px-4 py-2 rounded-lg bg-white border border-nordic-dark/5 text-nordic-muted/40 text-sm font-medium cursor-not-allowed select-none">
           <span className="material-icons text-base">chevron_left</span>
-          Prev
+          {dictionary.pagination.previous}
         </span>
       )}
 
@@ -64,12 +69,12 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
           className="flex items-center gap-1 px-4 py-2 rounded-lg bg-white border border-nordic-dark/10 text-nordic-dark text-sm font-medium hover:border-mosque hover:text-mosque transition-all hover:shadow-md"
           aria-label="Next page"
         >
-          Next
+          {dictionary.pagination.next}
           <span className="material-icons text-base">chevron_right</span>
         </Link>
       ) : (
         <span className="flex items-center gap-1 px-4 py-2 rounded-lg bg-white border border-nordic-dark/5 text-nordic-muted/40 text-sm font-medium cursor-not-allowed select-none">
-          Next
+          {dictionary.pagination.next}
           <span className="material-icons text-base">chevron_right</span>
         </span>
       )}

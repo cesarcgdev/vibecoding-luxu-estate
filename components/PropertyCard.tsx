@@ -1,7 +1,10 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Property } from "../lib/properties";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 interface Props {
   property: Property;
@@ -9,6 +12,7 @@ interface Props {
 }
 
 export default function PropertyCard({ property, className = "" }: Props) {
+  const { dictionary } = useLanguage();
   const tagBgClass =
     property.tag === "FOR RENT" ? "bg-mosque/90" : "bg-nordic-dark/90";
 
@@ -45,10 +49,10 @@ export default function PropertyCard({ property, className = "" }: Props) {
         <p className="text-nordic-muted text-xs mb-4">{property.location}</p>
         <div className="mt-auto flex items-center justify-between pt-3 border-t border-gray-100">
           <div className="flex items-center gap-1 text-nordic-muted text-xs">
-            <span className="material-icons text-sm text-mosque/80">king_bed</span> {property.beds}
+            <span className="material-icons text-sm text-mosque/80">king_bed</span> {property.beds} {dictionary.property.beds}
           </div>
           <div className="flex items-center gap-1 text-nordic-muted text-xs">
-            <span className="material-icons text-sm text-mosque/80">bathtub</span> {property.baths}
+            <span className="material-icons text-sm text-mosque/80">bathtub</span> {property.baths} {dictionary.property.baths}
           </div>
           <div className="flex items-center gap-1 text-nordic-muted text-xs">
             <span className="material-icons text-sm text-mosque/80">square_foot</span> {property.area}

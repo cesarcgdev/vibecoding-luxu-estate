@@ -1,0 +1,99 @@
+{
+  "navbar": {
+    "buy": "Comprar",
+    "rent": "Alquilar",
+    "sell": "Vender",
+    "savedHomes": "Guardados"
+  },
+  "home": {
+    "heroPrefix": "Encuentra tu ",
+    "heroHighlight": "refugio",
+    "heroSuffix": ".",
+    "searchPlaceholder": "Buscar por ciudad, vecindario o dirección...",
+    "searchBtn": "Buscar",
+    "featuredTitle": "Colecciones Destacadas",
+    "featuredDesc": "Propiedades seleccionadas para los más exigentes.",
+    "viewAll": "Ver todo",
+    "newMarketTitle": "Novedades del Mercado",
+    "newMarketDesc": "Nuevas oportunidades añadidas esta semana.",
+    "propertiesCount": "{count} propiedades",
+    "filterAll": "Todo",
+    "filterBuy": "Comprar",
+    "filterRent": "Alquilar"
+  },
+  "filters": {
+    "all": "Todo",
+    "house": "Casa",
+    "apartment": "Apartamento",
+    "villa": "Villa",
+    "penthouse": "Penthouse",
+    "filters": "Filtros",
+    "apply": "Aplicar",
+    "clear": "Limpiar",
+    "priceRange": "Rango de Precio"
+  },
+  "property": {
+    "beds": "Camas",
+    "baths": "Baños",
+    "sqft": "pies cuad.",
+    "viewDetails": "Ver Detalles",
+    "bedrooms": "Habitaciones",
+    "bathrooms": "Baños",
+    "garage": "Garaje",
+    "size": "Tamaño",
+    "features": "Características de la Propiedad",
+    "about": "Acerca de esta casa",
+    "aboutDesc": "{title} es una propiedad excepcional ubicada en {location}. Equilibra perfectamente el lujo moderno con la comodidad, ofreciendo una experiencia de vida incomparable.",
+    "aboutDesc2": "Ideal para quienes buscan un estilo de vida exclusivo, este {type} ofrece interiores espaciosos y acabados de primera calidad.",
+    "readMore": "Leer más",
+    "agent": "Agente Inmobiliario",
+    "topAgent": "Agente Mejor Valorado",
+    "schedule": "Programar Visita",
+    "contact": "Contactar Agente",
+    "viewMap": "Ver en Mapa",
+    "estimatedPayment": "Pago Estimado",
+    "startingFrom": "A partir de",
+    "calcMortgage": "Calcular Hipoteca",
+    "home": "hogar"
+  },
+  "gallery": {
+    "premium": "Premium",
+    "new": "Nuevo",
+    "viewAll": "Ver Todas las Fotos"
+  },
+  "tags": {
+    "Exclusive": "Exclusivo",
+    "New Arrival": "Novedad",
+    "FOR SALE": "EN VENTA",
+    "FOR RENT": "EN ALQUILER"
+  },
+  "filters": {
+    "title": "Filtros",
+    "location": "Ubicación",
+    "locationPlaceholder": "Ciudad, barrio o dirección",
+    "priceRange": "Rango de Precio",
+    "propertyType": "Tipo de Propiedad",
+    "anyType": "Cualquier Tipo",
+    "house": "Casa",
+    "apartment": "Apartamento",
+    "villa": "Villa",
+    "penthouse": "Ático",
+    "bedrooms": "Habitaciones",
+    "bathrooms": "Baños",
+    "any": "Cualquiera",
+    "amenities": "Comodidades y Características",
+    "swimmingPool": "Piscina",
+    "gym": "Gimnasio",
+    "parking": "Estacionamiento",
+    "airConditioning": "Aire Acondicionado",
+    "wifi": "Wifi de alta velocidad",
+    "patio": "Patio / Terraza",
+    "clearAll": "Borrar todos los filtros",
+    "showProperties": "Mostrar Propiedades"
+  },
+  "pagination": {
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "page": "Página {current} de {total}"
+  }
+}

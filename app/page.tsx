@@ -4,6 +4,8 @@ import FeaturedPropertyCard from "../components/FeaturedPropertyCard";
 import PropertyCard from "../components/PropertyCard";
 import Pagination from "../components/Pagination";
 import FilterCategoryBar from "../components/FilterCategoryBar";
+import { cookies } from "next/headers";
+import { getDictionary, defaultLocale } from "../lib/i18n/dictionaries";
 import { getFeaturedProperties, getMarketProperties } from "../lib/properties";
 
 const PAGE_SIZE = 8;
@@ -13,6 +15,10 @@ export default async function Home({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
+  const cookieStore = await cookies();
+  const locale = cookieStore.get("NEXT_LOCALE")?.value || defaultLocale;
+  const dictionary = await getDictionary(locale);
+
   const params = await searchParams;
   const currentPage = Math.max(1, parseInt((params.page as string) ?? "1", 10));
 
@@ -40,12 +46,12 @@ export default async function Home({
         <section className="py-12 md:py-16">
           <div className="max-w-3xl mx-auto text-center space-y-8">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-light text-nordic-dark leading-tight">
-              Find your{" "}
+              {dictionary.home.heroPrefix}
               <span className="relative inline-block">
-                <span className="relative z-10 font-medium">sanctuary</span>
+                <span className="relative z-10 font-medium">{dictionary.home.heroHighlight}</span>
                 <span className="absolute bottom-2 left-0 w-full h-3 bg-mosque/20 -rotate-1 z-0"></span>
               </span>
-              .
+              {dictionary.home.heroSuffix}
             </h1>
             <form action="/" method="GET" className="relative group max-w-2xl mx-auto">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -61,11 +67,11 @@ export default async function Home({
                 name="q"
                 defaultValue={filters.q || ""}
                 className="block w-full pl-12 pr-4 py-4 rounded-xl border-none bg-white text-nordic-dark shadow-soft placeholder-nordic-muted/60 focus:ring-2 focus:ring-mosque focus:bg-white transition-all text-lg outline-none"
-                placeholder="Search by city, neighborhood, or address..."
+                placeholder={dictionary.home.searchPlaceholder}
                 type="text"
               />
               <button type="submit" className="absolute inset-y-2 right-2 px-6 bg-mosque hover:bg-mosque/90 text-white font-medium rounded-lg transition-colors flex items-center justify-center shadow-lg shadow-mosque/20">
-                Search
+                {dictionary.home.searchBtn}
               </button>
             </form>
             <FilterCategoryBar />
@@ -77,17 +83,17 @@ export default async function Home({
             <div className="flex items-end justify-between mb-8">
               <div>
                 <h2 className="text-2xl font-light text-nordic-dark">
-                  Featured Collections
+                  {dictionary.home.featuredTitle}
                 </h2>
                 <p className="text-nordic-muted mt-1 text-sm">
-                  Curated properties for the discerning eye.
+                  {dictionary.home.featuredDesc}
                 </p>
               </div>
               <a
                 className="hidden sm:flex items-center gap-1 text-sm font-medium text-mosque hover:opacity-70 transition-opacity"
                 href="#"
               >
-                View all <span className="material-icons text-sm">arrow_forward</span>
+                {dictionary.home.viewAll} <span className="material-icons text-sm">arrow_forward</span>
               </a>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -102,22 +108,22 @@ export default async function Home({
           <div className="flex items-end justify-between mb-8">
             <div>
               <h2 className="text-2xl font-light text-nordic-dark">
-                New in Market
+                {dictionary.home.newMarketTitle}
               </h2>
               <p className="text-nordic-muted mt-1 text-sm">
-                Fresh opportunities added this week.{" "}
-                <span className="text-mosque font-medium">{count} properties</span>
+                {dictionary.home.newMarketDesc}{" "}
+                <span className="text-mosque font-medium">{dictionary.home.propertiesCount.replace("{count}", count.toString())}</span>
               </p>
             </div>
             <div className="hidden md:flex bg-white p-1 rounded-lg">
               <button className="px-4 py-1.5 rounded-md text-sm font-medium bg-nordic-dark text-white shadow-sm">
-                All
+                {dictionary.home.filterAll}
               </button>
               <button className="px-4 py-1.5 rounded-md text-sm font-medium text-nordic-muted hover:text-nordic-dark">
-                Buy
+                {dictionary.home.filterBuy}
               </button>
               <button className="px-4 py-1.5 rounded-md text-sm font-medium text-nordic-muted hover:text-nordic-dark">
-                Rent
+                {dictionary.home.filterRent}
               </button>
             </div>
           </div>

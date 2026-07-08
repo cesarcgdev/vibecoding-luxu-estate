@@ -3,8 +3,10 @@
 import React, { useState } from "react";
 import FiltersModal from "./FiltersModal";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function FilterCategoryBar() {
+  const { dictionary } = useLanguage();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -33,26 +35,26 @@ export default function FilterCategoryBar() {
     <>
       <div className="flex items-center justify-center gap-3 overflow-x-auto hide-scroll py-2 px-4 -mx-4">
         <button onClick={() => handleTypeClick('All')} className={getButtonClass('All')}>
-          All
+          {dictionary.filters.all}
         </button>
         <button onClick={() => handleTypeClick('House')} className={getButtonClass('House')}>
-          House
+          {dictionary.filters.house}
         </button>
         <button onClick={() => handleTypeClick('Apartment')} className={getButtonClass('Apartment')}>
-          Apartment
+          {dictionary.filters.apartment}
         </button>
         <button onClick={() => handleTypeClick('Villa')} className={getButtonClass('Villa')}>
-          Villa
+          {dictionary.filters.villa}
         </button>
         <button onClick={() => handleTypeClick('Penthouse')} className={getButtonClass('Penthouse')}>
-          Penthouse
+          {dictionary.filters.penthouse}
         </button>
         <div className="w-px h-6 bg-nordic-dark/10 mx-2"></div>
         <button 
           onClick={() => setIsModalOpen(true)}
           className="whitespace-nowrap flex items-center gap-1 px-4 py-2 rounded-full text-nordic-dark font-medium text-sm hover:bg-black/5 transition-colors"
         >
-          <span className="material-icons text-base">tune</span> Filters
+          <span className="material-icons text-base">tune</span> {dictionary.filters.filters}
         </button>
       </div>
       

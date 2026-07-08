@@ -1,13 +1,18 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Property } from "../lib/properties";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 interface Props {
   property: Property;
 }
 
 export default function FeaturedPropertyCard({ property }: Props) {
+  const { dictionary } = useLanguage();
+
   return (
     <Link href={`/properties/${property.slug || property.id}`} className="block group relative rounded-xl overflow-hidden shadow-soft bg-white cursor-pointer">
       <div className="aspect-[4/3] w-full overflow-hidden relative">
@@ -45,10 +50,10 @@ export default function FeaturedPropertyCard({ property }: Props) {
         </div>
         <div className="flex items-center gap-6 mt-6 pt-6 border-t border-nordic-dark/5">
           <div className="flex items-center gap-2 text-nordic-muted text-sm">
-            <span className="material-icons text-lg">king_bed</span> {property.beds} Beds
+            <span className="material-icons text-lg">king_bed</span> {property.beds} {dictionary.property.beds}
           </div>
           <div className="flex items-center gap-2 text-nordic-muted text-sm">
-            <span className="material-icons text-lg">bathtub</span> {property.baths} Baths
+            <span className="material-icons text-lg">bathtub</span> {property.baths} {dictionary.property.baths}
           </div>
           <div className="flex items-center gap-2 text-nordic-muted text-sm">
             <span className="material-icons text-lg">square_foot</span> {property.area}

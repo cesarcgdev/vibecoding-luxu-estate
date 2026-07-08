@@ -1,0 +1,99 @@
+{
+  "navbar": {
+    "buy": "Acheter",
+    "rent": "Louer",
+    "sell": "Vendre",
+    "savedHomes": "Sauvegardés"
+  },
+  "home": {
+    "heroPrefix": "Trouvez votre ",
+    "heroHighlight": "sanctuaire",
+    "heroSuffix": ".",
+    "searchPlaceholder": "Recherche par ville, quartier ou adresse...",
+    "searchBtn": "Rechercher",
+    "featuredTitle": "Collections en Vedette",
+    "featuredDesc": "Des propriétés sélectionnées pour les plus exigeants.",
+    "viewAll": "Voir tout",
+    "newMarketTitle": "Nouveautés du Marché",
+    "newMarketDesc": "Nouvelles opportunités ajoutées cette semaine.",
+    "propertiesCount": "{count} propriétés",
+    "filterAll": "Tout",
+    "filterBuy": "Acheter",
+    "filterRent": "Louer"
+  },
+  "filters": {
+    "all": "Tout",
+    "house": "Maison",
+    "apartment": "Appartement",
+    "villa": "Villa",
+    "penthouse": "Attique",
+    "filters": "Filtres",
+    "apply": "Appliquer",
+    "clear": "Effacer",
+    "priceRange": "Fourchette de Prix"
+  },
+  "property": {
+    "beds": "Lits",
+    "baths": "Salles de bain",
+    "sqft": "pi. ca.",
+    "viewDetails": "Voir Détails",
+    "bedrooms": "Chambres",
+    "bathrooms": "Salles de bain",
+    "garage": "Garage",
+    "size": "Taille",
+    "features": "Caractéristiques de la Propriété",
+    "about": "À propos de cette maison",
+    "aboutDesc": "{title} est une propriété exceptionnelle située à {location}. Elle équilibre parfaitement le luxe moderne avec le confort, offrant une expérience de vie inégalée.",
+    "aboutDesc2": "Idéal pour ceux qui recherchent un style de vie exclusif, ce {type} offre des intérieurs spacieux et des finitions haut de gamme.",
+    "readMore": "Lire la suite",
+    "agent": "Agent Immobilier",
+    "topAgent": "Agent le Mieux Noté",
+    "schedule": "Planifier une Visite",
+    "contact": "Contacter l'Agent",
+    "viewMap": "Voir sur la Carte",
+    "estimatedPayment": "Paiement Estimé",
+    "startingFrom": "À partir de",
+    "calcMortgage": "Calculer l'Hypothèque",
+    "home": "maison"
+  },
+  "gallery": {
+    "premium": "Premium",
+    "new": "Nouveau",
+    "viewAll": "Voir Toutes les Photos"
+  },
+  "tags": {
+    "Exclusive": "Exclusif",
+    "New Arrival": "Nouveauté",
+    "FOR SALE": "À VENDRE",
+    "FOR RENT": "À LOUER"
+  },
+  "filters": {
+    "title": "Filtres",
+    "location": "Emplacement",
+    "locationPlaceholder": "Ville, quartier ou adresse",
+    "priceRange": "Gamme de Prix",
+    "propertyType": "Type de Propriété",
+    "anyType": "N'importe quel Type",
+    "house": "Maison",
+    "apartment": "Appartement",
+    "villa": "Villa",
+    "penthouse": "Penthouse",
+    "bedrooms": "Chambres",
+    "bathrooms": "Salles de bain",
+    "any": "Tout",
+    "amenities": "Équipements et Caractéristiques",
+    "swimmingPool": "Piscine",
+    "gym": "Gym",
+    "parking": "Parking",
+    "airConditioning": "Climatisation",
+    "wifi": "Wifi Haut Débit",
+    "patio": "Patio / Terrasse",
+    "clearAll": "Effacer tous les filtres",
+    "showProperties": "Afficher les Propriétés"
+  },
+  "pagination": {
+    "previous": "Précédent",
+    "next": "Suivant",
+    "page": "Page {current} sur {total}"
+  }
+}

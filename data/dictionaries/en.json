@@ -1,0 +1,99 @@
+{
+  "navbar": {
+    "buy": "Buy",
+    "rent": "Rent",
+    "sell": "Sell",
+    "savedHomes": "Saved Homes"
+  },
+  "home": {
+    "heroPrefix": "Find your ",
+    "heroHighlight": "sanctuary",
+    "heroSuffix": ".",
+    "searchPlaceholder": "Search by city, neighborhood, or address...",
+    "searchBtn": "Search",
+    "featuredTitle": "Featured Collections",
+    "featuredDesc": "Curated properties for the discerning eye.",
+    "viewAll": "View all",
+    "newMarketTitle": "New in Market",
+    "newMarketDesc": "Fresh opportunities added this week.",
+    "propertiesCount": "{count} properties",
+    "filterAll": "All",
+    "filterBuy": "Buy",
+    "filterRent": "Rent"
+  },
+  "filters": {
+    "all": "All",
+    "house": "House",
+    "apartment": "Apartment",
+    "villa": "Villa",
+    "penthouse": "Penthouse",
+    "filters": "Filters",
+    "apply": "Apply",
+    "clear": "Clear",
+    "priceRange": "Price Range"
+  },
+  "property": {
+    "beds": "Beds",
+    "baths": "Baths",
+    "sqft": "sqft",
+    "viewDetails": "View Details",
+    "bedrooms": "Bedrooms",
+    "bathrooms": "Bathrooms",
+    "garage": "Garage",
+    "size": "Size",
+    "features": "Property Features",
+    "about": "About this home",
+    "aboutDesc": "{title} is an exceptional property located in {location}. It perfectly balances modern luxury with comfort, offering an unparalleled living experience.",
+    "aboutDesc2": "Ideal for those seeking an exclusive lifestyle, this {type} offers spacious interiors and premium finishes throughout.",
+    "readMore": "Read more",
+    "agent": "Real Estate Agent",
+    "topAgent": "Top Rated Agent",
+    "schedule": "Schedule Visit",
+    "contact": "Contact Agent",
+    "viewMap": "View on Map",
+    "estimatedPayment": "Estimated Payment",
+    "startingFrom": "Starting from",
+    "calcMortgage": "Calculate Mortgage",
+    "home": "home"
+  },
+  "gallery": {
+    "premium": "Premium",
+    "new": "New",
+    "viewAll": "View All Photos"
+  },
+  "tags": {
+    "Exclusive": "Exclusive",
+    "New Arrival": "New Arrival",
+    "FOR SALE": "FOR SALE",
+    "FOR RENT": "FOR RENT"
+  },
+  "filters": {
+    "title": "Filters",
+    "location": "Location",
+    "locationPlaceholder": "City, neighborhood, or address",
+    "priceRange": "Price Range",
+    "propertyType": "Property Type",
+    "anyType": "Any Type",
+    "house": "House",
+    "apartment": "Apartment",
+    "villa": "Villa",
+    "penthouse": "Penthouse",
+    "bedrooms": "Bedrooms",
+    "bathrooms": "Bathrooms",
+    "any": "Any",
+    "amenities": "Amenities & Features",
+    "swimmingPool": "Swimming Pool",
+    "gym": "Gym",
+    "parking": "Parking",
+    "airConditioning": "Air Conditioning",
+    "wifi": "High-speed Wifi",
+    "patio": "Patio / Terrace",
+    "clearAll": "Clear all filters",
+    "showProperties": "Show Properties"
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page {current} of {total}"
+  }
+}

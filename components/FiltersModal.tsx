@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 interface FiltersModalProps {
   isOpen: boolean;
@@ -18,6 +19,7 @@ function formatPrice(value: number): string {
 }
 
 export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
+  const { dictionary } = useLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -140,7 +142,7 @@ export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
         {/* Header */}
         <header className="px-8 py-6 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 sticky top-0 z-30">
           <h1 className="text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
-            Filters
+            {dictionary.filters?.title || "Filters"}
           </h1>
           <button
             type="button"
@@ -156,7 +158,7 @@ export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
           {/* Section 1: Location */}
           <section>
             <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
-              Location
+              {dictionary.filters?.location || "Location"}
             </label>
             <div className="relative group">
               <span className="material-icons absolute left-4 top-3.5 text-gray-400 group-focus-within:text-[#006611] transition-colors">
@@ -165,7 +167,7 @@ export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
               <input
                 name="location"
                 className="w-full pl-12 pr-4 py-3 bg-[#f5f8f6] dark:bg-gray-800 border-0 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-[#006611] focus:bg-white dark:focus:bg-gray-800 transition-all shadow-sm outline-none"
-                placeholder="City, neighborhood, or address"
+                placeholder={dictionary.filters?.locationPlaceholder || "City, neighborhood, or address"}
                 type="text"
                 defaultValue={searchParams.get("location") || ""}
               />
@@ -176,7 +178,7 @@ export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
           <section>
             <div className="flex justify-between items-end mb-5">
               <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                Price Range
+                {dictionary.filters?.priceRange || "Price Range"}
               </label>
               <span className="text-sm font-semibold text-[#006611]">
                 {formatPrice(rangeMin)} – {formatPrice(rangeMax)}
@@ -214,7 +216,7 @@ export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
             {/* Property Type */}
             <div className="space-y-3">
               <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                Property Type
+                {dictionary.filters?.propertyType || "Property Type"}
               </label>
               <div className="relative">
                 <select
@@ -222,11 +224,11 @@ export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
                   className="w-full bg-[#f5f8f6] dark:bg-gray-800 border-0 rounded-lg py-3 pl-4 pr-10 text-gray-900 dark:text-white appearance-none focus:ring-2 focus:ring-[#006611] cursor-pointer outline-none"
                   defaultValue={searchParams.get("type") || "Any Type"}
                 >
-                  <option>Any Type</option>
-                  <option>House</option>
-                  <option>Apartment</option>
-                  <option>Villa</option>
-                  <option>Penthouse</option>
+                  <option value="Any Type">{dictionary.filters?.anyType || "Any Type"}</option>
+                  <option value="House">{dictionary.filters?.house || "House"}</option>
+                  <option value="Apartment">{dictionary.filters?.apartment || "Apartment"}</option>
+                  <option value="Villa">{dictionary.filters?.villa || "Villa"}</option>
+                  <option value="Penthouse">{dictionary.filters?.penthouse || "Penthouse"}</option>
                 </select>
                 <span className="material-icons absolute right-3 top-3 text-gray-400 pointer-events-none">
                   expand_more
@@ -239,7 +241,7 @@ export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
               {/* Beds */}
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                  Bedrooms
+                  {dictionary.filters?.bedrooms || "Bedrooms"}
                 </span>
                 <div className="flex items-center gap-2 bg-[#f5f8f6] dark:bg-gray-800 rounded-full px-1 py-1">
                   <button
@@ -251,7 +253,7 @@ export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
                     <span className="material-icons text-base">remove</span>
                   </button>
                   <span className="text-sm font-semibold w-8 text-center text-gray-900 dark:text-white">
-                    {beds === 0 ? "Any" : `${beds}+`}
+                    {beds === 0 ? (dictionary.filters?.any || "Any") : `${beds}+`}
                   </span>
                   <button
                     type="button"
@@ -266,7 +268,7 @@ export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
               {/* Baths */}
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                  Bathrooms
+                  {dictionary.filters?.bathrooms || "Bathrooms"}
                 </span>
                 <div className="flex items-center gap-2 bg-[#f5f8f6] dark:bg-gray-800 rounded-full px-1 py-1">
                   <button
@@ -278,7 +280,7 @@ export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
                     <span className="material-icons text-base">remove</span>
                   </button>
                   <span className="text-sm font-semibold w-8 text-center text-gray-900 dark:text-white">
-                    {baths === 0 ? "Any" : `${baths}+`}
+                    {baths === 0 ? (dictionary.filters?.any || "Any") : `${baths}+`}
                   </span>
                   <button
                     type="button"
@@ -295,14 +297,14 @@ export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
           {/* Section 4: Amenities */}
           <section>
             <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">
-              Amenities &amp; Features
+              {dictionary.filters?.amenities || "Amenities & Features"}
             </label>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               <label className="cursor-pointer group relative">
                 <input defaultChecked className="peer sr-only" type="checkbox" />
                 <div className="h-full px-4 py-3 rounded-lg border border-[#006611] bg-[#006611]/5 dark:bg-[#006611]/20 text-[#006611] font-medium text-sm flex items-center justify-center gap-2 transition-all peer-checked:bg-[#006611]/10 peer-checked:border-[#006611] peer-checked:text-[#006611] hover:bg-[#006611]/10">
                   <span className="material-icons text-lg">pool</span>
-                  Swimming Pool
+                  {dictionary.filters?.swimmingPool || "Swimming Pool"}
                 </div>
                 <div className="absolute top-2 right-2 w-2 h-2 bg-[#006611] rounded-full" />
               </label>
@@ -311,7 +313,7 @@ export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
                 <input className="peer sr-only" type="checkbox" />
                 <div className="h-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-sm flex items-center justify-center gap-2 transition-all hover:border-gray-300 peer-checked:border-[#006611] peer-checked:bg-[#006611]/5 peer-checked:text-[#006611]">
                   <span className="material-icons text-lg text-gray-400 peer-checked:text-[#006611]">fitness_center</span>
-                  Gym
+                  {dictionary.filters?.gym || "Gym"}
                 </div>
               </label>
 
@@ -319,7 +321,7 @@ export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
                 <input className="peer sr-only" type="checkbox" />
                 <div className="h-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-sm flex items-center justify-center gap-2 transition-all hover:border-gray-300 peer-checked:border-[#006611] peer-checked:bg-[#006611]/5 peer-checked:text-[#006611]">
                   <span className="material-icons text-lg text-gray-400 peer-checked:text-[#006611]">local_parking</span>
-                  Parking
+                  {dictionary.filters?.parking || "Parking"}
                 </div>
               </label>
 
@@ -327,7 +329,7 @@ export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
                 <input className="peer sr-only" type="checkbox" />
                 <div className="h-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-sm flex items-center justify-center gap-2 transition-all hover:border-gray-300 peer-checked:border-[#006611] peer-checked:bg-[#006611]/5 peer-checked:text-[#006611]">
                   <span className="material-icons text-lg text-gray-400 peer-checked:text-[#006611]">ac_unit</span>
-                  Air Conditioning
+                  {dictionary.filters?.airConditioning || "Air Conditioning"}
                 </div>
               </label>
 
@@ -335,7 +337,7 @@ export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
                 <input defaultChecked className="peer sr-only" type="checkbox" />
                 <div className="h-full px-4 py-3 rounded-lg border border-[#006611] bg-[#006611]/5 dark:bg-[#006611]/20 text-[#006611] font-medium text-sm flex items-center justify-center gap-2 transition-all peer-checked:bg-[#006611]/10 peer-checked:border-[#006611] peer-checked:text-[#006611] hover:bg-[#006611]/10">
                   <span className="material-icons text-lg">wifi</span>
-                  High-speed Wifi
+                  {dictionary.filters?.wifi || "High-speed Wifi"}
                 </div>
                 <div className="absolute top-2 right-2 w-2 h-2 bg-[#006611] rounded-full" />
               </label>
@@ -344,7 +346,7 @@ export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
                 <input className="peer sr-only" type="checkbox" />
                 <div className="h-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-sm flex items-center justify-center gap-2 transition-all hover:border-gray-300 peer-checked:border-[#006611] peer-checked:bg-[#006611]/5 peer-checked:text-[#006611]">
                   <span className="material-icons text-lg text-gray-400 peer-checked:text-[#006611]">deck</span>
-                  Patio / Terrace
+                  {dictionary.filters?.patio || "Patio / Terrace"}
                 </div>
               </label>
             </div>
@@ -358,13 +360,13 @@ export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
             onClick={handleClear}
             className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors underline decoration-gray-300 underline-offset-4"
           >
-            Clear all filters
+            {dictionary.filters?.clearAll || "Clear all filters"}
           </button>
           <button
             type="submit"
             className="bg-[#006611] hover:bg-[#005510] text-white px-8 py-3 rounded-lg font-medium shadow-lg shadow-[#006611]/30 transition-all hover:shadow-[#006611]/40 flex items-center gap-2 active:scale-95"
           >
-            Show Properties
+            {dictionary.filters?.showProperties || "Show Properties"}
             <span className="material-icons text-sm">arrow_forward</span>
           </button>
         </footer>

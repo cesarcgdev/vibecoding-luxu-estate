@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 interface PropertyGalleryProps {
   images: string[];
@@ -9,6 +10,7 @@ interface PropertyGalleryProps {
 }
 
 export default function PropertyGallery({ images, title }: PropertyGalleryProps) {
+  const { dictionary } = useLanguage();
   const [mainImage, setMainImage] = useState(images[0] || "");
 
   if (!images || images.length === 0) {
@@ -30,15 +32,15 @@ export default function PropertyGallery({ images, title }: PropertyGalleryProps)
         />
         <div className="absolute top-4 left-4 flex gap-2">
           <span className="bg-mosque text-white text-xs font-medium px-3 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
-            Premium
+            {dictionary.gallery?.premium || "Premium"}
           </span>
           <span className="bg-white/90 backdrop-blur text-nordic-dark text-xs font-medium px-3 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
-            New
+            {dictionary.gallery?.new || "New"}
           </span>
         </div>
         <button className="absolute bottom-4 right-4 bg-white/90 hover:bg-white text-nordic-dark px-4 py-2 rounded-lg text-sm font-medium shadow-lg backdrop-blur transition-all flex items-center gap-2">
           <span className="material-icons text-sm">grid_view</span>
-          View All Photos
+          {dictionary.gallery?.viewAll || "View All Photos"}
         </button>
       </div>
 
