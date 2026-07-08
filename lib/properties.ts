@@ -46,6 +46,8 @@ export async function getFeaturedProperties(): Promise<Property[]> {
   return data as Property[];
 }
 
+import { MOCK_PROPERTIES } from "../data/mock-properties";
+
 /** Fetches a paginated page of non-featured market properties */
 export async function getMarketProperties(
   page: number,
@@ -54,19 +56,26 @@ export async function getMarketProperties(
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
 
+  // We fetch a larger subset from Supabase just in case, but rely heavily on local pagination
   const { data, error, count } = await supabase
     .from("properties")
     .select("*", { count: "exact" })
     .eq("is_featured", false)
-    .order("created_at", { ascending: true })
-    .range(from, to);
+    .order("created_at", { ascending: true });
+
+  const supabaseProperties = (data as Property[]) ?? [];
+  const combinedProperties = [...supabaseProperties, ...MOCK_PROPERTIES];
+  const totalCount = combinedProperties.length;
+
+  const paginatedData = combinedProperties.slice(from, to + 1);
 
   if (error) {
     console.error("Error fetching market properties:", error);
-    return { data: [], count: 0 };
+    // Still return mock properties if there's an error
+    return { data: MOCK_PROPERTIES.slice(from, to + 1), count: MOCK_PROPERTIES.length };
   }
 
-  return { data: (data as Property[]) ?? [], count: count ?? 0 };
+  return { data: paginatedData, count: totalCount };
 }
 
 /** Fetches a single property by its slug */
