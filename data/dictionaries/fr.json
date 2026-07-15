@@ -21,17 +21,6 @@
     "filterBuy": "Acheter",
     "filterRent": "Louer"
   },
-  "filters": {
-    "all": "Tout",
-    "house": "Maison",
-    "apartment": "Appartement",
-    "villa": "Villa",
-    "penthouse": "Attique",
-    "filters": "Filtres",
-    "apply": "Appliquer",
-    "clear": "Effacer",
-    "priceRange": "Fourchette de Prix"
-  },
   "property": {
     "beds": "Lits",
     "baths": "Salles de bain",
@@ -67,17 +56,26 @@
     "FOR SALE": "À VENDRE",
     "FOR RENT": "À LOUER"
   },
+  "pagination": {
+    "previous": "Précédent",
+    "next": "Suivant",
+    "page": "Page {current} sur {total}"
+  },
   "filters": {
-    "title": "Filtres",
-    "location": "Emplacement",
-    "locationPlaceholder": "Ville, quartier ou adresse",
-    "priceRange": "Gamme de Prix",
-    "propertyType": "Type de Propriété",
-    "anyType": "N'importe quel Type",
+    "all": "Tout",
     "house": "Maison",
     "apartment": "Appartement",
     "villa": "Villa",
     "penthouse": "Penthouse",
+    "filters": "Filtres",
+    "apply": "Appliquer",
+    "clear": "Effacer",
+    "priceRange": "Gamme de Prix",
+    "title": "Filtres",
+    "location": "Emplacement",
+    "locationPlaceholder": "Ville, quartier ou adresse",
+    "propertyType": "Type de Propriété",
+    "anyType": "N'importe quel Type",
     "bedrooms": "Chambres",
     "bathrooms": "Salles de bain",
     "any": "Tout",
@@ -90,10 +88,5 @@
     "patio": "Patio / Terrasse",
     "clearAll": "Effacer tous les filtres",
     "showProperties": "Afficher les Propriétés"
-  },
-  "pagination": {
-    "previous": "Précédent",
-    "next": "Suivant",
-    "page": "Page {current} sur {total}"
   }
 }

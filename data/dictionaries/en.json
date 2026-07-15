@@ -21,17 +21,6 @@
     "filterBuy": "Buy",
     "filterRent": "Rent"
   },
-  "filters": {
-    "all": "All",
-    "house": "House",
-    "apartment": "Apartment",
-    "villa": "Villa",
-    "penthouse": "Penthouse",
-    "filters": "Filters",
-    "apply": "Apply",
-    "clear": "Clear",
-    "priceRange": "Price Range"
-  },
   "property": {
     "beds": "Beds",
     "baths": "Baths",
@@ -67,17 +56,26 @@
     "FOR SALE": "FOR SALE",
     "FOR RENT": "FOR RENT"
   },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page {current} of {total}"
+  },
   "filters": {
-    "title": "Filters",
-    "location": "Location",
-    "locationPlaceholder": "City, neighborhood, or address",
-    "priceRange": "Price Range",
-    "propertyType": "Property Type",
-    "anyType": "Any Type",
+    "all": "All",
     "house": "House",
     "apartment": "Apartment",
     "villa": "Villa",
     "penthouse": "Penthouse",
+    "filters": "Filters",
+    "apply": "Apply",
+    "clear": "Clear",
+    "priceRange": "Price Range",
+    "title": "Filters",
+    "location": "Location",
+    "locationPlaceholder": "City, neighborhood, or address",
+    "propertyType": "Property Type",
+    "anyType": "Any Type",
     "bedrooms": "Bedrooms",
     "bathrooms": "Bathrooms",
     "any": "Any",
@@ -90,10 +88,5 @@
     "patio": "Patio / Terrace",
     "clearAll": "Clear all filters",
     "showProperties": "Show Properties"
-  },
-  "pagination": {
-    "previous": "Previous",
-    "next": "Next",
-    "page": "Page {current} of {total}"
   }
 }

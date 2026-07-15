@@ -21,17 +21,6 @@
     "filterBuy": "Comprar",
     "filterRent": "Alquilar"
   },
-  "filters": {
-    "all": "Todo",
-    "house": "Casa",
-    "apartment": "Apartamento",
-    "villa": "Villa",
-    "penthouse": "Penthouse",
-    "filters": "Filtros",
-    "apply": "Aplicar",
-    "clear": "Limpiar",
-    "priceRange": "Rango de Precio"
-  },
   "property": {
     "beds": "Camas",
     "baths": "Baños",
@@ -67,17 +56,26 @@
     "FOR SALE": "EN VENTA",
     "FOR RENT": "EN ALQUILER"
   },
+  "pagination": {
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "page": "Página {current} de {total}"
+  },
   "filters": {
-    "title": "Filtros",
-    "location": "Ubicación",
-    "locationPlaceholder": "Ciudad, barrio o dirección",
-    "priceRange": "Rango de Precio",
-    "propertyType": "Tipo de Propiedad",
-    "anyType": "Cualquier Tipo",
+    "all": "Todo",
     "house": "Casa",
     "apartment": "Apartamento",
     "villa": "Villa",
     "penthouse": "Ático",
+    "filters": "Filtros",
+    "apply": "Aplicar",
+    "clear": "Limpiar",
+    "priceRange": "Rango de Precio",
+    "title": "Filtros",
+    "location": "Ubicación",
+    "locationPlaceholder": "Ciudad, barrio o dirección",
+    "propertyType": "Tipo de Propiedad",
+    "anyType": "Cualquier Tipo",
     "bedrooms": "Habitaciones",
     "bathrooms": "Baños",
     "any": "Cualquiera",
@@ -90,10 +88,5 @@
     "patio": "Patio / Terraza",
     "clearAll": "Borrar todos los filtros",
     "showProperties": "Mostrar Propiedades"
-  },
-  "pagination": {
-    "previous": "Anterior",
-    "next": "Siguiente",
-    "page": "Página {current} de {total}"
   }
 }

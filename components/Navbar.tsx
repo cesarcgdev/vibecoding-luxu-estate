@@ -1,13 +1,42 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import LanguageSelector from "./LanguageSelector";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { createClient } from "@/lib/supabase/client";
 
 export default function Navbar() {
   const { dictionary } = useLanguage();
+  const [userAvatar, setUserAvatar] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const supabase = createClient();
+    
+    const fetchSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user?.user_metadata?.avatar_url) {
+        setUserAvatar(session.user.user_metadata.avatar_url);
+      }
+      setLoading(false);
+    };
+    
+    fetchSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user?.user_metadata?.avatar_url) {
+        setUserAvatar(session.user.user_metadata.avatar_url);
+      } else {
+        setUserAvatar(null);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
 
   return (
     <nav className="sticky top-0 z-50 bg-background-light/95 backdrop-blur-md border-b border-nordic-dark/10">
@@ -56,17 +85,27 @@ export default function Navbar() {
               <span className="material-icons">notifications_none</span>
               <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border-2 border-background-light"></span>
             </button>
-            <button className="flex items-center gap-2 pl-2 border-l border-nordic-dark/10 ml-2">
-              <div className="w-9 h-9 rounded-full bg-gray-200 overflow-hidden ring-2 ring-transparent hover:ring-mosque transition-all relative">
-                <Image
-                  alt="Profile"
-                  className="object-cover"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAWhQZ663Bd08kmzjbOPmUk4UIxYooNONShMEFXLR-DtmVi6Oz-TiaY77SPwFk7g0OobkeZEOMvt6v29mSOD0Xm2g95WbBG3ZjWXmiABOUwGU0LOySRfVDo-JTXQ0-gtwjWxbmue0qDm91m-zEOEZwAW6iRFB1qC1bAU-wkjxm67Sbztq8w7srHkFT9bVEC86qG-FzhOBTomhAurNRmx9l8Yfqabk328NfdKuVLckgCdaPsNFE3yN65MeoRi05GA_gXIMwG4YDIeA"
-                  fill
-                  unoptimized
-                />
-              </div>
-            </button>
+            
+            {loading ? (
+              <div className="w-9 h-9 ml-2 rounded-full bg-gray-200 animate-pulse border-l border-nordic-dark/10 pl-2"></div>
+            ) : userAvatar ? (
+              <button className="flex items-center gap-2 pl-4 border-l border-nordic-dark/10 ml-2">
+                <div className="w-9 h-9 rounded-full bg-gray-200 overflow-hidden ring-2 ring-transparent hover:ring-mosque transition-all relative">
+                  <Image
+                    alt="Profile"
+                    className="object-cover"
+                    src={userAvatar}
+                    fill
+                    unoptimized
+                  />
+                </div>
+              </button>
+            ) : (
+              <Link href="/login" className="flex items-center gap-2 pl-4 border-l border-nordic-dark/10 ml-2 text-sm font-medium text-nordic-dark hover:text-mosque transition-colors">
+                <span className="material-icons text-xl">login</span>
+                <span className="hidden sm:inline">Sign In</span>
+              </Link>
+            )}
           </div>
         </div>
       </div>
