@@ -3,17 +3,25 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 import LanguageSelector from "./LanguageSelector";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { createClient } from "@/lib/supabase/client";
 
 export default function Navbar() {
   const { dictionary } = useLanguage();
+  const router = useRouter();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  
   const [userAvatar, setUserAvatar] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const supabase = createClient();
 
   useEffect(() => {
-    const supabase = createClient();
+    setMounted(true);
     
     const fetchSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -36,41 +44,51 @@ export default function Navbar() {
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [supabase]);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setDropdownOpen(false);
+    router.push("/");
+  };
+
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
 
   return (
-    <nav className="sticky top-0 z-50 bg-background-light/95 backdrop-blur-md border-b border-nordic-dark/10">
+    <nav className="sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md border-b border-nordic-dark/10 dark:border-white/10 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           <Link href="/" className="flex-shrink-0 flex items-center gap-2 cursor-pointer">
-            <div className="w-8 h-8 rounded-lg bg-nordic-dark flex items-center justify-center">
-              <span className="material-icons text-white text-lg">apartment</span>
+            <div className="w-8 h-8 rounded-lg bg-nordic-dark dark:bg-white flex items-center justify-center transition-colors">
+              <span className="material-icons text-white dark:text-nordic-dark text-lg">apartment</span>
             </div>
-            <span className="text-xl font-semibold tracking-tight text-nordic-dark">
+            <span className="text-xl font-semibold tracking-tight text-nordic-dark dark:text-white transition-colors">
               LuxeEstate
             </span>
           </Link>
           <div className="hidden md:flex items-center space-x-8">
             <Link
-              className="text-mosque font-medium text-sm border-b-2 border-mosque px-1 py-1"
+              className="text-mosque dark:text-hint-green font-medium text-sm border-b-2 border-mosque dark:border-hint-green px-1 py-1 transition-colors"
               href="#"
             >
               {dictionary.navbar.buy}
             </Link>
             <Link
-              className="text-nordic-dark/70 hover:text-nordic-dark font-medium text-sm hover:border-b-2 hover:border-nordic-dark/20 px-1 py-1 transition-all"
+              className="text-nordic-dark/70 dark:text-gray-400 hover:text-nordic-dark dark:hover:text-white font-medium text-sm hover:border-b-2 hover:border-nordic-dark/20 dark:hover:border-white/20 px-1 py-1 transition-all"
               href="#"
             >
               {dictionary.navbar.rent}
             </Link>
             <Link
-              className="text-nordic-dark/70 hover:text-nordic-dark font-medium text-sm hover:border-b-2 hover:border-nordic-dark/20 px-1 py-1 transition-all"
+              className="text-nordic-dark/70 dark:text-gray-400 hover:text-nordic-dark dark:hover:text-white font-medium text-sm hover:border-b-2 hover:border-nordic-dark/20 dark:hover:border-white/20 px-1 py-1 transition-all"
               href="#"
             >
               {dictionary.navbar.sell}
             </Link>
             <Link
-              className="text-nordic-dark/70 hover:text-nordic-dark font-medium text-sm hover:border-b-2 hover:border-nordic-dark/20 px-1 py-1 transition-all"
+              className="text-nordic-dark/70 dark:text-gray-400 hover:text-nordic-dark dark:hover:text-white font-medium text-sm hover:border-b-2 hover:border-nordic-dark/20 dark:hover:border-white/20 px-1 py-1 transition-all"
               href="#"
             >
               {dictionary.navbar.savedHomes}
@@ -78,59 +96,90 @@ export default function Navbar() {
           </div>
           <div className="flex items-center space-x-4 sm:space-x-6">
             <LanguageSelector />
-            <button className="text-nordic-dark hover:text-mosque transition-colors">
+            
+            {/* Theme Toggle Button */}
+            {mounted && (
+              <button
+                onClick={toggleTheme}
+                className="text-nordic-dark dark:text-gray-300 hover:text-mosque dark:hover:text-white transition-colors flex items-center justify-center w-8 h-8 rounded-full hover:bg-black/5 dark:hover:bg-white/10"
+                aria-label="Toggle Dark Mode"
+              >
+                <span className="material-symbols-outlined text-[20px]">
+                  {theme === 'dark' ? 'light_mode' : 'dark_mode'}
+                </span>
+              </button>
+            )}
+
+            <button className="text-nordic-dark dark:text-gray-300 hover:text-mosque dark:hover:text-white transition-colors">
               <span className="material-icons">search</span>
             </button>
-            <button className="text-nordic-dark hover:text-mosque transition-colors relative">
+            <button className="text-nordic-dark dark:text-gray-300 hover:text-mosque dark:hover:text-white transition-colors relative">
               <span className="material-icons">notifications_none</span>
-              <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border-2 border-background-light"></span>
+              <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border-2 border-background-light dark:border-background-dark"></span>
             </button>
             
             {loading ? (
-              <div className="w-9 h-9 ml-2 rounded-full bg-gray-200 animate-pulse border-l border-nordic-dark/10 pl-2"></div>
+              <div className="w-9 h-9 ml-2 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse border-l border-nordic-dark/10 dark:border-white/10 pl-2"></div>
             ) : userAvatar ? (
-              <button className="flex items-center gap-2 pl-4 border-l border-nordic-dark/10 ml-2">
-                <div className="w-9 h-9 rounded-full bg-gray-200 overflow-hidden ring-2 ring-transparent hover:ring-mosque transition-all relative">
-                  <Image
-                    alt="Profile"
-                    className="object-cover"
-                    src={userAvatar}
-                    fill
-                    unoptimized
-                  />
-                </div>
-              </button>
+              <div className="relative border-l border-nordic-dark/10 dark:border-white/10 pl-4 ml-2">
+                <button
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="flex items-center gap-2 outline-none"
+                >
+                  <div className="w-9 h-9 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden ring-2 ring-transparent hover:ring-mosque dark:hover:ring-hint-green transition-all relative">
+                    <Image
+                      alt="Profile"
+                      className="object-cover"
+                      src={userAvatar}
+                      fill
+                      unoptimized
+                    />
+                  </div>
+                </button>
+
+                {dropdownOpen && (
+                  <div className="absolute right-0 mt-3 w-48 bg-white dark:bg-[#152e2a] rounded-xl shadow-lg border border-gray-100 dark:border-white/10 overflow-hidden py-1 z-50">
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 font-medium flex items-center gap-2 transition-colors"
+                    >
+                      <span className="material-icons text-sm">logout</span>
+                      {dictionary.navbar.logout}
+                    </button>
+                  </div>
+                )}
+              </div>
             ) : (
-              <Link href="/login" className="flex items-center gap-2 pl-4 border-l border-nordic-dark/10 ml-2 text-sm font-medium text-nordic-dark hover:text-mosque transition-colors">
+              <Link href="/login" className="flex items-center gap-2 pl-4 border-l border-nordic-dark/10 dark:border-white/10 ml-2 text-sm font-medium text-nordic-dark dark:text-white hover:text-mosque dark:hover:text-hint-green transition-colors">
                 <span className="material-icons text-xl">login</span>
-                <span className="hidden sm:inline">Sign In</span>
+                <span className="hidden sm:inline">{dictionary.navbar.login}</span>
               </Link>
             )}
           </div>
         </div>
       </div>
-      <div className="md:hidden border-t border-nordic-dark/5 bg-background-light overflow-hidden h-0 transition-all duration-300">
+      <div className="md:hidden border-t border-nordic-dark/5 dark:border-white/5 bg-background-light dark:bg-background-dark overflow-hidden h-0 transition-all duration-300">
         <div className="px-4 py-2 space-y-1">
           <Link
-            className="block px-3 py-2 rounded-md text-base font-medium text-mosque bg-mosque/10"
+            className="block px-3 py-2 rounded-md text-base font-medium text-mosque dark:text-hint-green bg-mosque/10 dark:bg-hint-green/10"
             href="#"
           >
             {dictionary.navbar.buy}
           </Link>
           <Link
-            className="block px-3 py-2 rounded-md text-base font-medium text-nordic-dark hover:bg-black/5"
+            className="block px-3 py-2 rounded-md text-base font-medium text-nordic-dark dark:text-gray-200 hover:bg-black/5 dark:hover:bg-white/5"
             href="#"
           >
             {dictionary.navbar.rent}
           </Link>
           <Link
-            className="block px-3 py-2 rounded-md text-base font-medium text-nordic-dark hover:bg-black/5"
+            className="block px-3 py-2 rounded-md text-base font-medium text-nordic-dark dark:text-gray-200 hover:bg-black/5 dark:hover:bg-white/5"
             href="#"
           >
             {dictionary.navbar.sell}
           </Link>
           <Link
-            className="block px-3 py-2 rounded-md text-base font-medium text-nordic-dark hover:bg-black/5"
+            className="block px-3 py-2 rounded-md text-base font-medium text-nordic-dark dark:text-gray-200 hover:bg-black/5 dark:hover:bg-white/5"
             href="#"
           >
             {dictionary.navbar.savedHomes}

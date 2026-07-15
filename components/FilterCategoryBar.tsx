@@ -27,8 +27,8 @@ export default function FilterCategoryBar() {
 
   const getButtonClass = (type: string) => {
     return currentType === type
-      ? "whitespace-nowrap px-5 py-2 rounded-full bg-nordic-dark text-white text-sm font-medium shadow-lg shadow-nordic-dark/10 transition-transform hover:-translate-y-0.5"
-      : "whitespace-nowrap px-5 py-2 rounded-full bg-white border border-nordic-dark/5 text-nordic-muted hover:text-nordic-dark hover:border-mosque/50 text-sm font-medium transition-all hover:bg-mosque/5";
+      ? "whitespace-nowrap px-5 py-2 rounded-full bg-nordic-dark dark:bg-white text-white dark:text-nordic-dark text-sm font-medium shadow-lg shadow-nordic-dark/10 transition-transform hover:-translate-y-0.5"
+      : "whitespace-nowrap px-5 py-2 rounded-full bg-white dark:bg-[#152e2a] border border-nordic-dark/5 dark:border-white/10 text-nordic-muted dark:text-gray-300 hover:text-nordic-dark dark:hover:text-white hover:border-mosque/50 dark:hover:border-hint-green/50 text-sm font-medium transition-all hover:bg-mosque/5 dark:hover:bg-white/5";
   };
 
   return (
@@ -49,10 +49,10 @@ export default function FilterCategoryBar() {
         <button onClick={() => handleTypeClick('Penthouse')} className={getButtonClass('Penthouse')}>
           {dictionary.filters.penthouse}
         </button>
-        <div className="w-px h-6 bg-nordic-dark/10 mx-2"></div>
+        <div className="w-px h-6 bg-nordic-dark/10 dark:bg-white/20 mx-2 transition-colors"></div>
         <button 
           onClick={() => setIsModalOpen(true)}
-          className="whitespace-nowrap flex items-center gap-1 px-4 py-2 rounded-full text-nordic-dark font-medium text-sm hover:bg-black/5 transition-colors"
+          className="whitespace-nowrap flex items-center gap-1 px-4 py-2 rounded-full text-nordic-dark dark:text-gray-300 font-medium text-sm hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
         >
           <span className="material-icons text-base">tune</span> {dictionary.filters.filters}
         </button>

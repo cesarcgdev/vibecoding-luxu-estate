@@ -137,17 +137,17 @@ export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
       {/* Modal */}
       <form
         onSubmit={handleSubmit}
-        className="relative z-20 w-full max-w-2xl bg-white dark:bg-gray-900 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+        className="relative z-20 w-full max-w-2xl bg-white dark:bg-[#152e2a] rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] transition-colors"
       >
         {/* Header */}
-        <header className="px-8 py-6 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 sticky top-0 z-30">
-          <h1 className="text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
+        <header className="px-8 py-6 border-b border-gray-100 dark:border-white/10 flex justify-between items-center bg-white dark:bg-[#152e2a] sticky top-0 z-30 transition-colors">
+          <h1 className="text-2xl font-semibold tracking-tight text-nordic-dark dark:text-white transition-colors">
             {dictionary.filters?.title || "Filters"}
           </h1>
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-500 dark:text-gray-400"
+            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-gray-500 dark:text-gray-400"
           >
             <span className="material-icons">close</span>
           </button>
@@ -157,16 +157,16 @@ export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
         <div className="flex-1 overflow-y-auto hide-scroll p-8 space-y-10">
           {/* Section 1: Location */}
           <section>
-            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+            <label className="block text-xs font-semibold text-nordic-muted dark:text-gray-400 uppercase tracking-wider mb-3 transition-colors">
               {dictionary.filters?.location || "Location"}
             </label>
             <div className="relative group">
-              <span className="material-icons absolute left-4 top-3.5 text-gray-400 group-focus-within:text-[#006611] transition-colors">
+              <span className="material-icons absolute left-4 top-3.5 text-gray-400 group-focus-within:text-mosque dark:group-focus-within:text-hint-green transition-colors">
                 location_on
               </span>
               <input
                 name="location"
-                className="w-full pl-12 pr-4 py-3 bg-[#f5f8f6] dark:bg-gray-800 border-0 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-[#006611] focus:bg-white dark:focus:bg-gray-800 transition-all shadow-sm outline-none"
+                className="w-full pl-12 pr-4 py-3 bg-[#f5f8f6] dark:bg-[#1a3833] border-0 rounded-lg text-nordic-dark dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-mosque dark:focus:ring-hint-green focus:bg-white dark:focus:bg-[#0f231f] transition-all shadow-sm outline-none"
                 placeholder={dictionary.filters?.locationPlaceholder || "City, neighborhood, or address"}
                 type="text"
                 defaultValue={searchParams.get("location") || ""}
@@ -177,10 +177,10 @@ export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
           {/* Section 2: Price Range */}
           <section>
             <div className="flex justify-between items-end mb-5">
-              <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <label className="block text-xs font-semibold text-nordic-muted dark:text-gray-400 uppercase tracking-wider transition-colors">
                 {dictionary.filters?.priceRange || "Price Range"}
               </label>
-              <span className="text-sm font-semibold text-[#006611]">
+              <span className="text-sm font-semibold text-mosque dark:text-hint-green transition-colors">
                 {formatPrice(rangeMin)} – {formatPrice(rangeMax)}
               </span>
             </div>
@@ -188,22 +188,22 @@ export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
             {/* Dual Range Slider */}
             <div className="relative h-10 flex items-center select-none mb-5" ref={sliderRef}>
               {/* Track background */}
-              <div className="absolute w-full h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full" />
+              <div className="absolute w-full h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full transition-colors" />
               {/* Active track */}
               <div
-                className="absolute h-1.5 bg-[#006611] rounded-full"
+                className="absolute h-1.5 bg-mosque dark:bg-hint-green rounded-full transition-colors"
                 style={{ left: `${minPercent}%`, right: `${100 - maxPercent}%` }}
               />
               {/* Min handle */}
               <div
                 onPointerDown={startDrag("min")}
-                className="absolute w-6 h-6 bg-white border-2 border-[#006611] rounded-full shadow-lg cursor-grab active:cursor-grabbing hover:scale-110 transition-transform z-10 touch-none"
+                className="absolute w-6 h-6 bg-white border-2 border-mosque dark:border-hint-green rounded-full shadow-lg cursor-grab active:cursor-grabbing hover:scale-110 transition-transform z-10 touch-none"
                 style={{ left: `calc(${minPercent}% - 12px)` }}
               />
               {/* Max handle */}
               <div
                 onPointerDown={startDrag("max")}
-                className="absolute w-6 h-6 bg-white border-2 border-[#006611] rounded-full shadow-lg cursor-grab active:cursor-grabbing hover:scale-110 transition-transform z-10 touch-none"
+                className="absolute w-6 h-6 bg-white border-2 border-mosque dark:border-hint-green rounded-full shadow-lg cursor-grab active:cursor-grabbing hover:scale-110 transition-transform z-10 touch-none"
                 style={{ left: `calc(${maxPercent}% - 12px)` }}
               />
             </div>
@@ -215,13 +215,13 @@ export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
           <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Property Type */}
             <div className="space-y-3">
-              <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <label className="block text-xs font-semibold text-nordic-muted dark:text-gray-400 uppercase tracking-wider transition-colors">
                 {dictionary.filters?.propertyType || "Property Type"}
               </label>
               <div className="relative">
                 <select
                   name="propertyType"
-                  className="w-full bg-[#f5f8f6] dark:bg-gray-800 border-0 rounded-lg py-3 pl-4 pr-10 text-gray-900 dark:text-white appearance-none focus:ring-2 focus:ring-[#006611] cursor-pointer outline-none"
+                  className="w-full bg-[#f5f8f6] dark:bg-[#1a3833] border-0 rounded-lg py-3 pl-4 pr-10 text-nordic-dark dark:text-white appearance-none focus:ring-2 focus:ring-mosque dark:focus:ring-hint-green cursor-pointer outline-none transition-colors"
                   defaultValue={searchParams.get("type") || "Any Type"}
                 >
                   <option value="Any Type">{dictionary.filters?.anyType || "Any Type"}</option>
@@ -240,25 +240,25 @@ export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
             <div className="space-y-4">
               {/* Beds */}
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                <span className="text-sm font-medium text-nordic-dark dark:text-gray-100 transition-colors">
                   {dictionary.filters?.bedrooms || "Bedrooms"}
                 </span>
-                <div className="flex items-center gap-2 bg-[#f5f8f6] dark:bg-gray-800 rounded-full px-1 py-1">
+                <div className="flex items-center gap-2 bg-[#f5f8f6] dark:bg-[#1a3833] rounded-full px-1 py-1 transition-colors">
                   <button
                     type="button"
                     onClick={() => setBeds(Math.max(0, beds - 1))}
                     disabled={beds === 0}
-                    className="w-8 h-8 rounded-full bg-white dark:bg-gray-700 shadow-sm flex items-center justify-center text-gray-500 hover:text-[#006611] disabled:opacity-30 transition-colors"
+                    className="w-8 h-8 rounded-full bg-white dark:bg-gray-700 shadow-sm flex items-center justify-center text-gray-500 hover:text-mosque dark:hover:text-hint-green disabled:opacity-30 transition-colors"
                   >
                     <span className="material-icons text-base">remove</span>
                   </button>
-                  <span className="text-sm font-semibold w-8 text-center text-gray-900 dark:text-white">
+                  <span className="text-sm font-semibold w-8 text-center text-nordic-dark dark:text-white transition-colors">
                     {beds === 0 ? (dictionary.filters?.any || "Any") : `${beds}+`}
                   </span>
                   <button
                     type="button"
                     onClick={() => setBeds(beds + 1)}
-                    className="w-8 h-8 rounded-full bg-[#006611] shadow-sm flex items-center justify-center text-white hover:bg-[#005510] transition-colors"
+                    className="w-8 h-8 rounded-full bg-mosque dark:bg-hint-green shadow-sm flex items-center justify-center text-white dark:text-nordic-dark hover:bg-mosque/90 dark:hover:bg-hint-green/90 transition-colors"
                   >
                     <span className="material-icons text-base">add</span>
                   </button>
@@ -267,25 +267,25 @@ export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
 
               {/* Baths */}
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                <span className="text-sm font-medium text-nordic-dark dark:text-gray-100 transition-colors">
                   {dictionary.filters?.bathrooms || "Bathrooms"}
                 </span>
-                <div className="flex items-center gap-2 bg-[#f5f8f6] dark:bg-gray-800 rounded-full px-1 py-1">
+                <div className="flex items-center gap-2 bg-[#f5f8f6] dark:bg-[#1a3833] rounded-full px-1 py-1 transition-colors">
                   <button
                     type="button"
                     onClick={() => setBaths(Math.max(0, baths - 1))}
                     disabled={baths === 0}
-                    className="w-8 h-8 rounded-full bg-white dark:bg-gray-700 shadow-sm flex items-center justify-center text-gray-500 hover:text-[#006611] disabled:opacity-30 transition-colors"
+                    className="w-8 h-8 rounded-full bg-white dark:bg-gray-700 shadow-sm flex items-center justify-center text-gray-500 hover:text-mosque dark:hover:text-hint-green disabled:opacity-30 transition-colors"
                   >
                     <span className="material-icons text-base">remove</span>
                   </button>
-                  <span className="text-sm font-semibold w-8 text-center text-gray-900 dark:text-white">
+                  <span className="text-sm font-semibold w-8 text-center text-nordic-dark dark:text-white transition-colors">
                     {baths === 0 ? (dictionary.filters?.any || "Any") : `${baths}+`}
                   </span>
                   <button
                     type="button"
                     onClick={() => setBaths(baths + 1)}
-                    className="w-8 h-8 rounded-full bg-[#006611] shadow-sm flex items-center justify-center text-white hover:bg-[#005510] transition-colors"
+                    className="w-8 h-8 rounded-full bg-mosque dark:bg-hint-green shadow-sm flex items-center justify-center text-white dark:text-nordic-dark hover:bg-mosque/90 dark:hover:bg-hint-green/90 transition-colors"
                   >
                     <span className="material-icons text-base">add</span>
                   </button>
@@ -296,56 +296,56 @@ export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
 
           {/* Section 4: Amenities */}
           <section>
-            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">
+            <label className="block text-xs font-semibold text-nordic-muted dark:text-gray-400 uppercase tracking-wider mb-4 transition-colors">
               {dictionary.filters?.amenities || "Amenities & Features"}
             </label>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               <label className="cursor-pointer group relative">
                 <input defaultChecked className="peer sr-only" type="checkbox" />
-                <div className="h-full px-4 py-3 rounded-lg border border-[#006611] bg-[#006611]/5 dark:bg-[#006611]/20 text-[#006611] font-medium text-sm flex items-center justify-center gap-2 transition-all peer-checked:bg-[#006611]/10 peer-checked:border-[#006611] peer-checked:text-[#006611] hover:bg-[#006611]/10">
+                <div className="h-full px-4 py-3 rounded-lg border border-mosque dark:border-hint-green bg-mosque/5 dark:bg-hint-green/10 text-mosque dark:text-hint-green font-medium text-sm flex items-center justify-center gap-2 transition-all peer-checked:bg-mosque/10 dark:peer-checked:bg-hint-green/20 peer-checked:border-mosque dark:peer-checked:border-hint-green hover:bg-mosque/10 dark:hover:bg-hint-green/20">
                   <span className="material-icons text-lg">pool</span>
                   {dictionary.filters?.swimmingPool || "Swimming Pool"}
                 </div>
-                <div className="absolute top-2 right-2 w-2 h-2 bg-[#006611] rounded-full" />
+                <div className="absolute top-2 right-2 w-2 h-2 bg-mosque dark:bg-hint-green rounded-full transition-colors" />
               </label>
 
               <label className="cursor-pointer group">
                 <input className="peer sr-only" type="checkbox" />
-                <div className="h-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-sm flex items-center justify-center gap-2 transition-all hover:border-gray-300 peer-checked:border-[#006611] peer-checked:bg-[#006611]/5 peer-checked:text-[#006611]">
-                  <span className="material-icons text-lg text-gray-400 peer-checked:text-[#006611]">fitness_center</span>
+                <div className="h-full px-4 py-3 rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-[#1a3833] text-gray-600 dark:text-gray-300 text-sm flex items-center justify-center gap-2 transition-all hover:border-gray-300 dark:hover:border-white/20 peer-checked:border-mosque dark:peer-checked:border-hint-green peer-checked:bg-mosque/5 dark:peer-checked:bg-hint-green/10 peer-checked:text-mosque dark:peer-checked:text-hint-green">
+                  <span className="material-icons text-lg text-gray-400 peer-checked:text-mosque dark:peer-checked:text-hint-green">fitness_center</span>
                   {dictionary.filters?.gym || "Gym"}
                 </div>
               </label>
 
               <label className="cursor-pointer group">
                 <input className="peer sr-only" type="checkbox" />
-                <div className="h-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-sm flex items-center justify-center gap-2 transition-all hover:border-gray-300 peer-checked:border-[#006611] peer-checked:bg-[#006611]/5 peer-checked:text-[#006611]">
-                  <span className="material-icons text-lg text-gray-400 peer-checked:text-[#006611]">local_parking</span>
+                <div className="h-full px-4 py-3 rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-[#1a3833] text-gray-600 dark:text-gray-300 text-sm flex items-center justify-center gap-2 transition-all hover:border-gray-300 dark:hover:border-white/20 peer-checked:border-mosque dark:peer-checked:border-hint-green peer-checked:bg-mosque/5 dark:peer-checked:bg-hint-green/10 peer-checked:text-mosque dark:peer-checked:text-hint-green">
+                  <span className="material-icons text-lg text-gray-400 peer-checked:text-mosque dark:peer-checked:text-hint-green">local_parking</span>
                   {dictionary.filters?.parking || "Parking"}
                 </div>
               </label>
 
               <label className="cursor-pointer group">
                 <input className="peer sr-only" type="checkbox" />
-                <div className="h-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-sm flex items-center justify-center gap-2 transition-all hover:border-gray-300 peer-checked:border-[#006611] peer-checked:bg-[#006611]/5 peer-checked:text-[#006611]">
-                  <span className="material-icons text-lg text-gray-400 peer-checked:text-[#006611]">ac_unit</span>
+                <div className="h-full px-4 py-3 rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-[#1a3833] text-gray-600 dark:text-gray-300 text-sm flex items-center justify-center gap-2 transition-all hover:border-gray-300 dark:hover:border-white/20 peer-checked:border-mosque dark:peer-checked:border-hint-green peer-checked:bg-mosque/5 dark:peer-checked:bg-hint-green/10 peer-checked:text-mosque dark:peer-checked:text-hint-green">
+                  <span className="material-icons text-lg text-gray-400 peer-checked:text-mosque dark:peer-checked:text-hint-green">ac_unit</span>
                   {dictionary.filters?.airConditioning || "Air Conditioning"}
                 </div>
               </label>
 
               <label className="cursor-pointer group relative">
                 <input defaultChecked className="peer sr-only" type="checkbox" />
-                <div className="h-full px-4 py-3 rounded-lg border border-[#006611] bg-[#006611]/5 dark:bg-[#006611]/20 text-[#006611] font-medium text-sm flex items-center justify-center gap-2 transition-all peer-checked:bg-[#006611]/10 peer-checked:border-[#006611] peer-checked:text-[#006611] hover:bg-[#006611]/10">
+                <div className="h-full px-4 py-3 rounded-lg border border-mosque dark:border-hint-green bg-mosque/5 dark:bg-hint-green/10 text-mosque dark:text-hint-green font-medium text-sm flex items-center justify-center gap-2 transition-all peer-checked:bg-mosque/10 dark:peer-checked:bg-hint-green/20 peer-checked:border-mosque dark:peer-checked:border-hint-green hover:bg-mosque/10 dark:hover:bg-hint-green/20">
                   <span className="material-icons text-lg">wifi</span>
                   {dictionary.filters?.wifi || "High-speed Wifi"}
                 </div>
-                <div className="absolute top-2 right-2 w-2 h-2 bg-[#006611] rounded-full" />
+                <div className="absolute top-2 right-2 w-2 h-2 bg-mosque dark:bg-hint-green rounded-full transition-colors" />
               </label>
 
               <label className="cursor-pointer group">
                 <input className="peer sr-only" type="checkbox" />
-                <div className="h-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-sm flex items-center justify-center gap-2 transition-all hover:border-gray-300 peer-checked:border-[#006611] peer-checked:bg-[#006611]/5 peer-checked:text-[#006611]">
-                  <span className="material-icons text-lg text-gray-400 peer-checked:text-[#006611]">deck</span>
+                <div className="h-full px-4 py-3 rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-[#1a3833] text-gray-600 dark:text-gray-300 text-sm flex items-center justify-center gap-2 transition-all hover:border-gray-300 dark:hover:border-white/20 peer-checked:border-mosque dark:peer-checked:border-hint-green peer-checked:bg-mosque/5 dark:peer-checked:bg-hint-green/10 peer-checked:text-mosque dark:peer-checked:text-hint-green">
+                  <span className="material-icons text-lg text-gray-400 peer-checked:text-mosque dark:peer-checked:text-hint-green">deck</span>
                   {dictionary.filters?.patio || "Patio / Terrace"}
                 </div>
               </label>
@@ -354,17 +354,17 @@ export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
         </div>
 
         {/* Footer */}
-        <footer className="bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 px-8 py-6 sticky bottom-0 z-30 flex items-center justify-between">
+        <footer className="bg-white dark:bg-[#152e2a] border-t border-gray-100 dark:border-white/10 px-8 py-6 sticky bottom-0 z-30 flex items-center justify-between transition-colors">
           <button
             type="button"
             onClick={handleClear}
-            className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors underline decoration-gray-300 underline-offset-4"
+            className="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-nordic-dark dark:hover:text-white transition-colors underline decoration-gray-300 dark:decoration-gray-600 underline-offset-4"
           >
             {dictionary.filters?.clearAll || "Clear all filters"}
           </button>
           <button
             type="submit"
-            className="bg-[#006611] hover:bg-[#005510] text-white px-8 py-3 rounded-lg font-medium shadow-lg shadow-[#006611]/30 transition-all hover:shadow-[#006611]/40 flex items-center gap-2 active:scale-95"
+            className="bg-mosque dark:bg-hint-green hover:bg-mosque/90 dark:hover:bg-hint-green/90 text-white dark:text-nordic-dark px-8 py-3 rounded-lg font-medium shadow-lg shadow-mosque/30 dark:shadow-hint-green/30 transition-all hover:shadow-mosque/40 dark:hover:shadow-hint-green/40 flex items-center gap-2 active:scale-95"
           >
             {dictionary.filters?.showProperties || "Show Properties"}
             <span className="material-icons text-sm">arrow_forward</span>
