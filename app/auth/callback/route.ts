@@ -11,7 +11,29 @@ export async function GET(request: Request) {
   if (code) {
     const supabase = await createClient()
     const { error } = await supabase.auth.exchangeCodeForSession(code)
+    
     if (!error) {
+      // Get the authenticated user
+      const { data: { user } } = await supabase.auth.getUser()
+      
+      if (user) {
+        // Check if the user already has a role
+        const { data: existingRole, error: roleError } = await supabase
+          .from('user_roles')
+          .select('id')
+          .eq('user_id', user.id)
+          .maybeSingle()
+          
+        // Only insert if we are SURE it doesn't exist (no error, and no data)
+        if (!existingRole && !roleError) {
+          await supabase.from('user_roles').insert({
+            user_id: user.id,
+            email: user.email,
+            role: 'user'
+          })
+        }
+      }
+
       const forwardedHost = request.headers.get('x-forwarded-host') // original origin before load balancer
       const isLocalEnv = process.env.NODE_ENV === 'development'
       if (isLocalEnv) {
