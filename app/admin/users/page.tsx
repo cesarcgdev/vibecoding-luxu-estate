@@ -24,12 +24,12 @@ export default async function AdminUsersPage() {
                 <span className="material-icons text-nordic/40 group-focus-within:text-primary text-xl">search</span>
               </div>
               <input 
-                className="block w-full pl-10 pr-3 py-2.5 border-none rounded-lg bg-white dark:bg-gray-800 text-nordic dark:text-white shadow-soft placeholder-nordic/30 focus:ring-2 focus:ring-primary focus:bg-white transition-all text-sm" 
+                className="block w-full pl-10 pr-3 py-2.5 border border-transparent dark:border-primary/20 rounded-lg bg-white dark:bg-background-dark text-nordic dark:text-white shadow-soft placeholder-nordic/30 focus:ring-2 focus:ring-primary focus:bg-white transition-all text-sm" 
                 placeholder="Search by name, email..." 
                 type="text"
               />
             </div>
-            <button className="inline-flex items-center justify-center px-4 py-2.5 border border-primary text-sm font-medium rounded-lg text-primary bg-transparent hover:bg-primary/5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors whitespace-nowrap">
+            <button className="inline-flex items-center justify-center px-4 py-2.5 border border-nordic text-sm font-medium rounded-lg text-nordic dark:border-white dark:text-white bg-transparent hover:bg-gray-50 dark:hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-nordic transition-colors whitespace-nowrap">
               <span className="material-icons text-lg mr-2">add</span>
               Add User
             </button>
@@ -53,12 +53,12 @@ export default async function AdminUsersPage() {
         </div>
 
         {users.length === 0 ? (
-          <div className="p-10 text-center text-nordic/50 dark:text-gray-400 bg-white dark:bg-gray-800 rounded-xl shadow-sm">
+          <div className="p-10 text-center text-nordic/50 dark:text-gray-400 bg-white dark:bg-background-dark rounded-xl shadow-sm border border-gray-200 dark:border-primary/20">
             No users found. Ensure the user_roles table is populated.
           </div>
         ) : (
           users.map((user) => (
-            <div key={user.id} className="user-card group relative bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 hover:bg-active-green dark:hover:bg-primary/20 flex flex-col md:grid md:grid-cols-12 gap-4 items-center transition-all duration-200">
+            <div key={user.id} className="user-card group relative bg-white dark:bg-background-dark rounded-xl p-5 shadow-sm border border-gray-100 dark:border-primary/20 hover:bg-background-light dark:hover:bg-primary/10 flex flex-col md:grid md:grid-cols-12 gap-4 items-center transition-all duration-200">
               <div className="col-span-12 md:col-span-4 flex items-center w-full">
                 <div className="relative flex-shrink-0">
                   <div className="h-12 w-12 rounded-full bg-primary/10 border-2 border-white dark:border-primary flex items-center justify-center overflow-hidden">
@@ -126,7 +126,7 @@ export default async function AdminUsersPage() {
                   <span className="sr-only">Previous</span>
                   <span className="material-icons text-xl">chevron_left</span>
                 </button>
-                <button aria-current="page" className="z-10 bg-primary text-white relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md mx-1 shadow-sm">
+                <button aria-current="page" className="z-10 bg-nordic dark:bg-white text-white dark:text-nordic relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md mx-1 shadow-sm">
                   1
                 </button>
                 <button className="relative inline-flex items-center px-2 py-2 rounded-r-md text-sm font-medium text-nordic/50 hover:text-primary transition-colors cursor-not-allowed opacity-50">

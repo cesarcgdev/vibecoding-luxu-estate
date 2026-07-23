@@ -1,5 +1,6 @@
 import { getMarketProperties } from "@/lib/properties";
 import Image from "next/image";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -7,9 +8,16 @@ export const metadata = {
   title: "Property Management | LuxeEstate Admin",
 };
 
-export default async function AdminPropertiesPage() {
-  // Fetch a large number of properties for the admin view
-  const { data: properties } = await getMarketProperties(1, 100);
+export default async function AdminPropertiesPage({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
+  const resolvedParams = await searchParams;
+  const page = resolvedParams.page ? parseInt(resolvedParams.page as string) : 1;
+  const limit = 10;
+  
+  // Fetch properties for the admin view
+  const { data: properties, count } = await getMarketProperties(page, limit);
+  const totalPages = Math.ceil(count / limit);
+  const startItem = (page - 1) * limit + 1;
+  const endItem = Math.min(page * limit, count);
 
   return (
     <div className="w-full py-10">
@@ -20,19 +28,19 @@ export default async function AdminPropertiesPage() {
           <p className="text-gray-500 dark:text-gray-400 mt-1">Manage your portfolio and track performance.</p>
         </div>
         <div className="flex items-center gap-3">
-          <button className="bg-white dark:bg-[#152e2a] border border-gray-200 dark:border-primary/30 text-nordic dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-primary/10 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm inline-flex items-center gap-2">
+          <button className="bg-white dark:bg-background-dark border border-gray-200 dark:border-primary/30 text-nordic dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-primary/10 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm inline-flex items-center gap-2">
             <span className="material-icons text-base">filter_list</span> Filter
           </button>
-          <button className="bg-primary hover:bg-primary/90 text-white px-5 py-2.5 rounded-lg text-sm font-medium shadow-md shadow-primary/20 transition-all transform hover:-translate-y-0.5 inline-flex items-center gap-2">
+          <button className="bg-nordic hover:bg-nordic-muted text-white dark:bg-white dark:text-nordic dark:hover:bg-gray-100 px-5 py-2.5 rounded-lg text-sm font-medium shadow-md transition-all transform hover:-translate-y-0.5 inline-flex items-center gap-2">
             <span className="material-icons text-base">add</span> Add New Property
           </button>
         </div>
       </div>
 
       {/* Property List Container */}
-      <div className="bg-white dark:bg-[#152e2a] rounded-xl shadow-sm border border-gray-200 dark:border-primary/20 overflow-hidden">
+      <div className="bg-white dark:bg-background-dark rounded-xl shadow-sm border border-gray-200 dark:border-primary/20 overflow-hidden">
         {/* Table Header */}
-        <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-4 bg-gray-50/50 dark:bg-primary/5 border-b border-gray-100 dark:border-primary/10 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+        <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-4 bg-gray-50 dark:bg-primary/10 border-b border-gray-100 dark:border-primary/10 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
           <div className="col-span-6">Property Details</div>
           <div className="col-span-2">Price</div>
           <div className="col-span-2">Status</div>
@@ -40,12 +48,12 @@ export default async function AdminPropertiesPage() {
         </div>
 
         {properties.length === 0 ? (
-          <div className="p-10 text-center text-nordic/50 dark:text-gray-400 bg-white dark:bg-[#152e2a]">
+          <div className="p-10 text-center text-nordic/50 dark:text-gray-400 bg-white dark:bg-background-dark">
             No properties found.
           </div>
         ) : (
           properties.map((property) => (
-            <div key={property.id} className="group grid grid-cols-1 md:grid-cols-12 gap-4 px-6 py-5 border-b border-gray-100 dark:border-primary/10 hover:bg-background-light dark:hover:bg-primary/5 transition-colors items-center">
+            <div key={property.id} className="group grid grid-cols-1 md:grid-cols-12 gap-4 px-6 py-5 border-b border-gray-100 dark:border-primary/10 hover:bg-background-light dark:hover:bg-primary/10 transition-colors items-center">
               {/* Property Details */}
               <div className="col-span-12 md:col-span-6 flex gap-4 items-center">
                 <div className="relative h-20 w-28 flex-shrink-0 rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-800">
@@ -77,8 +85,8 @@ export default async function AdminPropertiesPage() {
 
               {/* Status */}
               <div className="col-span-6 md:col-span-2">
-                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-hint-green text-primary border border-primary/10">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary mr-1.5"></span>
+                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-nordic/10 text-nordic dark:bg-white/10 dark:text-gray-200 border border-nordic/10 dark:border-white/10">
+                  <span className="w-1.5 h-1.5 rounded-full bg-nordic dark:bg-white mr-1.5"></span>
                   Active
                 </span>
               </div>
@@ -96,14 +104,31 @@ export default async function AdminPropertiesPage() {
           ))
         )}
 
-        {/* Pagination Placeholder */}
-        <div className="px-6 py-4 flex items-center justify-between bg-gray-50/50 dark:bg-primary/5">
+        {/* Pagination */}
+        <div className="px-6 py-4 flex items-center justify-between bg-gray-50 dark:bg-primary/10 border-t border-gray-100 dark:border-primary/10">
           <div className="text-sm text-gray-500 dark:text-gray-400">
-            Showing <span className="font-medium text-nordic dark:text-white">1</span> to <span className="font-medium text-nordic dark:text-white">{properties.length}</span> of <span className="font-medium text-nordic dark:text-white">{properties.length}</span> results
+            Showing <span className="font-medium text-nordic dark:text-white">{count > 0 ? startItem : 0}</span> to <span className="font-medium text-nordic dark:text-white">{endItem}</span> of <span className="font-medium text-nordic dark:text-white">{count}</span> results
           </div>
           <div className="flex gap-2">
-            <button className="px-3 py-1 text-sm border border-gray-200 dark:border-primary/30 rounded-md text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-primary/20 disabled:opacity-50" disabled>Previous</button>
-            <button className="px-3 py-1 text-sm border border-gray-200 dark:border-primary/30 rounded-md text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-primary/20" disabled>Next</button>
+            {page > 1 ? (
+              <Link href={`/admin/properties?page=${page - 1}`} className="px-3 py-1 text-sm border border-gray-200 dark:border-primary/30 rounded-md text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-primary/20">
+                Previous
+              </Link>
+            ) : (
+              <button className="px-3 py-1 text-sm border border-gray-200 dark:border-primary/30 rounded-md text-gray-600 dark:text-gray-300 opacity-50 cursor-not-allowed" disabled>
+                Previous
+              </button>
+            )}
+            
+            {page < totalPages ? (
+              <Link href={`/admin/properties?page=${page + 1}`} className="px-3 py-1 text-sm border border-gray-200 dark:border-primary/30 rounded-md text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-primary/20">
+                Next
+              </Link>
+            ) : (
+              <button className="px-3 py-1 text-sm border border-gray-200 dark:border-primary/30 rounded-md text-gray-600 dark:text-gray-300 opacity-50 cursor-not-allowed" disabled>
+                Next
+              </button>
+            )}
           </div>
         </div>
       </div>
