@@ -4,7 +4,7 @@ import Image from "next/image";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Manage Properties | Admin Dashboard",
+  title: "Property Management | LuxeEstate Admin",
 };
 
 export default async function AdminPropertiesPage() {
@@ -12,90 +12,99 @@ export default async function AdminPropertiesPage() {
   const { data: properties } = await getMarketProperties(1, 100);
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Properties
-        </h1>
-        {/* Placeholder for Add Property button */}
-        <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors shadow-sm">
-          Add Property
-        </button>
+    <div className="w-full py-10">
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-nordic dark:text-white tracking-tight">My Properties</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">Manage your portfolio and track performance.</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <button className="bg-white dark:bg-[#152e2a] border border-gray-200 dark:border-primary/30 text-nordic dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-primary/10 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm inline-flex items-center gap-2">
+            <span className="material-icons text-base">filter_list</span> Filter
+          </button>
+          <button className="bg-primary hover:bg-primary/90 text-white px-5 py-2.5 rounded-lg text-sm font-medium shadow-md shadow-primary/20 transition-all transform hover:-translate-y-0.5 inline-flex items-center gap-2">
+            <span className="material-icons text-base">add</span> Add New Property
+          </button>
+        </div>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 shadow-sm rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-900/50">
-              <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Property
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Location
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Price
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Details
-                </th>
-                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-              {properties.map((property) => (
-                <tr key={property.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10 relative rounded overflow-hidden">
-                        <Image 
-                          src={property.images[0] || "/images/placeholder.jpg"} 
-                          alt={property.title}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900 dark:text-white">
-                          {property.title}
-                        </div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">
-                          {property.listing_type || "Sale/Rent"}
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                    {property.location}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                    {property.price_display}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                    {property.beds} Beds • {property.baths} Baths
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button className="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 mr-4">
-                      Edit
-                    </button>
-                    <button className="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300">
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              {properties.length === 0 && (
-                <tr>
-                  <td colSpan={5} className="px-6 py-10 text-center text-gray-500 dark:text-gray-400">
-                    No properties found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+      {/* Property List Container */}
+      <div className="bg-white dark:bg-[#152e2a] rounded-xl shadow-sm border border-gray-200 dark:border-primary/20 overflow-hidden">
+        {/* Table Header */}
+        <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-4 bg-gray-50/50 dark:bg-primary/5 border-b border-gray-100 dark:border-primary/10 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+          <div className="col-span-6">Property Details</div>
+          <div className="col-span-2">Price</div>
+          <div className="col-span-2">Status</div>
+          <div className="col-span-2 text-right">Actions</div>
+        </div>
+
+        {properties.length === 0 ? (
+          <div className="p-10 text-center text-nordic/50 dark:text-gray-400 bg-white dark:bg-[#152e2a]">
+            No properties found.
+          </div>
+        ) : (
+          properties.map((property) => (
+            <div key={property.id} className="group grid grid-cols-1 md:grid-cols-12 gap-4 px-6 py-5 border-b border-gray-100 dark:border-primary/10 hover:bg-background-light dark:hover:bg-primary/5 transition-colors items-center">
+              {/* Property Details */}
+              <div className="col-span-12 md:col-span-6 flex gap-4 items-center">
+                <div className="relative h-20 w-28 flex-shrink-0 rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-800">
+                  <Image 
+                    src={property.images[0] || "/images/placeholder.jpg"} 
+                    alt={property.title}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-nordic dark:text-white group-hover:text-primary transition-colors cursor-pointer">{property.title}</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{property.location}</p>
+                  <div className="flex items-center gap-3 mt-1.5 text-xs text-gray-400 dark:text-gray-500">
+                    <span className="flex items-center gap-1"><span className="material-icons text-[14px]">bed</span> {property.beds} Beds</span>
+                    <span className="w-1 h-1 rounded-full bg-gray-300"></span>
+                    <span className="flex items-center gap-1"><span className="material-icons text-[14px]">bathtub</span> {property.baths} Baths</span>
+                    <span className="w-1 h-1 rounded-full bg-gray-300"></span>
+                    <span>{property.listing_type || 'Sale'}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Price */}
+              <div className="col-span-6 md:col-span-2">
+                <div className="text-base font-semibold text-nordic dark:text-gray-200">{property.price_display}</div>
+                <div className="text-xs text-gray-400">Created: {new Date(property.created_at).toLocaleDateString()}</div>
+              </div>
+
+              {/* Status */}
+              <div className="col-span-6 md:col-span-2">
+                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-hint-green text-primary border border-primary/10">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary mr-1.5"></span>
+                  Active
+                </span>
+              </div>
+
+              {/* Actions */}
+              <div className="col-span-12 md:col-span-2 flex items-center justify-end gap-2">
+                <button className="p-2 rounded-lg text-gray-400 hover:text-primary hover:bg-hint-green/30 transition-all tooltip-trigger" title="Edit Property">
+                  <span className="material-icons text-xl">edit</span>
+                </button>
+                <button className="p-2 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all tooltip-trigger" title="Delete Property">
+                  <span className="material-icons text-xl">delete_outline</span>
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+
+        {/* Pagination Placeholder */}
+        <div className="px-6 py-4 flex items-center justify-between bg-gray-50/50 dark:bg-primary/5">
+          <div className="text-sm text-gray-500 dark:text-gray-400">
+            Showing <span className="font-medium text-nordic dark:text-white">1</span> to <span className="font-medium text-nordic dark:text-white">{properties.length}</span> of <span className="font-medium text-nordic dark:text-white">{properties.length}</span> results
+          </div>
+          <div className="flex gap-2">
+            <button className="px-3 py-1 text-sm border border-gray-200 dark:border-primary/30 rounded-md text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-primary/20 disabled:opacity-50" disabled>Previous</button>
+            <button className="px-3 py-1 text-sm border border-gray-200 dark:border-primary/30 rounded-md text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-primary/20" disabled>Next</button>
+          </div>
         </div>
       </div>
     </div>
