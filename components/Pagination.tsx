@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 interface PaginationProps {
@@ -10,6 +11,14 @@ interface PaginationProps {
 
 export default function Pagination({ currentPage, totalPages }: PaginationProps) {
   const { dictionary } = useLanguage();
+  const searchParams = useSearchParams();
+
+  /** Keeps the active filters when moving between pages */
+  const hrefForPage = (page: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", page.toString());
+    return `?${params.toString()}`;
+  };
 
   if (totalPages <= 1) return null;
 
@@ -23,7 +32,7 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
       {/* Previous */}
       {currentPage > 1 ? (
         <Link
-          href={`?page=${currentPage - 1}`}
+          href={hrefForPage(currentPage - 1)}
           className="flex items-center gap-1 px-4 py-2 rounded-lg bg-white border border-nordic-dark/10 text-nordic-dark text-sm font-medium hover:border-mosque hover:text-mosque transition-all hover:shadow-md"
           aria-label="Previous page"
         >
@@ -52,7 +61,7 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
           ) : (
             <Link
               key={page}
-              href={`?page=${page}`}
+              href={hrefForPage(page)}
               className="w-10 h-10 flex items-center justify-center rounded-lg bg-white border border-nordic-dark/10 text-nordic-dark text-sm font-medium hover:border-mosque hover:text-mosque transition-all hover:shadow-md"
               aria-label={`Page ${page}`}
             >
@@ -65,7 +74,7 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
       {/* Next */}
       {currentPage < totalPages ? (
         <Link
-          href={`?page=${currentPage + 1}`}
+          href={hrefForPage(currentPage + 1)}
           className="flex items-center gap-1 px-4 py-2 rounded-lg bg-white border border-nordic-dark/10 text-nordic-dark text-sm font-medium hover:border-mosque hover:text-mosque transition-all hover:shadow-md"
           aria-label="Next page"
         >

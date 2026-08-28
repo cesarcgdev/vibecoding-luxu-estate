@@ -3,15 +3,18 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import LanguageSelector from "./LanguageSelector";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { createClient } from "@/lib/supabase/client";
+import { FOCUS_SEARCH_EVENT } from "@/lib/search-filters";
+import { describeSupabaseError } from "@/lib/supabase-errors";
 
 export default function Navbar() {
   const { dictionary } = useLanguage();
   const router = useRouter();
+  const pathname = usePathname();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   
@@ -24,11 +27,18 @@ export default function Navbar() {
     setMounted(true);
     
     const fetchSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user?.user_metadata?.avatar_url) {
-        setUserAvatar(session.user.user_metadata.avatar_url);
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user?.user_metadata?.avatar_url) {
+          setUserAvatar(session.user.user_metadata.avatar_url);
+        }
+      } catch (error) {
+        // Auth being unreachable means "signed out", not a stuck avatar skeleton
+        console.error("Could not read the auth session:", describeSupabaseError(error));
+        setUserAvatar(null);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     
     fetchSession();
@@ -47,13 +57,25 @@ export default function Navbar() {
   }, [supabase]);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut();
+    } catch (error) {
+      // The local session is cleared either way, so still send them home
+      console.error("Sign out failed:", describeSupabaseError(error));
+    }
     setDropdownOpen(false);
     router.push("/");
   };
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
+  };
+
+  /** On the home page the search bar is already mounted, so just hand it focus */
+  const handleSearchClick = (event: React.MouseEvent) => {
+    if (pathname !== "/") return;
+    event.preventDefault();
+    window.dispatchEvent(new Event(FOCUS_SEARCH_EVENT));
   };
 
   return (
@@ -110,9 +132,15 @@ export default function Navbar() {
               </button>
             )}
 
-            <button className="text-nordic-dark dark:text-gray-300 hover:text-mosque dark:hover:text-white transition-colors">
+            <Link
+              href="/#search"
+              onClick={handleSearchClick}
+              aria-label={dictionary.search.hint}
+              title={dictionary.search.hint}
+              className="text-nordic-dark dark:text-gray-300 hover:text-mosque dark:hover:text-white transition-colors"
+            >
               <span className="material-icons">search</span>
-            </button>
+            </Link>
             <button className="text-nordic-dark dark:text-gray-300 hover:text-mosque dark:hover:text-white transition-colors relative">
               <span className="material-icons">notifications_none</span>
               <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border-2 border-background-light dark:border-background-dark"></span>

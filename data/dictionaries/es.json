@@ -90,5 +90,25 @@
     "patio": "Patio / Terraza",
     "clearAll": "Borrar todos los filtros",
     "showProperties": "Mostrar Propiedades"
+  },
+  "search": {
+    "hint": "Escribe para buscar tipo, zona o características",
+    "typesGroup": "Tipo de inmueble",
+    "zonesGroup": "Zonas",
+    "bedsGroup": "Habitaciones",
+    "listingGroup": "Operación",
+    "recent": "Búsquedas recientes",
+    "bedsPlus": "{n}+ habitaciones",
+    "bathsPlus": "{n}+ baños",
+    "priceChip": "Precio: {range}",
+    "textChip": "Texto: «{q}»",
+    "noSuggestions": "Ninguna coincidencia para «{q}»",
+    "searchFreeText": "Buscar «{q}» en títulos y ubicaciones",
+    "suggestionsCount": "{count} sugerencias disponibles",
+    "removeFilter": "Quitar filtro {label}",
+    "noResultsTitle": "No hay propiedades que coincidan",
+    "noResultsDesc": "Ninguna propiedad cumple con: {criteria}. Prueba a quitar algún criterio.",
+    "clearLast": "Quitar el último filtro",
+    "clearAll": "Borrar todos los filtros"
   }
 }

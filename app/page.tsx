@@ -4,9 +4,12 @@ import FeaturedPropertyCard from "../components/FeaturedPropertyCard";
 import PropertyCard from "../components/PropertyCard";
 import Pagination from "../components/Pagination";
 import FilterCategoryBar from "../components/FilterCategoryBar";
+import SearchBar from "../components/SearchBar";
+import NoResults from "../components/NoResults";
 import { cookies } from "next/headers";
 import { getDictionary, defaultLocale } from "../lib/i18n/dictionaries";
 import { getFeaturedProperties, getMarketProperties } from "../lib/properties";
+import { getSearchFacets } from "../lib/search-facets";
 
 const PAGE_SIZE = 8;
 
@@ -28,13 +31,17 @@ export default async function Home({
     location: params.location as string | undefined,
     minPrice: params.minPrice as string | undefined,
     maxPrice: params.maxPrice as string | undefined,
+    beds: params.beds as string | undefined,
+    baths: params.baths as string | undefined,
+    listing: params.listing as string | undefined,
   };
   const isSearchActive = Object.values(filters).some(val => val !== undefined && val !== "");
 
-  const [featuredProperties, { data: marketProperties, count }] =
+  const [featuredProperties, { data: marketProperties, count }, facets] =
     await Promise.all([
       getFeaturedProperties(),
       getMarketProperties(currentPage, PAGE_SIZE, filters),
+      getSearchFacets(),
     ]);
 
   const totalPages = Math.ceil(count / PAGE_SIZE);
@@ -53,27 +60,7 @@ export default async function Home({
               </span>
               {dictionary.home.heroSuffix}
             </h1>
-            <form action="/" method="GET" className="relative group max-w-2xl mx-auto">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <span className="material-icons text-nordic-muted dark:text-gray-400 text-2xl group-focus-within:text-mosque dark:group-focus-within:text-hint-green transition-colors">
-                  search
-                </span>
-              </div>
-              {filters.type && <input type="hidden" name="type" value={filters.type} />}
-              {filters.location && <input type="hidden" name="location" value={filters.location} />}
-              {filters.minPrice && <input type="hidden" name="minPrice" value={filters.minPrice} />}
-              {filters.maxPrice && <input type="hidden" name="maxPrice" value={filters.maxPrice} />}
-              <input
-                name="q"
-                defaultValue={filters.q || ""}
-                className="block w-full pl-12 pr-4 py-4 rounded-xl border-none bg-white dark:bg-[#152e2a] text-nordic-dark dark:text-white shadow-soft dark:shadow-none placeholder-nordic-muted/60 dark:placeholder-gray-400 focus:ring-2 focus:ring-mosque dark:focus:ring-hint-green focus:bg-white dark:focus:bg-[#1a3833] transition-all text-lg outline-none"
-                placeholder={dictionary.home.searchPlaceholder}
-                type="text"
-              />
-              <button type="submit" className="absolute inset-y-2 right-2 px-6 bg-mosque hover:bg-mosque/90 dark:bg-hint-green dark:hover:bg-hint-green/90 text-white dark:text-nordic-dark font-medium rounded-lg transition-colors flex items-center justify-center shadow-lg shadow-mosque/20 dark:shadow-hint-green/20">
-                {dictionary.home.searchBtn}
-              </button>
-            </form>
+            <SearchBar facets={facets} />
             <FilterCategoryBar />
           </div>
         </section>
@@ -127,11 +114,15 @@ export default async function Home({
               </button>
             </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {marketProperties.map((property) => (
-              <PropertyCard key={property.id} property={property} />
-            ))}
-          </div>
+          {marketProperties.length === 0 ? (
+            <NoResults />
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {marketProperties.map((property) => (
+                <PropertyCard key={property.id} property={property} />
+              ))}
+            </div>
+          )}
           <Pagination currentPage={currentPage} totalPages={totalPages} />
         </section>
       </main>

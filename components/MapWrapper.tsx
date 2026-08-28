@@ -11,6 +11,14 @@ const Map = dynamic(() => import("./Map"), {
   ),
 });
 
-export default function MapWrapper({ location }: { location: string }) {
-  return <Map location={location} />;
+export default function MapWrapper({
+  location,
+  latitude,
+  longitude,
+}: {
+  location: string;
+  latitude?: number | null;
+  longitude?: number | null;
+}) {
+  return <Map location={location} latitude={latitude} longitude={longitude} />;
 }

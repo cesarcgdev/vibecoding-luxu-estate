@@ -96,7 +96,11 @@ export default async function PropertyDetails({
 
               <div className="bg-white p-2 rounded-xl shadow-sm border border-mosque/5">
                 <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden bg-slate-100">
-                  <MapWrapper location={property.location} />
+                  <MapWrapper
+                    location={property.location}
+                    latitude={property.latitude}
+                    longitude={property.longitude}
+                  />
                   <a
                     className="absolute bottom-2 right-2 bg-white/90 text-xs font-medium px-2 py-1 rounded shadow-sm text-nordic-dark hover:text-mosque z-[1000]"
                     href="#"
