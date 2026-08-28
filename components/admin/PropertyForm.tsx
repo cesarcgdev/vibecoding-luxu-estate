@@ -180,6 +180,10 @@ export default function PropertyForm({ property }: PropertyFormProps) {
   const [isFeatured, setIsFeatured] = useState(
     (property?.is_featured as boolean) ?? false
   );
+  // New listings and rows saved before the column existed are visible
+  const [isActive, setIsActive] = useState(
+    (property?.is_active as boolean) ?? true
+  );
   const [slug, setSlug] = useState((property?.slug as string) ?? "");
   const [amenities, setAmenities] = useState<string[]>(
     (property?.amenities as string[]) ?? []
@@ -329,6 +333,7 @@ export default function PropertyForm({ property }: PropertyFormProps) {
         parking,
         amenities,
         is_featured: isFeatured,
+        is_active: isActive,
         slug: slug.trim() || slugify(title.trim()),
         existing_images: keepExisting,
       };
@@ -515,6 +520,34 @@ export default function PropertyForm({ property }: PropertyFormProps) {
                 <span
                   className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
                     isFeatured ? "translate-x-6" : "translate-x-1"
+                  }`}
+                />
+              </button>
+            </div>
+
+            {/* Visibility toggle */}
+            <div className="flex items-center justify-between p-4 rounded-lg bg-hint-green/20 border border-hint-green/40">
+              <div>
+                <p className="text-sm font-medium text-nordic font-sf-pro">
+                  Visible on Site
+                </p>
+                <p className="text-xs text-gray-500 font-sf-pro">
+                  Hidden properties stay in the database but never appear in
+                  search or on the homepage.
+                </p>
+              </div>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={isActive}
+                onClick={() => setIsActive(!isActive)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-mosque focus:ring-offset-2 ${
+                  isActive ? "bg-mosque" : "bg-gray-300"
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
+                    isActive ? "translate-x-6" : "translate-x-1"
                   }`}
                 />
               </button>

@@ -61,6 +61,7 @@ export const generateMockProperties = (count = MARKET_COUNT): Property[] => {
       images: [propertyImages[i % propertyImages.length]],
       tag: tag,
       is_featured: false,
+      is_active: true,
       listing_type: isRent ? "rent" : "buy",
       slug: `prop-mock-${i}`,
       created_at: new Date().toISOString()

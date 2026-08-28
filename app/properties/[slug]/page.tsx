@@ -11,7 +11,10 @@ import { getDictionary, defaultLocale } from "../../../lib/i18n/dictionaries";
 export const revalidate = 60; // ISR
 
 export async function generateStaticParams() {
-  const { data } = await supabase.from("properties").select("slug");
+  const { data } = await supabase
+    .from("properties")
+    .select("slug")
+    .eq("is_active", true);
   if (!data) return [];
   return data.map((p) => ({
     slug: p.slug,

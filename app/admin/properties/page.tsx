@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getAdminProperties } from "@/app/actions/properties";
 import DeletePropertyButton from "@/components/admin/DeletePropertyButton";
+import PropertyVisibilityButton from "@/components/admin/PropertyVisibilityButton";
 
 export const dynamic = "force-dynamic";
 
@@ -18,24 +19,38 @@ export default async function AdminPropertiesPage({
 }) {
   const resolvedParams = await searchParams;
   const requestedPage = parseInt(resolvedParams.page as string, 10);
+  const tab = resolvedParams.tab === "hidden" ? "hidden" : "active";
 
   // The admin table lists the rows that actually exist, so the edit and delete
   // buttons always act on real ids — paging happens here rather than in the query.
   const { data: allProperties, error } = await getAdminProperties();
 
-  const count = allProperties.length;
+  // Rows saved before the is_active column existed read as undefined, not false
+  const activeProperties = allProperties.filter((p) => p.is_active !== false);
+  const hiddenProperties = allProperties.filter((p) => p.is_active === false);
+  const scoped = tab === "hidden" ? hiddenProperties : activeProperties;
+
+  const count = scoped.length;
   const totalPages = Math.max(1, Math.ceil(count / PAGE_SIZE));
   const page = Math.min(
     Math.max(Number.isFinite(requestedPage) ? requestedPage : 1, 1),
     totalPages
   );
 
-  const properties = allProperties.slice(
-    (page - 1) * PAGE_SIZE,
-    page * PAGE_SIZE
-  );
+  const properties = scoped.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   const startItem = (page - 1) * PAGE_SIZE + 1;
   const endItem = Math.min(page * PAGE_SIZE, count);
+
+  // Previous/Next have to keep the tab, or paging jumps back to the active list
+  const pageHref = (n: number) =>
+    tab === "hidden"
+      ? `/admin/properties?tab=hidden&page=${n}`
+      : `/admin/properties?page=${n}`;
+
+  const tabClass = (isCurrent: boolean) =>
+    isCurrent
+      ? "pb-3 text-sm font-semibold text-primary border-b-2 border-primary"
+      : "pb-3 text-sm font-medium text-nordic/60 dark:text-gray-400 hover:text-nordic dark:hover:text-white transition-colors";
 
   return (
     <div className="w-full py-10">
@@ -50,9 +65,6 @@ export default async function AdminPropertiesPage({
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <button className="bg-white dark:bg-background-dark border border-gray-200 dark:border-primary/30 text-nordic dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-primary/10 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm inline-flex items-center gap-2">
-            <span className="material-icons text-base">filter_list</span> Filter
-          </button>
           <Link
             href="/admin/properties/new"
             className="bg-nordic hover:bg-nordic-muted text-white dark:bg-white dark:text-nordic dark:hover:bg-gray-100 px-5 py-2.5 rounded-lg text-sm font-medium shadow-md transition-all transform hover:-translate-y-0.5 inline-flex items-center gap-2"
@@ -61,6 +73,19 @@ export default async function AdminPropertiesPage({
             Property
           </Link>
         </div>
+      </div>
+
+      {/* Active / Hidden tabs */}
+      <div className="mb-6 flex gap-6 border-b border-nordic/10 dark:border-primary/20 overflow-x-auto">
+        <Link href="/admin/properties" className={tabClass(tab === "active")}>
+          Active ({activeProperties.length})
+        </Link>
+        <Link
+          href="/admin/properties?tab=hidden"
+          className={tabClass(tab === "hidden")}
+        >
+          Hidden ({hiddenProperties.length})
+        </Link>
       </div>
 
       {error && (
@@ -81,16 +106,25 @@ export default async function AdminPropertiesPage({
 
         {properties.length === 0 ? (
           <div className="p-10 text-center text-nordic/50 dark:text-gray-400 bg-white dark:bg-background-dark">
-            No properties found.{" "}
-            <Link
-              href="/admin/properties/new"
-              className="text-primary underline hover:no-underline"
-            >
-              Add your first property.
-            </Link>
+            {tab === "hidden" ? (
+              "No hidden properties."
+            ) : (
+              <>
+                No properties found.{" "}
+                <Link
+                  href="/admin/properties/new"
+                  className="text-primary underline hover:no-underline"
+                >
+                  Add your first property.
+                </Link>
+              </>
+            )}
           </div>
         ) : (
-          properties.map((property) => (
+          properties.map((property) => {
+            const isActive = property.is_active !== false;
+
+            return (
             <div
               key={property.id}
               className="group grid grid-cols-1 md:grid-cols-12 gap-4 px-6 py-5 border-b border-gray-100 dark:border-primary/10 hover:bg-background-light dark:hover:bg-primary/10 transition-colors items-center"
@@ -143,10 +177,17 @@ export default async function AdminPropertiesPage({
 
               {/* Status */}
               <div className="col-span-6 md:col-span-2">
-                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-nordic/10 text-nordic dark:bg-white/10 dark:text-gray-200 border border-nordic/10 dark:border-white/10">
-                  <span className="w-1.5 h-1.5 rounded-full bg-nordic dark:bg-white mr-1.5"></span>
-                  Active
-                </span>
+                {isActive ? (
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-nordic/10 text-nordic dark:bg-white/10 dark:text-gray-200 border border-nordic/10 dark:border-white/10">
+                    <span className="w-1.5 h-1.5 rounded-full bg-nordic dark:bg-white mr-1.5"></span>
+                    Active
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1.5"></span>
+                    Hidden
+                  </span>
+                )}
               </div>
 
               {/* Actions */}
@@ -158,13 +199,23 @@ export default async function AdminPropertiesPage({
                 >
                   <span className="material-icons text-xl">edit</span>
                 </Link>
-                <DeletePropertyButton
+                <PropertyVisibilityButton
                   propertyId={property.id}
                   propertyTitle={property.title}
+                  isActive={isActive}
                 />
+                {/* Permanent deletion is a last resort, so it only exists once
+                    a property has already been taken off the public site */}
+                {!isActive && (
+                  <DeletePropertyButton
+                    propertyId={property.id}
+                    propertyTitle={property.title}
+                  />
+                )}
               </div>
             </div>
-          ))
+            );
+          })
         )}
 
         {/* Pagination */}
@@ -187,7 +238,7 @@ export default async function AdminPropertiesPage({
           <div className="flex gap-2">
             {page > 1 ? (
               <Link
-                href={`/admin/properties?page=${page - 1}`}
+                href={pageHref(page - 1)}
                 className="px-3 py-1 text-sm border border-gray-200 dark:border-primary/30 rounded-md text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-primary/20"
               >
                 Previous
@@ -203,7 +254,7 @@ export default async function AdminPropertiesPage({
 
             {page < totalPages ? (
               <Link
-                href={`/admin/properties?page=${page + 1}`}
+                href={pageHref(page + 1)}
                 className="px-3 py-1 text-sm border border-gray-200 dark:border-primary/30 rounded-md text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-primary/20"
               >
                 Next

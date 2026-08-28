@@ -81,6 +81,8 @@ export type PropertyFormData = {
   parking: number;
   amenities: string[];
   is_featured: boolean;
+  /** false keeps the listing out of the public site without deleting it */
+  is_active: boolean;
   slug: string;
   /** Existing image URLs (already in Supabase) */
   existing_images: string[];
@@ -123,6 +125,7 @@ function toPropertyRow(data: PropertyFormData, imageUrls: string[], slug: string
     parking: data.parking,
     amenities: data.amenities,
     is_featured: data.is_featured,
+    is_active: data.is_active,
     slug,
     images: imageUrls,
     tag: data.listing_type === "rent" ? "FOR RENT" : "FOR SALE",
@@ -287,6 +290,46 @@ export async function updateProperty(
   redirect("/admin/properties");
 }
 
+/**
+ * Hide a property from the public site, or publish it again.
+ *
+ * This is what the admin panel offers instead of deleting: the row and its
+ * images stay put, so a listing can come back exactly as it was.
+ */
+export async function setPropertyActive(
+  id: string,
+  isActive: boolean
+): Promise<PropertyActionResult> {
+  let supabase: SupabaseClient;
+  try {
+    supabase = await getWriteClient();
+  } catch (err) {
+    return { success: false, error: err instanceof Error ? err.message : "Unauthorized" };
+  }
+
+  const { data: updated, error } = await supabase
+    .from("properties")
+    .update({ is_active: isActive })
+    .eq("id", id)
+    .select("id, slug");
+
+  if (error) {
+    console.error("Error changing property visibility:", error);
+    return { success: false, error: explainWriteError(error) };
+  }
+
+  // RLS rejects writes silently, so an empty result is a real failure
+  if (!updated?.length) {
+    return { success: false, error: MISSING_SERVICE_ROLE_MESSAGE };
+  }
+
+  revalidatePath("/admin/properties");
+  // The detail page is ISR-cached, so it would keep serving a hidden listing
+  revalidatePath(`/properties/${updated[0].slug}`);
+  revalidatePath("/");
+  return { success: true, id };
+}
+
 /** Delete a property and its images */
 export async function deleteProperty(
   id: string
@@ -298,10 +341,11 @@ export async function deleteProperty(
     return { success: false, error: err instanceof Error ? err.message : "Unauthorized" };
   }
 
-  // Get images first so we can delete them from storage
+  // Get images first so we can delete them from storage, and the slug so the
+  // detail page can be purged once the row is gone
   const { data: property } = await supabase
     .from("properties")
-    .select("images")
+    .select("images, slug")
     .eq("id", id)
     .single();
 
@@ -328,6 +372,7 @@ export async function deleteProperty(
   }
 
   revalidatePath("/admin/properties");
+  if (property?.slug) revalidatePath(`/properties/${property.slug}`);
   revalidatePath("/");
   return { success: true, id };
 }

@@ -29,6 +29,8 @@ export interface Property {
   images: string[];
   tag: PropertyTag;
   is_featured: boolean;
+  /** false hides the listing from the public site without deleting it */
+  is_active: boolean;
   listing_type: string | null;
   created_at: string;
   slug: string;
@@ -45,6 +47,7 @@ export async function getFeaturedProperties(): Promise<Property[]> {
     .from("properties")
     .select("*")
     .eq("is_featured", true)
+    .eq("is_active", true)
     .order("created_at", { ascending: true })
     .limit(2);
 
@@ -84,6 +87,7 @@ export async function getMarketProperties(
     .from("properties")
     .select("*", { count: "exact" })
     .eq("is_featured", false)
+    .eq("is_active", true)
     .order("created_at", { ascending: true });
 
   if (filters?.q) {
@@ -183,6 +187,9 @@ export async function getPropertyBySlug(slug: string): Promise<Property | null> 
     .from("properties")
     .select("*")
     .eq("slug", slug)
+    // A hidden listing has no public detail page — .single() errors on zero
+    // rows, the mock lookup below misses, and the page renders notFound()
+    .eq("is_active", true)
     .single();
 
   if (error) {

@@ -21,7 +21,8 @@ export async function getSearchFacets(): Promise<Facet[]> {
   const { data, error } = await supabase
     .from("properties")
     .select("title, location, beds, listing_type")
-    .eq("is_featured", false);
+    .eq("is_featured", false)
+    .eq("is_active", true);
 
   if (error) {
     // Not fatal — the mock properties still produce a usable suggestion list
