@@ -1,4 +1,10 @@
 import { supabase } from "./supabase";
+import { describeSupabaseError } from "./supabase-errors";
+import {
+  ALL_MOCK_PROPERTIES,
+  MOCK_FEATURED_PROPERTIES,
+  MOCK_PROPERTIES,
+} from "../data/mock-properties";
 
 export type PropertyTag =
   | "Exclusive"
@@ -40,14 +46,18 @@ export async function getFeaturedProperties(): Promise<Property[]> {
     .limit(2);
 
   if (error) {
-    console.error("Error fetching featured properties:", error);
-    return [];
+    console.error(
+      "Error fetching featured properties:",
+      describeSupabaseError(error)
+    );
+    return MOCK_FEATURED_PROPERTIES;
   }
 
-  return data as Property[];
-}
+  const featured = (data as Property[]) ?? [];
 
-import { MOCK_PROPERTIES } from "../data/mock-properties";
+  // An empty table would leave the hero band as a bare heading
+  return featured.length ? featured : MOCK_FEATURED_PROPERTIES;
+}
 
 /** Fetches a paginated page of non-featured market properties */
 export async function getMarketProperties(
@@ -61,6 +71,7 @@ export async function getMarketProperties(
     maxPrice?: string;
     beds?: string;
     baths?: string;
+    listing?: string;
   }
 ): Promise<PaginatedProperties> {
   const from = (page - 1) * pageSize;
@@ -92,6 +103,9 @@ export async function getMarketProperties(
   }
   if (filters?.baths && filters.baths !== "0") {
     query = query.gte("baths", parseInt(filters.baths, 10));
+  }
+  if (filters?.listing) {
+    query = query.eq("listing_type", filters.listing);
   }
 
   const { data, error, count } = await query;
@@ -140,14 +154,21 @@ export async function getMarketProperties(
     const baths = parseInt(filters.baths, 10);
     combinedProperties = combinedProperties.filter((p) => p.baths >= baths);
   }
+  if (filters?.listing) {
+    combinedProperties = combinedProperties.filter(
+      (p) => p.listing_type === filters.listing
+    );
+  }
 
   const totalCount = combinedProperties.length;
   const paginatedData = combinedProperties.slice(from, to + 1);
 
   if (error) {
-    console.error("Error fetching market properties:", error);
-    // Still return mock properties if there's an error
-    return { data: paginatedData, count: totalCount };
+    // Not fatal — the mock properties still fill the grid
+    console.error(
+      "Error fetching market properties:",
+      describeSupabaseError(error)
+    );
   }
 
   return { data: paginatedData, count: totalCount };
@@ -162,8 +183,12 @@ export async function getPropertyBySlug(slug: string): Promise<Property | null> 
     .single();
 
   if (error) {
-    console.error(`Error fetching property with slug ${slug}:`, error);
-    return null;
+    console.error(
+      `Error fetching property with slug ${slug}:`,
+      describeSupabaseError(error)
+    );
+    // Mock listings appear in the grid, so their detail pages have to resolve too
+    return ALL_MOCK_PROPERTIES.find((property) => property.slug === slug) ?? null;
   }
 
   return data as Property;

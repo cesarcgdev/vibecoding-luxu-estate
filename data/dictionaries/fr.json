@@ -90,5 +90,25 @@
     "patio": "Patio / Terrasse",
     "clearAll": "Effacer tous les filtres",
     "showProperties": "Afficher les Propriétés"
+  },
+  "search": {
+    "hint": "Saisissez un type, un quartier ou une caractéristique",
+    "typesGroup": "Type de bien",
+    "zonesGroup": "Quartiers",
+    "bedsGroup": "Chambres",
+    "listingGroup": "Transaction",
+    "recent": "Recherches récentes",
+    "bedsPlus": "{n}+ chambres",
+    "bathsPlus": "{n}+ salles de bain",
+    "priceChip": "Prix : {range}",
+    "textChip": "Texte : « {q} »",
+    "noSuggestions": "Aucune correspondance pour « {q} »",
+    "searchFreeText": "Rechercher « {q} » dans les titres et emplacements",
+    "suggestionsCount": "{count} suggestions disponibles",
+    "removeFilter": "Retirer le filtre {label}",
+    "noResultsTitle": "Aucune propriété ne correspond",
+    "noResultsDesc": "Aucune propriété ne correspond à : {criteria}. Essayez de retirer un critère.",
+    "clearLast": "Retirer le dernier filtre",
+    "clearAll": "Effacer tous les filtres"
   }
 }

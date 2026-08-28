@@ -28,6 +28,9 @@ const propertyImages = [
   "https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=800&q=80",
 ];
 
+const FEATURED_COUNT = 2;
+const MARKET_COUNT = 20;
+
 function randomInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -36,8 +39,8 @@ function randomItem<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-export const generateMockProperties = (): Property[] => {
-  return Array.from({ length: 20 }).map((_, i) => {
+export const generateMockProperties = (count = MARKET_COUNT): Property[] => {
+  return Array.from({ length: count }).map((_, i) => {
     const city = randomItem(cities);
     const neighborhood = randomItem(neighborhoods);
     const priceValue = randomInt(500000, 5000000);
@@ -45,7 +48,7 @@ export const generateMockProperties = (): Property[] => {
     const tag: PropertyTag = isRent ? "FOR RENT" : "FOR SALE";
     const type = randomItem(propertyTypes);
     const title = `${randomItem(adjectives)} ${type} in ${neighborhood}`;
-    
+
     return {
       id: `mock-${i}`,
       title,
@@ -65,4 +68,17 @@ export const generateMockProperties = (): Property[] => {
   });
 };
 
-export const MOCK_PROPERTIES = generateMockProperties();
+const generated = generateMockProperties(FEATURED_COUNT + MARKET_COUNT);
+
+/** Hero properties, kept out of MOCK_PROPERTIES so the market grid never repeats them */
+export const MOCK_FEATURED_PROPERTIES: Property[] = generated
+  .slice(0, FEATURED_COUNT)
+  .map((property) => ({ ...property, is_featured: true, tag: "Exclusive" }));
+
+export const MOCK_PROPERTIES: Property[] = generated.slice(FEATURED_COUNT);
+
+/** Every mock listing, so a card rendered from mock data still resolves its detail page */
+export const ALL_MOCK_PROPERTIES: Property[] = [
+  ...MOCK_FEATURED_PROPERTIES,
+  ...MOCK_PROPERTIES,
+];

@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { describeSupabaseError } from '@/lib/supabase-errors'
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -32,7 +33,13 @@ export async function updateSession(request: NextRequest) {
   )
 
   // refreshing the auth token
-  await supabase.auth.getUser()
+  try {
+    await supabase.auth.getUser()
+  } catch (error) {
+    // An unreachable auth server must not take every route down with it —
+    // the request continues unauthenticated.
+    console.error('Could not refresh the auth token:', describeSupabaseError(error))
+  }
 
   return supabaseResponse
 }
