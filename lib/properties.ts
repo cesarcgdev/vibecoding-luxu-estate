@@ -17,6 +17,9 @@ export interface Property {
   id: string;
   title: string;
   location: string;
+  /** Map coordinates — null on listings saved before the map picker existed */
+  latitude?: number | null;
+  longitude?: number | null;
   price_value: number | null;
   price_display: string;
   beds: number;

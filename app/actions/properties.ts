@@ -71,6 +71,9 @@ export type PropertyFormData = {
   property_type: string;
   description: string;
   location: string;
+  /** Map coordinates — both null when the listing has no marker yet */
+  latitude: number | null;
+  longitude: number | null;
   area: string;
   year_built: string;
   beds: number;
@@ -111,6 +114,8 @@ function toPropertyRow(data: PropertyFormData, imageUrls: string[], slug: string
     property_type: data.property_type,
     description: data.description,
     location: data.location,
+    latitude: data.latitude,
+    longitude: data.longitude,
     area: data.area,
     year_built: Number.isFinite(year) ? year : null,
     beds: data.beds,
@@ -128,7 +133,7 @@ function toPropertyRow(data: PropertyFormData, imageUrls: string[], slug: string
 function explainWriteError(error: { code?: string; message: string }): string {
   if (error.code === "42501") return MISSING_SERVICE_ROLE_MESSAGE;
   if (error.code === "PGRST204" || error.code === "42703") {
-    return `${error.message} — run supabase/migrations/0001_property_admin.sql in the Supabase SQL editor.`;
+    return `${error.message} — run the files in supabase/migrations/ in the Supabase SQL editor.`;
   }
   if (error.code === "23505") {
     return "That URL slug is already taken by another property.";

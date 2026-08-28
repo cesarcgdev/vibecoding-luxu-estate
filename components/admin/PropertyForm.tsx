@@ -10,6 +10,13 @@ import {
   deletePropertyImage,
   type PropertyFormData,
 } from "@/app/actions/properties";
+import LocationPicker from "./LocationPicker";
+import {
+  coordinateToInput,
+  isValidLatitude,
+  isValidLongitude,
+  parseCoordinate,
+} from "@/lib/geo";
 
 /* ─────────────────────────────────────────────
    Types
@@ -157,6 +164,12 @@ export default function PropertyForm({ property }: PropertyFormProps) {
   const [location, setLocation] = useState(
     (property?.location as string) ?? ""
   );
+  const [latitude, setLatitude] = useState(
+    coordinateToInput(property?.latitude)
+  );
+  const [longitude, setLongitude] = useState(
+    coordinateToInput(property?.longitude)
+  );
   const [area, setArea] = useState((property?.area as string) ?? "");
   const [yearBuilt, setYearBuilt] = useState(
     (property?.year_built as string | number)?.toString() ?? ""
@@ -194,6 +207,24 @@ export default function PropertyForm({ property }: PropertyFormProps) {
     setAmenities((prev) =>
       prev.includes(name) ? prev.filter((a) => a !== name) : [...prev, name]
     );
+  };
+
+  /* ── Coordinates ────────────────────── */
+  const parsedLatitude = parseCoordinate(latitude);
+  const parsedLongitude = parseCoordinate(longitude);
+  // A coordinate outside its range would put the marker nowhere real
+  const mapLatitude =
+    parsedLatitude !== null && isValidLatitude(parsedLatitude)
+      ? parsedLatitude
+      : null;
+  const mapLongitude =
+    parsedLongitude !== null && isValidLongitude(parsedLongitude)
+      ? parsedLongitude
+      : null;
+
+  const handleMapPick = (lat: number, lng: number) => {
+    setLatitude(String(lat));
+    setLongitude(String(lng));
   };
 
   /* ── Image handling ─────────────────── */
@@ -237,6 +268,18 @@ export default function PropertyForm({ property }: PropertyFormProps) {
       setError("Address is required.");
       return;
     }
+    if (latitude.trim() && mapLatitude === null) {
+      setError("Latitude must be a number between -90 and 90.");
+      return;
+    }
+    if (longitude.trim() && mapLongitude === null) {
+      setError("Longitude must be a number between -180 and 180.");
+      return;
+    }
+    if ((mapLatitude === null) !== (mapLongitude === null)) {
+      setError("Set both latitude and longitude, or leave both empty.");
+      return;
+    }
 
     setIsUploading(true);
 
@@ -277,6 +320,8 @@ export default function PropertyForm({ property }: PropertyFormProps) {
         property_type: propertyType,
         description: description.trim(),
         location: location.trim(),
+        latitude: mapLatitude,
+        longitude: mapLongitude,
         area: area.trim(),
         year_built: yearBuilt.trim(),
         beds,
@@ -634,15 +679,54 @@ export default function PropertyForm({ property }: PropertyFormProps) {
                 required
               />
             </div>
-            {/* Map placeholder */}
-            <div className="relative h-36 w-full rounded-lg overflow-hidden bg-gray-100 border border-gray-200">
-              <div className="w-full h-full bg-gradient-to-br from-hint-green/30 to-hint-green/10 flex items-center justify-center">
-                <span className="bg-white/90 text-nordic px-3 py-1.5 rounded shadow-sm text-xs font-bold font-sf-pro flex items-center gap-1">
-                  <span className="material-icons text-sm text-mosque">map</span>
-                  Map Preview
-                </span>
+            {/* Coordinates */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label
+                  className="block text-sm font-medium text-nordic mb-1.5 font-sf-pro"
+                  htmlFor="prop-latitude"
+                >
+                  Latitude
+                </label>
+                <input
+                  id="prop-latitude"
+                  type="text"
+                  inputMode="decimal"
+                  value={latitude}
+                  onChange={(e) => setLatitude(e.target.value)}
+                  placeholder="37.4419"
+                  className="w-full px-4 py-2.5 rounded-md border border-gray-200 bg-white text-nordic placeholder-gray-400 focus:ring-1 focus:ring-mosque focus:border-mosque transition-all text-sm font-sf-pro outline-none"
+                />
+              </div>
+              <div>
+                <label
+                  className="block text-sm font-medium text-nordic mb-1.5 font-sf-pro"
+                  htmlFor="prop-longitude"
+                >
+                  Longitude
+                </label>
+                <input
+                  id="prop-longitude"
+                  type="text"
+                  inputMode="decimal"
+                  value={longitude}
+                  onChange={(e) => setLongitude(e.target.value)}
+                  placeholder="-122.1430"
+                  className="w-full px-4 py-2.5 rounded-md border border-gray-200 bg-white text-nordic placeholder-gray-400 focus:ring-1 focus:ring-mosque focus:border-mosque transition-all text-sm font-sf-pro outline-none"
+                />
               </div>
             </div>
+
+            {/* Interactive map */}
+            <LocationPicker
+              latitude={mapLatitude}
+              longitude={mapLongitude}
+              onChange={handleMapPick}
+            />
+            <p className="text-xs text-gray-400 font-sf-pro">
+              Type the coordinates to move the marker, or click the map to fill
+              them in.
+            </p>
           </div>
         </div>
 
