@@ -3,6 +3,8 @@ import Link from "next/link";
 import { getAdminProperties } from "@/app/actions/properties";
 import DeletePropertyButton from "@/components/admin/DeletePropertyButton";
 import PropertyVisibilityButton from "@/components/admin/PropertyVisibilityButton";
+import PropertyAdminSearch from "@/components/admin/PropertyAdminSearch";
+import { normalize } from "@/lib/search-filters";
 
 export const dynamic = "force-dynamic";
 
@@ -20,14 +22,28 @@ export default async function AdminPropertiesPage({
   const resolvedParams = await searchParams;
   const requestedPage = parseInt(resolvedParams.page as string, 10);
   const tab = resolvedParams.tab === "hidden" ? "hidden" : "active";
+  const query =
+    typeof resolvedParams.q === "string" ? resolvedParams.q.trim() : "";
 
   // The admin table lists the rows that actually exist, so the edit and delete
   // buttons always act on real ids — paging happens here rather than in the query.
   const { data: allProperties, error } = await getAdminProperties();
 
+  // Every term has to appear somewhere, so "villa miami" narrows instead of widening
+  const terms = normalize(query).split(/\s+/).filter(Boolean);
+  const matches = terms.length
+    ? allProperties.filter((p) => {
+        const haystack = normalize(
+          [p.title, p.location, p.slug].filter(Boolean).join(" ")
+        );
+        return terms.every((term) => haystack.includes(term));
+      })
+    : allProperties;
+
+  // Counting matches per tab tells you which tab the property you searched for is in
   // Rows saved before the is_active column existed read as undefined, not false
-  const activeProperties = allProperties.filter((p) => p.is_active !== false);
-  const hiddenProperties = allProperties.filter((p) => p.is_active === false);
+  const activeProperties = matches.filter((p) => p.is_active !== false);
+  const hiddenProperties = matches.filter((p) => p.is_active === false);
   const scoped = tab === "hidden" ? hiddenProperties : activeProperties;
 
   const count = scoped.length;
@@ -41,11 +57,25 @@ export default async function AdminPropertiesPage({
   const startItem = (page - 1) * PAGE_SIZE + 1;
   const endItem = Math.min(page * PAGE_SIZE, count);
 
-  // Previous/Next have to keep the tab, or paging jumps back to the active list
-  const pageHref = (n: number) =>
-    tab === "hidden"
-      ? `/admin/properties?tab=hidden&page=${n}`
-      : `/admin/properties?page=${n}`;
+  // Every in-page link has to carry the tab and the search, or clicking one
+  // silently throws away the filter the admin is looking at
+  const buildHref = (next: { tab?: "active" | "hidden"; page?: number }) => {
+    const params = new URLSearchParams();
+    if ((next.tab ?? tab) === "hidden") params.set("tab", "hidden");
+    if (query) params.set("q", query);
+    if (next.page && next.page > 1) params.set("page", String(next.page));
+
+    const search = params.toString();
+    return search ? `/admin/properties?${search}` : "/admin/properties";
+  };
+
+  // Switching tabs starts over at page 1 — the other tab has its own length
+  const pageHref = (n: number) => buildHref({ page: n });
+
+  // A search that comes up empty here has usually landed in the other tab
+  const otherTab = tab === "hidden" ? "active" : "hidden";
+  const otherTabCount =
+    tab === "hidden" ? activeProperties.length : hiddenProperties.length;
 
   const tabClass = (isCurrent: boolean) =>
     isCurrent
@@ -64,7 +94,8 @@ export default async function AdminPropertiesPage({
             Manage your portfolio and track performance.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+          <PropertyAdminSearch query={query} tab={tab} />
           <Link
             href="/admin/properties/new"
             className="bg-nordic hover:bg-nordic-muted text-white dark:bg-white dark:text-nordic dark:hover:bg-gray-100 px-5 py-2.5 rounded-lg text-sm font-medium shadow-md transition-all transform hover:-translate-y-0.5 inline-flex items-center gap-2"
@@ -77,11 +108,14 @@ export default async function AdminPropertiesPage({
 
       {/* Active / Hidden tabs */}
       <div className="mb-6 flex gap-6 border-b border-nordic/10 dark:border-primary/20 overflow-x-auto">
-        <Link href="/admin/properties" className={tabClass(tab === "active")}>
+        <Link
+          href={buildHref({ tab: "active" })}
+          className={tabClass(tab === "active")}
+        >
           Active ({activeProperties.length})
         </Link>
         <Link
-          href="/admin/properties?tab=hidden"
+          href={buildHref({ tab: "hidden" })}
           className={tabClass(tab === "hidden")}
         >
           Hidden ({hiddenProperties.length})
@@ -106,7 +140,25 @@ export default async function AdminPropertiesPage({
 
         {properties.length === 0 ? (
           <div className="p-10 text-center text-nordic/50 dark:text-gray-400 bg-white dark:bg-background-dark">
-            {tab === "hidden" ? (
+            {query ? (
+              <>
+                No {tab} properties match &ldquo;{query}&rdquo;.
+                {otherTabCount > 0 && (
+                  <>
+                    {" "}
+                    <Link
+                      href={buildHref({ tab: otherTab })}
+                      className="text-primary underline hover:no-underline"
+                    >
+                      {otherTabCount === 1
+                        ? "1 match is"
+                        : `${otherTabCount} matches are`}{" "}
+                      in the {otherTab === "hidden" ? "Hidden" : "Active"} tab.
+                    </Link>
+                  </>
+                )}
+              </>
+            ) : tab === "hidden" ? (
               "No hidden properties."
             ) : (
               <>
