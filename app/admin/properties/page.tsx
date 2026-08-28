@@ -98,7 +98,7 @@ export default async function AdminPropertiesPage({
           <PropertyAdminSearch query={query} tab={tab} />
           <Link
             href="/admin/properties/new"
-            className="bg-nordic hover:bg-nordic-muted text-white dark:bg-white dark:text-nordic dark:hover:bg-gray-100 px-5 py-2.5 rounded-lg text-sm font-medium shadow-md transition-all transform hover:-translate-y-0.5 inline-flex items-center gap-2"
+            className="shrink-0 h-11 px-5 bg-nordic hover:bg-nordic-muted text-white dark:bg-white dark:text-nordic dark:hover:bg-gray-100 border border-transparent rounded-lg text-sm font-medium shadow-md transition-all transform hover:-translate-y-0.5 inline-flex items-center justify-center gap-2 whitespace-nowrap"
           >
             <span className="material-icons text-base">add</span> Add New
             Property

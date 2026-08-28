@@ -39,7 +39,7 @@ export default function PropertyAdminSearch({
   }, [value, query, tab, router]);
 
   return (
-    <div className="relative w-full sm:max-w-sm">
+    <div className="relative w-full sm:w-72">
       <span className="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-xl text-gray-400 pointer-events-none">
         search
       </span>
@@ -49,7 +49,7 @@ export default function PropertyAdminSearch({
         onChange={(e) => setValue(e.target.value)}
         placeholder="Search by title, location or slug…"
         aria-label="Search properties"
-        className="w-full pl-10 pr-10 py-2.5 rounded-lg border border-gray-200 dark:border-primary/30 bg-white dark:bg-background-dark text-nordic dark:text-gray-200 placeholder-gray-400 focus:ring-1 focus:ring-mosque focus:border-mosque transition-all text-sm outline-none"
+        className="w-full h-11 pl-10 pr-10 rounded-lg border border-gray-200 dark:border-primary/30 bg-white dark:bg-background-dark text-nordic dark:text-gray-200 placeholder-gray-400 focus:ring-1 focus:ring-mosque focus:border-mosque transition-all text-sm outline-none"
       />
       {value && (
         <button
