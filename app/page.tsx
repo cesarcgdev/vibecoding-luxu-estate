@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import Navbar from "../components/Navbar";
 import FeaturedPropertyCard from "../components/FeaturedPropertyCard";
 import PropertyCard from "../components/PropertyCard";
@@ -33,7 +34,6 @@ export default async function Home({
     maxPrice: params.maxPrice as string | undefined,
     beds: params.beds as string | undefined,
     baths: params.baths as string | undefined,
-    listing: params.listing as string | undefined,
   };
   const isSearchActive = Object.values(filters).some(val => val !== undefined && val !== "");
 
@@ -102,16 +102,18 @@ export default async function Home({
                 <span className="text-mosque dark:text-hint-green font-medium">{dictionary.home.propertiesCount.replace("{count}", count.toString())}</span>
               </p>
             </div>
+            {/* Buy and rent are separate pages now, so these navigate rather
+                than filter — they were three dead buttons before. */}
             <div className="hidden md:flex bg-white dark:bg-[#152e2a] p-1 rounded-lg transition-colors">
-              <button className="px-4 py-1.5 rounded-md text-sm font-medium bg-nordic-dark dark:bg-white text-white dark:text-nordic-dark shadow-sm transition-colors">
-                {dictionary.home.filterAll}
-              </button>
-              <button className="px-4 py-1.5 rounded-md text-sm font-medium text-nordic-muted dark:text-gray-400 hover:text-nordic-dark dark:hover:text-white transition-colors">
+              <span className="px-4 py-1.5 rounded-md text-sm font-medium bg-nordic-dark dark:bg-white text-white dark:text-nordic-dark shadow-sm transition-colors">
                 {dictionary.home.filterBuy}
-              </button>
-              <button className="px-4 py-1.5 rounded-md text-sm font-medium text-nordic-muted dark:text-gray-400 hover:text-nordic-dark dark:hover:text-white transition-colors">
+              </span>
+              <Link
+                href="/rent"
+                className="px-4 py-1.5 rounded-md text-sm font-medium text-nordic-muted dark:text-gray-400 hover:text-nordic-dark dark:hover:text-white transition-colors"
+              >
                 {dictionary.home.filterRent}
-              </button>
+              </Link>
             </div>
           </div>
           {marketProperties.length === 0 ? (

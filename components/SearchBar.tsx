@@ -11,20 +11,22 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import {
   buildActiveFilters,
+  facetIcon,
   facetLabel,
   groupHeading,
   normalize,
   FOCUS_SEARCH_EVENT,
-  ICON_BY_KIND,
   PARAM_BY_KIND,
   type Facet,
   type FacetKind,
+  type FilterVariant,
 } from "@/lib/search-filters";
 
 const RECENT_KEY = "luxestate:recent-searches";
 const MAX_RECENT = 5;
 const MAX_PER_GROUP = 4;
-const KIND_ORDER: FacetKind[] = ["type", "zone", "beds", "listing"];
+// Rental modalities lead on /rent; the sales page never supplies a "kind" facet
+const KIND_ORDER: FacetKind[] = ["kind", "type", "zone", "beds"];
 
 type Option =
   | { id: string; kind: "facet"; facet: Facet; label: string; icon: string }
@@ -84,7 +86,14 @@ function subscribeRecent(listener: () => void) {
   };
 }
 
-export default function SearchBar({ facets }: { facets: Facet[] }) {
+export default function SearchBar({
+  facets,
+  variant = "sale",
+}: {
+  facets: Facet[];
+  /** Decides how price chips are formatted — rents are not abbreviated */
+  variant?: FilterVariant;
+}) {
   const { dictionary } = useLanguage();
   const router = useRouter();
   const pathname = usePathname();
@@ -136,8 +145,13 @@ export default function SearchBar({ facets }: { facets: Facet[] }) {
   }, []);
 
   const activeFilters = useMemo(
-    () => buildActiveFilters(new URLSearchParams(searchParams.toString()), dictionary),
-    [searchParams, dictionary]
+    () =>
+      buildActiveFilters(
+        new URLSearchParams(searchParams.toString()),
+        dictionary,
+        variant
+      ),
+    [searchParams, dictionary, variant]
   );
 
   const groups = useMemo<OptionGroup[]>(() => {
@@ -150,7 +164,7 @@ export default function SearchBar({ facets }: { facets: Facet[] }) {
       kind: "facet",
       facet,
       label: facetLabel(facet, dictionary),
-      icon: ICON_BY_KIND[facet.kind],
+      icon: facetIcon(facet),
     });
 
     if (!term) {

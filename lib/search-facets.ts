@@ -16,11 +16,14 @@ interface FacetSource {
  * Builds the suggestion catalogue from every property the market listing can
  * show — Supabase rows plus the mock ones, the same combination
  * getMarketProperties makes, so the counts match what a search will return.
+ *
+ * Sales only: rentals have their own page and their own facets in lib/rentals.
  */
 export async function getSearchFacets(): Promise<Facet[]> {
   const { data, error } = await supabase
     .from("properties")
     .select("title, location, beds, listing_type")
+    .eq("listing_type", "sale")
     .eq("is_featured", false)
     .eq("is_active", true);
 
@@ -31,14 +34,13 @@ export async function getSearchFacets(): Promise<Facet[]> {
 
   const properties: FacetSource[] = [
     ...((data as FacetSource[]) ?? []),
-    ...MOCK_PROPERTIES,
+    ...MOCK_PROPERTIES.filter((property) => property.listing_type === "sale"),
   ];
 
   return [
     ...buildTypeFacets(properties),
     ...buildZoneFacets(properties),
     ...buildBedsFacets(properties),
-    ...buildListingFacets(properties),
   ];
 }
 
@@ -77,16 +79,6 @@ function buildBedsFacets(properties: FacetSource[]): Facet[] {
       kind: "beds" as const,
       value: beds.toString(),
       count: properties.filter((p) => p.beds >= beds).length,
-    }))
-    .filter((facet) => facet.count > 0);
-}
-
-function buildListingFacets(properties: FacetSource[]): Facet[] {
-  return ["buy", "rent"]
-    .map((listing) => ({
-      kind: "listing" as const,
-      value: listing,
-      count: properties.filter((p) => p.listing_type === listing).length,
     }))
     .filter((facet) => facet.count > 0);
 }

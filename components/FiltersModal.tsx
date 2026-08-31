@@ -3,29 +3,55 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import type { FilterVariant } from "@/lib/search-filters";
 
 interface FiltersModalProps {
   isOpen: boolean;
   onClose: () => void;
+  /** "rent" rescales the price slider and adds the rental criteria */
+  variant?: FilterVariant;
 }
 
 const MIN_PRICE = 0;
-const MAX_PRICE = 10000000;
 
-function formatPrice(value: number): string {
+/**
+ * The price slider has to be scaled to the operation. A track that runs to ten
+ * million puts a 1,200 a month rental inside the first 0.012% of its width —
+ * the handle cannot be placed there, and the 50,000 snap would round the value
+ * to zero. Rents get their own ceiling and their own step.
+ *
+ * The rent ceiling is set against rent_monthly_eq, not the headline price: a
+ * holiday let at 450 a night normalises to 13,500 a month, so a 10,000 ceiling
+ * would put the most expensive rentals permanently out of reach of the filter.
+ */
+const PRICE_BOUNDS: Record<FilterVariant, { max: number; step: number }> = {
+  sale: { max: 10000000, step: 50000 },
+  rent: { max: 15000, step: 50 },
+};
+
+function formatPrice(value: number, variant: FilterVariant): string {
+  // Abbreviating a rent would drop the digits a tenant is comparing
+  if (variant === "rent") return `$${value.toLocaleString()}`;
   if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
   if (value >= 1000) return `$${(value / 1000).toFixed(0)}K`;
   return `$${value}`;
 }
 
-export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
+export default function FiltersModal({
+  isOpen,
+  onClose,
+  variant = "sale",
+}: FiltersModalProps) {
   const { dictionary } = useLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
+  const isRent = variant === "rent";
+  const { max: maxPrice, step: priceStep } = PRICE_BOUNDS[variant];
+
   const initMin = parseInt(searchParams.get("minPrice") || "0", 10) || MIN_PRICE;
-  const initMax = parseInt(searchParams.get("maxPrice") || "0", 10) || MAX_PRICE;
+  const initMax = parseInt(searchParams.get("maxPrice") || "0", 10) || maxPrice;
 
   const [rangeMin, setRangeMin] = useState(initMin);
   const [rangeMax, setRangeMax] = useState(initMax);
@@ -36,28 +62,30 @@ export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
   const dragging = useRef<"min" | "max" | null>(null);
 
   const getPercent = (val: number) =>
-    Math.round(((val - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) * 100);
+    Math.round(((val - MIN_PRICE) / (maxPrice - MIN_PRICE)) * 100);
 
-  const getValueFromX = useCallback((clientX: number) => {
-    if (!sliderRef.current) return 0;
-    const rect = sliderRef.current.getBoundingClientRect();
-    const ratio = Math.min(Math.max((clientX - rect.left) / rect.width, 0), 1);
-    const raw = MIN_PRICE + ratio * (MAX_PRICE - MIN_PRICE);
-    // snap to 50k increments
-    return Math.round(raw / 50000) * 50000;
-  }, []);
+  const getValueFromX = useCallback(
+    (clientX: number) => {
+      if (!sliderRef.current) return 0;
+      const rect = sliderRef.current.getBoundingClientRect();
+      const ratio = Math.min(Math.max((clientX - rect.left) / rect.width, 0), 1);
+      const raw = MIN_PRICE + ratio * (maxPrice - MIN_PRICE);
+      return Math.round(raw / priceStep) * priceStep;
+    },
+    [maxPrice, priceStep]
+  );
 
   const onPointerMove = useCallback(
     (e: PointerEvent) => {
       if (!dragging.current) return;
       const val = getValueFromX(e.clientX);
       if (dragging.current === "min") {
-        setRangeMin(Math.min(val, rangeMax - 50000));
+        setRangeMin(Math.min(val, rangeMax - priceStep));
       } else {
-        setRangeMax(Math.max(val, rangeMin + 50000));
+        setRangeMax(Math.max(val, rangeMin + priceStep));
       }
     },
-    [getValueFromX, rangeMin, rangeMax]
+    [getValueFromX, rangeMin, rangeMax, priceStep]
   );
 
   const onPointerUp = useCallback(() => {
@@ -83,10 +111,12 @@ export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
 
   const handleClear = () => {
     setRangeMin(MIN_PRICE);
-    setRangeMax(MAX_PRICE);
+    setRangeMax(maxPrice);
     setBeds(0);
     setBaths(0);
-    router.push(pathname, { scroll: false });
+    // The modality tab lives in the same URL and is not a modal filter
+    const kind = searchParams.get("kind");
+    router.push(kind ? `${pathname}?kind=${kind}` : pathname, { scroll: false });
     onClose();
   };
 
@@ -95,26 +125,29 @@ export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
     const formData = new FormData(e.currentTarget);
     const params = new URLSearchParams(searchParams.toString());
 
-    const location = formData.get("location") as string;
+    /** Writes a param when there is a value, and drops it when there is not */
+    const apply = (name: string, value: string | null) => {
+      if (value) params.set(name, value);
+      else params.delete(name);
+    };
+
+    apply("location", formData.get("location") as string);
+    apply("minPrice", rangeMin > MIN_PRICE ? rangeMin.toString() : null);
+    apply("maxPrice", rangeMax < maxPrice ? rangeMax.toString() : null);
+
     const propertyType = formData.get("propertyType") as string;
+    apply("type", propertyType && propertyType !== "Any Type" ? propertyType : null);
 
-    if (location) params.set("location", location);
-    else params.delete("location");
+    apply("beds", beds > 0 ? beds.toString() : null);
+    apply("baths", baths > 0 ? baths.toString() : null);
 
-    if (rangeMin > MIN_PRICE) params.set("minPrice", rangeMin.toString());
-    else params.delete("minPrice");
-
-    if (rangeMax < MAX_PRICE) params.set("maxPrice", rangeMax.toString());
-    else params.delete("maxPrice");
-
-    if (propertyType && propertyType !== "Any Type") params.set("type", propertyType);
-    else params.delete("type");
-
-    if (beds > 0) params.set("beds", beds.toString());
-    else params.delete("beds");
-
-    if (baths > 0) params.set("baths", baths.toString());
-    else params.delete("baths");
+    if (isRent) {
+      apply("minStay", formData.get("minStay") as string);
+      apply("maxDeposit", formData.get("maxDeposit") as string);
+      apply("availableFrom", formData.get("availableFrom") as string);
+      apply("furnished", formData.get("furnished") ? "true" : null);
+      apply("utilities", formData.get("utilities") ? "true" : null);
+    }
 
     params.delete("page");
     router.push(pathname + "?" + params.toString(), { scroll: false });
@@ -181,7 +214,8 @@ export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
                 {dictionary.filters?.priceRange || "Price Range"}
               </label>
               <span className="text-sm font-semibold text-mosque dark:text-hint-green transition-colors">
-                {formatPrice(rangeMin)} – {formatPrice(rangeMax)}
+                {formatPrice(rangeMin, variant)} – {formatPrice(rangeMax, variant)}
+                {isRent && dictionary.rent.perMonth}
               </span>
             </div>
 
@@ -294,7 +328,103 @@ export default function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
             </div>
           </section>
 
-          {/* Section 4: Amenities */}
+          {/* Section 4: Rental terms — only meaningful on /rent */}
+          {isRent && (
+            <section className="space-y-6">
+              <label className="block text-xs font-semibold text-nordic-muted dark:text-gray-400 uppercase tracking-wider transition-colors">
+                {dictionary.rent.conditions}
+              </label>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <span className="block text-sm font-medium text-nordic-dark dark:text-gray-100 transition-colors">
+                    {dictionary.rent.minStay}
+                  </span>
+                  <div className="relative">
+                    <select
+                      name="minStay"
+                      className="w-full bg-[#f5f8f6] dark:bg-[#1a3833] border-0 rounded-lg py-3 pl-4 pr-10 text-nordic-dark dark:text-white appearance-none focus:ring-2 focus:ring-mosque dark:focus:ring-hint-green cursor-pointer outline-none transition-colors"
+                      defaultValue={searchParams.get("minStay") || ""}
+                    >
+                      <option value="">{dictionary.rent.minStayAny}</option>
+                      {[1, 3, 6, 9, 12].map((months) => (
+                        <option key={months} value={months}>
+                          {dictionary.rent.minStayChip.replace("{n}", String(months))}
+                        </option>
+                      ))}
+                    </select>
+                    <span className="material-icons absolute right-3 top-3 text-gray-400 pointer-events-none">
+                      expand_more
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <span className="block text-sm font-medium text-nordic-dark dark:text-gray-100 transition-colors">
+                    {dictionary.rent.deposit}
+                  </span>
+                  <div className="relative">
+                    <select
+                      name="maxDeposit"
+                      className="w-full bg-[#f5f8f6] dark:bg-[#1a3833] border-0 rounded-lg py-3 pl-4 pr-10 text-nordic-dark dark:text-white appearance-none focus:ring-2 focus:ring-mosque dark:focus:ring-hint-green cursor-pointer outline-none transition-colors"
+                      defaultValue={searchParams.get("maxDeposit") || ""}
+                    >
+                      <option value="">{dictionary.filters?.any || "Any"}</option>
+                      {[1, 2, 3].map((months) => (
+                        <option key={months} value={months}>
+                          {dictionary.rent.depositValue.replace("{n}", String(months))}
+                        </option>
+                      ))}
+                    </select>
+                    <span className="material-icons absolute right-3 top-3 text-gray-400 pointer-events-none">
+                      expand_more
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <span className="block text-sm font-medium text-nordic-dark dark:text-gray-100 transition-colors">
+                    {dictionary.rent.availableFrom}
+                  </span>
+                  <input
+                    name="availableFrom"
+                    type="date"
+                    defaultValue={searchParams.get("availableFrom") || ""}
+                    className="w-full bg-[#f5f8f6] dark:bg-[#1a3833] border-0 rounded-lg py-3 px-4 text-nordic-dark dark:text-white focus:ring-2 focus:ring-mosque dark:focus:ring-hint-green outline-none transition-colors"
+                  />
+                </div>
+
+                <div className="space-y-3">
+                  <label className="flex items-center gap-3 cursor-pointer px-4 py-3 rounded-lg bg-[#f5f8f6] dark:bg-[#1a3833] transition-colors">
+                    <input
+                      name="furnished"
+                      type="checkbox"
+                      defaultChecked={searchParams.get("furnished") === "true"}
+                      className="w-4 h-4 accent-mosque dark:accent-hint-green"
+                    />
+                    <span className="material-icons text-lg text-gray-400">chair</span>
+                    <span className="text-sm font-medium text-nordic-dark dark:text-gray-100">
+                      {dictionary.rent.furnished}
+                    </span>
+                  </label>
+                  <label className="flex items-center gap-3 cursor-pointer px-4 py-3 rounded-lg bg-[#f5f8f6] dark:bg-[#1a3833] transition-colors">
+                    <input
+                      name="utilities"
+                      type="checkbox"
+                      defaultChecked={searchParams.get("utilities") === "true"}
+                      className="w-4 h-4 accent-mosque dark:accent-hint-green"
+                    />
+                    <span className="material-icons text-lg text-gray-400">bolt</span>
+                    <span className="text-sm font-medium text-nordic-dark dark:text-gray-100">
+                      {dictionary.rent.utilitiesIncluded}
+                    </span>
+                  </label>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* Section 5: Amenities */}
           <section>
             <label className="block text-xs font-semibold text-nordic-muted dark:text-gray-400 uppercase tracking-wider mb-4 transition-colors">
               {dictionary.filters?.amenities || "Amenities & Features"}

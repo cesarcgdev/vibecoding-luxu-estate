@@ -3,10 +3,14 @@
 import React from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
-import { buildActiveFilters } from "@/lib/search-filters";
+import { buildActiveFilters, type FilterVariant } from "@/lib/search-filters";
 
 /** Shown instead of the property grid when no listing matches the active filters */
-export default function NoResults() {
+export default function NoResults({
+  variant = "sale",
+}: {
+  variant?: FilterVariant;
+}) {
   const { dictionary } = useLanguage();
   const router = useRouter();
   const pathname = usePathname();
@@ -14,7 +18,8 @@ export default function NoResults() {
 
   const activeFilters = buildActiveFilters(
     new URLSearchParams(searchParams.toString()),
-    dictionary
+    dictionary,
+    variant
   );
 
   const clearLast = () => {

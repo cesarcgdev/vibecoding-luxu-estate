@@ -39,13 +39,19 @@ function randomItem<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
+/**
+ * Filler listings for the homepage, which is sales-only. They used to include a
+ * fifth of "rentals" priced off the same 500k–5M draw, so a mock rental showed
+ * "$23,000/mo" on a price_value of 2,300,000 — numbers that would have wrecked
+ * every price comparison the moment /rent read from the same source. Rentals
+ * come from Supabase alone now, seeded by scripts/seed-rentals.js.
+ */
 export const generateMockProperties = (count = MARKET_COUNT): Property[] => {
   return Array.from({ length: count }).map((_, i) => {
     const city = randomItem(cities);
     const neighborhood = randomItem(neighborhoods);
     const priceValue = randomInt(500000, 5000000);
-    const isRent = Math.random() > 0.8;
-    const tag: PropertyTag = isRent ? "FOR RENT" : "FOR SALE";
+    const tag: PropertyTag = "FOR SALE";
     const type = randomItem(propertyTypes);
     const title = `${randomItem(adjectives)} ${type} in ${neighborhood}`;
 
@@ -54,7 +60,7 @@ export const generateMockProperties = (count = MARKET_COUNT): Property[] => {
       title,
       location: `${neighborhood}, ${city}`,
       price_value: priceValue,
-      price_display: isRent ? `$${(priceValue / 100).toLocaleString()}/mo` : `$${(priceValue / 1000000).toFixed(1)}M`,
+      price_display: `$${(priceValue / 1000000).toFixed(1)}M`,
       beds: randomInt(1, 6),
       baths: randomInt(1, 5),
       area: `${randomInt(800, 5000)} sq.ft`,
@@ -62,7 +68,7 @@ export const generateMockProperties = (count = MARKET_COUNT): Property[] => {
       tag: tag,
       is_featured: false,
       is_active: true,
-      listing_type: isRent ? "rent" : "buy",
+      listing_type: "sale",
       slug: `prop-mock-${i}`,
       created_at: new Date().toISOString()
     };
