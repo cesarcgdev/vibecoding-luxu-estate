@@ -69,6 +69,18 @@ export type PropertyFormData = {
   price_display: string;
   listing_type: string;
   property_type: string;
+  /**
+   * Rental fields. Migration 0004 enforces the pairing: a rental must carry
+   * both rental_kind and price_period, and a sale must carry neither.
+   */
+  rental_kind: string | null;
+  price_period: string | null;
+  min_stay_months: number | null;
+  deposit_months: number | null;
+  utilities_included: boolean | null;
+  furnished: boolean | null;
+  available_from: string | null;
+  landlord_id: string | null;
   description: string;
   location: string;
   /** Map coordinates — both null when the listing has no marker yet */
@@ -114,6 +126,14 @@ function toPropertyRow(data: PropertyFormData, imageUrls: string[], slug: string
     price_display: data.price_display,
     listing_type: data.listing_type,
     property_type: data.property_type,
+    rental_kind: data.rental_kind,
+    price_period: data.price_period,
+    min_stay_months: data.min_stay_months,
+    deposit_months: data.deposit_months,
+    utilities_included: data.utilities_included,
+    furnished: data.furnished,
+    available_from: data.available_from,
+    landlord_id: data.landlord_id,
     description: data.description,
     location: data.location,
     latitude: data.latitude,
@@ -140,6 +160,12 @@ function explainWriteError(error: { code?: string; message: string }): string {
   }
   if (error.code === "23505") {
     return "That URL slug is already taken by another property.";
+  }
+  if (error.code === "23514") {
+    return (
+      `${error.message} — a rental needs a modality and a price period, and a ` +
+      "sale must not have either."
+    );
   }
   return error.message;
 }
@@ -250,6 +276,7 @@ export async function createProperty(
 
   revalidatePath("/admin/properties");
   revalidatePath("/");
+  revalidatePath("/rent");
   redirect("/admin/properties");
 }
 
@@ -287,6 +314,7 @@ export async function updateProperty(
   revalidatePath("/admin/properties");
   revalidatePath(`/properties/${slug}`);
   revalidatePath("/");
+  revalidatePath("/rent");
   redirect("/admin/properties");
 }
 
@@ -327,6 +355,7 @@ export async function setPropertyActive(
   // The detail page is ISR-cached, so it would keep serving a hidden listing
   revalidatePath(`/properties/${updated[0].slug}`);
   revalidatePath("/");
+  revalidatePath("/rent");
   return { success: true, id };
 }
 
@@ -374,6 +403,7 @@ export async function deleteProperty(
   revalidatePath("/admin/properties");
   if (property?.slug) revalidatePath(`/properties/${property.slug}`);
   revalidatePath("/");
+  revalidatePath("/rent");
   return { success: true, id };
 }
 

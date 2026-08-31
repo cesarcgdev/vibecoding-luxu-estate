@@ -1,12 +1,15 @@
 import Link from "next/link";
 import PropertyForm from "@/components/admin/PropertyForm";
+import { getLandlordOptions } from "@/lib/landlords";
 
 export const metadata = {
   title: "Add New Property | LuxeEstate Admin",
   description: "Create a new property listing in the LuxeEstate admin panel.",
 };
 
-export default function NewPropertyPage() {
+export default async function NewPropertyPage() {
+  const landlords = await getLandlordOptions();
+
   return (
     <div className="w-full py-10">
       {/* Header */}
@@ -61,7 +64,7 @@ export default function NewPropertyPage() {
         </div>
       </header>
 
-      <PropertyForm />
+      <PropertyForm landlords={landlords} />
     </div>
   );
 }

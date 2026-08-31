@@ -71,12 +71,36 @@ export default function Navbar() {
     setTheme(theme === "dark" ? "light" : "dark");
   };
 
-  /** On the home page the search bar is already mounted, so just hand it focus */
+  /** Both listing pages mount a search bar, so there just hand it focus */
   const handleSearchClick = (event: React.MouseEvent) => {
-    if (pathname !== "/") return;
+    if (pathname !== "/" && pathname !== "/rent") return;
     event.preventDefault();
     window.dispatchEvent(new Event(FOCUS_SEARCH_EVENT));
   };
+
+  /**
+   * The sections, in order. Buy and Rent are real pages; Sell and Saved are
+   * not built yet and stay inert rather than pretending to navigate.
+   */
+  const sections = [
+    { href: "/", label: dictionary.navbar.buy },
+    { href: "/rent", label: dictionary.navbar.rent },
+    { href: null, label: dictionary.navbar.sell },
+    { href: null, label: dictionary.navbar.savedHomes },
+  ];
+
+  // Which tab is current was hardcoded to "Buy", so /rent still underlined it
+  const isCurrent = (href: string | null) => href !== null && pathname === href;
+
+  const desktopLinkClass = (href: string | null) =>
+    isCurrent(href)
+      ? "text-mosque dark:text-hint-green font-medium text-sm border-b-2 border-mosque dark:border-hint-green px-1 py-1 transition-colors"
+      : "text-nordic-dark/70 dark:text-gray-400 hover:text-nordic-dark dark:hover:text-white font-medium text-sm hover:border-b-2 hover:border-nordic-dark/20 dark:hover:border-white/20 px-1 py-1 transition-all";
+
+  const mobileLinkClass = (href: string | null) =>
+    isCurrent(href)
+      ? "block px-3 py-2 rounded-md text-base font-medium text-mosque dark:text-hint-green bg-mosque/10 dark:bg-hint-green/10"
+      : "block px-3 py-2 rounded-md text-base font-medium text-nordic-dark dark:text-gray-200 hover:bg-black/5 dark:hover:bg-white/5";
 
   return (
     <nav className="sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md border-b border-nordic-dark/10 dark:border-white/10 transition-colors duration-300">
@@ -91,30 +115,25 @@ export default function Navbar() {
             </span>
           </Link>
           <div className="hidden md:flex items-center space-x-8">
-            <Link
-              className="text-mosque dark:text-hint-green font-medium text-sm border-b-2 border-mosque dark:border-hint-green px-1 py-1 transition-colors"
-              href="#"
-            >
-              {dictionary.navbar.buy}
-            </Link>
-            <Link
-              className="text-nordic-dark/70 dark:text-gray-400 hover:text-nordic-dark dark:hover:text-white font-medium text-sm hover:border-b-2 hover:border-nordic-dark/20 dark:hover:border-white/20 px-1 py-1 transition-all"
-              href="#"
-            >
-              {dictionary.navbar.rent}
-            </Link>
-            <Link
-              className="text-nordic-dark/70 dark:text-gray-400 hover:text-nordic-dark dark:hover:text-white font-medium text-sm hover:border-b-2 hover:border-nordic-dark/20 dark:hover:border-white/20 px-1 py-1 transition-all"
-              href="#"
-            >
-              {dictionary.navbar.sell}
-            </Link>
-            <Link
-              className="text-nordic-dark/70 dark:text-gray-400 hover:text-nordic-dark dark:hover:text-white font-medium text-sm hover:border-b-2 hover:border-nordic-dark/20 dark:hover:border-white/20 px-1 py-1 transition-all"
-              href="#"
-            >
-              {dictionary.navbar.savedHomes}
-            </Link>
+            {sections.map((section) =>
+              section.href ? (
+                <Link
+                  key={section.label}
+                  className={desktopLinkClass(section.href)}
+                  href={section.href}
+                  aria-current={isCurrent(section.href) ? "page" : undefined}
+                >
+                  {section.label}
+                </Link>
+              ) : (
+                <span
+                  key={section.label}
+                  className="text-nordic-dark/30 dark:text-gray-600 font-medium text-sm px-1 py-1 cursor-default"
+                >
+                  {section.label}
+                </span>
+              )
+            )}
           </div>
           <div className="flex items-center space-x-4 sm:space-x-6">
             <LanguageSelector />
@@ -133,7 +152,7 @@ export default function Navbar() {
             )}
 
             <Link
-              href="/#search"
+              href={pathname === "/rent" ? "/rent#search" : "/#search"}
               onClick={handleSearchClick}
               aria-label={dictionary.search.hint}
               title={dictionary.search.hint}
@@ -188,30 +207,25 @@ export default function Navbar() {
       </div>
       <div className="md:hidden border-t border-nordic-dark/5 dark:border-white/5 bg-background-light dark:bg-background-dark overflow-hidden h-0 transition-all duration-300">
         <div className="px-4 py-2 space-y-1">
-          <Link
-            className="block px-3 py-2 rounded-md text-base font-medium text-mosque dark:text-hint-green bg-mosque/10 dark:bg-hint-green/10"
-            href="#"
-          >
-            {dictionary.navbar.buy}
-          </Link>
-          <Link
-            className="block px-3 py-2 rounded-md text-base font-medium text-nordic-dark dark:text-gray-200 hover:bg-black/5 dark:hover:bg-white/5"
-            href="#"
-          >
-            {dictionary.navbar.rent}
-          </Link>
-          <Link
-            className="block px-3 py-2 rounded-md text-base font-medium text-nordic-dark dark:text-gray-200 hover:bg-black/5 dark:hover:bg-white/5"
-            href="#"
-          >
-            {dictionary.navbar.sell}
-          </Link>
-          <Link
-            className="block px-3 py-2 rounded-md text-base font-medium text-nordic-dark dark:text-gray-200 hover:bg-black/5 dark:hover:bg-white/5"
-            href="#"
-          >
-            {dictionary.navbar.savedHomes}
-          </Link>
+          {sections.map((section) =>
+            section.href ? (
+              <Link
+                key={section.label}
+                className={mobileLinkClass(section.href)}
+                href={section.href}
+                aria-current={isCurrent(section.href) ? "page" : undefined}
+              >
+                {section.label}
+              </Link>
+            ) : (
+              <span
+                key={section.label}
+                className="block px-3 py-2 rounded-md text-base font-medium text-nordic-dark/30 dark:text-gray-600 cursor-default"
+              >
+                {section.label}
+              </span>
+            )
+          )}
         </div>
       </div>
     </nav>

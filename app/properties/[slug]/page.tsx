@@ -1,9 +1,16 @@
 import { notFound } from "next/navigation";
-import dynamic from "next/dynamic";
 import Navbar from "../../../components/Navbar";
 import PropertyGallery from "../../../components/PropertyGallery";
 import MapWrapper from "../../../components/MapWrapper";
+import LandlordCard from "../../../components/LandlordCard";
+import RentalConditions from "../../../components/RentalConditions";
 import { getPropertyBySlug } from "../../../lib/properties";
+import { getLandlord } from "../../../lib/landlords";
+import {
+  rentalKindIcon,
+  rentalKindLabel,
+  splitPriceDisplay,
+} from "../../../lib/rental-kinds";
 import { supabase } from "../../../lib/supabase";
 import { cookies } from "next/headers";
 import { getDictionary, defaultLocale } from "../../../lib/i18n/dictionaries";
@@ -40,6 +47,16 @@ export default async function PropertyDetails({
   // images is now the single source of truth
   const images = property.images?.length ? property.images : [];
 
+  const isRental = property.listing_type === "rent";
+  // Mock listings and anything created before landlords existed have none
+  const landlord = await getLandlord(property.landlord_id);
+
+  const { amount: priceAmount, unit: priceUnit } = splitPriceDisplay(
+    property.price_display,
+    isRental ? property.price_period : null,
+    dictionary
+  );
+
   return (
     <>
       <Navbar />
@@ -53,8 +70,37 @@ export default async function PropertyDetails({
             <div className="sticky top-28 space-y-6">
               <div className="bg-white p-6 rounded-xl shadow-sm border border-mosque/5">
                 <div className="mb-4">
-                  <h1 className="text-4xl font-display font-light text-nordic-dark mb-2">
-                    {property.price_display}
+                  {/* Operation and modality, same chips the cards use */}
+                  <div className="flex flex-wrap items-center gap-2 mb-3">
+                    <span
+                      className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded ${
+                        isRental
+                          ? "bg-mosque text-white"
+                          : "bg-nordic-dark text-white"
+                      }`}
+                    >
+                      {isRental
+                        ? dictionary.tags["FOR RENT"]
+                        : dictionary.tags["FOR SALE"]}
+                    </span>
+                    {isRental && property.rental_kind && (
+                      <span className="flex items-center gap-1 bg-mosque/10 text-mosque text-[10px] font-semibold px-2 py-1 rounded">
+                        <span className="material-icons text-[12px]">
+                          {rentalKindIcon(property.rental_kind)}
+                        </span>
+                        {rentalKindLabel(property.rental_kind, dictionary)}
+                      </span>
+                    )}
+                  </div>
+                  <h1
+                    className={`text-4xl font-display font-light mb-2 ${
+                      isRental ? "text-mosque" : "text-nordic-dark"
+                    }`}
+                  >
+                    {priceAmount}
+                    {priceUnit && (
+                      <span className="text-xl text-nordic-muted ml-1">{priceUnit}</span>
+                    )}
                   </h1>
                   <p className="text-nordic-muted font-medium flex items-center gap-1">
                     <span className="material-icons text-mosque text-sm">location_on</span>
@@ -64,26 +110,21 @@ export default async function PropertyDetails({
 
                 <div className="h-px bg-slate-100 my-6"></div>
 
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-14 h-14 rounded-full bg-mosque/10 flex items-center justify-center border-2 border-white shadow-sm overflow-hidden text-mosque">
-                    <span className="material-icons text-2xl">person</span>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-nordic-dark">{dictionary.property.agent}</h3>
-                    <div className="flex items-center gap-1 text-xs text-mosque font-medium">
-                      <span className="material-icons text-[14px]">star</span>
-                      <span>{dictionary.property.topAgent}</span>
+                {/* Listings created before landlords existed keep the generic block */}
+                {!landlord && (
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-14 h-14 rounded-full bg-mosque/10 flex items-center justify-center border-2 border-white shadow-sm overflow-hidden text-mosque">
+                      <span className="material-icons text-2xl">person</span>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-nordic-dark">{dictionary.property.agent}</h3>
+                      <div className="flex items-center gap-1 text-xs text-mosque font-medium">
+                        <span className="material-icons text-[14px]">star</span>
+                        <span>{dictionary.property.topAgent}</span>
+                      </div>
                     </div>
                   </div>
-                  <div className="ml-auto flex gap-2">
-                    <button className="p-2 rounded-full bg-mosque/10 text-mosque hover:bg-mosque hover:text-white transition-colors">
-                      <span className="material-icons text-sm">chat</span>
-                    </button>
-                    <button className="p-2 rounded-full bg-mosque/10 text-mosque hover:bg-mosque hover:text-white transition-colors">
-                      <span className="material-icons text-sm">call</span>
-                    </button>
-                  </div>
-                </div>
+                )}
 
                 <div className="space-y-3">
                   <button className="w-full bg-mosque hover:bg-mosque/90 text-white py-4 px-6 rounded-lg font-medium transition-all shadow-lg shadow-mosque/20 flex items-center justify-center gap-2 group">
@@ -96,6 +137,8 @@ export default async function PropertyDetails({
                   </button>
                 </div>
               </div>
+
+              {landlord && <LandlordCard landlord={landlord} />}
 
               <div className="bg-white p-2 rounded-xl shadow-sm border border-mosque/5">
                 <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden bg-slate-100">
@@ -138,7 +181,7 @@ export default async function PropertyDetails({
                 </div>
                 <div className="flex flex-col items-center justify-center p-4 bg-mosque/5 rounded-lg border border-mosque/10">
                   <span className="material-icons text-mosque text-2xl mb-2">directions_car</span>
-                  <span className="text-xl font-bold text-nordic-dark">2</span>
+                  <span className="text-xl font-bold text-nordic-dark">{property.parking ?? 0}</span>
                   <span className="text-xs uppercase tracking-wider text-nordic-muted">{dictionary.property.garage}</span>
                 </div>
               </div>
@@ -150,8 +193,10 @@ export default async function PropertyDetails({
                 <p className="mb-4">
                   {dictionary.property.aboutDesc.replace("{title}", property.title).replace("{location}", property.location)}
                 </p>
+                {/* This used to interpolate listing_type, so a rental read
+                    "this rent offers spacious interiors" */}
                 <p>
-                  {dictionary.property.aboutDesc2.replace("{type}", property.listing_type?.toLowerCase() || dictionary.property.home)}
+                  {dictionary.property.aboutDesc2.replace("{type}", property.property_type?.toLowerCase() || dictionary.property.home)}
                 </p>
               </div>
               <button className="mt-4 text-mosque font-semibold text-sm flex items-center gap-1 hover:gap-2 transition-all">
@@ -160,20 +205,30 @@ export default async function PropertyDetails({
               </button>
             </div>
 
-            <div className="bg-mosque/5 p-6 rounded-xl border border-mosque/10 flex flex-col sm:flex-row items-center justify-between gap-6">
-              <div className="flex items-start gap-4">
-                <div className="p-3 bg-white rounded-full text-mosque shadow-sm">
-                  <span className="material-icons">calculate</span>
+            {/* A mortgage estimate means nothing on a let; the move-in cost is
+                the equivalent decision for a tenant */}
+            {isRental ? (
+              <RentalConditions
+                property={property}
+                dictionary={dictionary}
+                locale={locale}
+              />
+            ) : (
+              <div className="bg-mosque/5 p-6 rounded-xl border border-mosque/10 flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div className="flex items-start gap-4">
+                  <div className="p-3 bg-white rounded-full text-mosque shadow-sm">
+                    <span className="material-icons">calculate</span>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-nordic-dark">{dictionary.property.estimatedPayment}</h3>
+                    <p className="text-sm text-nordic-muted">{dictionary.property.startingFrom} <strong className="text-mosque">{property.price_display}</strong></p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-nordic-dark">{dictionary.property.estimatedPayment}</h3>
-                  <p className="text-sm text-nordic-muted">{dictionary.property.startingFrom} <strong className="text-mosque">{property.price_display}</strong></p>
-                </div>
+                <button className="whitespace-nowrap px-4 py-2 bg-white border border-nordic-dark/10 rounded-lg text-sm font-semibold hover:border-mosque transition-colors text-nordic-dark">
+                  {dictionary.property.calcMortgage}
+                </button>
               </div>
-              <button className="whitespace-nowrap px-4 py-2 bg-white border border-nordic-dark/10 rounded-lg text-sm font-semibold hover:border-mosque transition-colors text-nordic-dark">
-                {dictionary.property.calcMortgage}
-              </button>
-            </div>
+            )}
           </div>
         </div>
       </main>

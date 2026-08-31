@@ -1,7 +1,15 @@
 import type { Dictionary } from "./i18n/dictionaries";
+import { rentalKindIcon, rentalKindLabel } from "./rental-kinds";
 
-/** The categories a search suggestion can belong to */
-export type FacetKind = "type" | "zone" | "beds" | "listing";
+/**
+ * The categories a search suggestion can belong to.
+ *
+ * "kind" is the rental modality and only appears on /rent. There is no
+ * buy-vs-rent facet any more: each listing page shows one operation, so a
+ * suggestion reading "For sale (57)" on a page of nothing but sales told the
+ * visitor nothing.
+ */
+export type FacetKind = "type" | "zone" | "beds" | "kind";
 
 export interface Facet {
   kind: FacetKind;
@@ -18,15 +26,22 @@ export const PARAM_BY_KIND: Record<FacetKind, string> = {
   type: "type",
   zone: "location",
   beds: "beds",
-  listing: "listing",
+  kind: "kind",
 };
 
 export const ICON_BY_KIND: Record<FacetKind, string> = {
   type: "home_work",
   zone: "location_on",
   beds: "bed",
-  listing: "sell",
+  kind: "category",
 };
+
+/** Each rental modality has its own glyph, so it wins over the group default */
+export function facetIcon(facet: Facet): string {
+  return facet.kind === "kind"
+    ? rentalKindIcon(facet.value)
+    : ICON_BY_KIND[facet.kind];
+}
 
 /**
  * Fired by the navbar magnifier when the search bar is already on screen, so it
@@ -42,7 +57,15 @@ export function normalize(value: string): string {
     .replace(/\p{Diacritic}/gu, "");
 }
 
-function formatPrice(value: number): string {
+/** Which listing page a set of filters belongs to */
+export type FilterVariant = "sale" | "rent";
+
+/**
+ * Sale prices are abbreviated because they run to seven figures. Rents do not:
+ * rounding 1,200 to "$1K" loses the only digits a tenant is comparing.
+ */
+function formatPrice(value: number, variant: FilterVariant): string {
+  if (variant === "rent") return `$${value.toLocaleString()}`;
   if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
   if (value >= 1000) return `$${(value / 1000).toFixed(0)}K`;
   return `$${value}`;
@@ -57,10 +80,8 @@ export function facetLabel(facet: Facet, dictionary: Dictionary): string {
       return facet.value;
     case "beds":
       return dictionary.search.bedsPlus.replace("{n}", facet.value);
-    case "listing":
-      return facet.value === "rent"
-        ? dictionary.home.filterRent
-        : dictionary.home.filterBuy;
+    case "kind":
+      return rentalKindLabel(facet.value, dictionary);
   }
 }
 
@@ -82,8 +103,8 @@ export function groupHeading(kind: FacetKind, dictionary: Dictionary): string {
       return dictionary.search.zonesGroup;
     case "beds":
       return dictionary.search.bedsGroup;
-    case "listing":
-      return dictionary.search.listingGroup;
+    case "kind":
+      return dictionary.search.kindGroup;
   }
 }
 
@@ -101,7 +122,8 @@ export interface ActiveFilter {
  */
 export function buildActiveFilters(
   searchParams: URLSearchParams,
-  dictionary: Dictionary
+  dictionary: Dictionary,
+  variant: FilterVariant = "sale"
 ): ActiveFilter[] {
   const filters: ActiveFilter[] = [];
 
@@ -150,13 +172,57 @@ export function buildActiveFilters(
     });
   }
 
-  const listing = searchParams.get("listing");
-  if (listing) {
+  // Rental criteria. They only ever reach the URL from /rent, but reading them
+  // unconditionally keeps this the one place that describes a filtered listing.
+  const kind = searchParams.get("kind");
+  if (kind) {
     filters.push({
-      params: ["listing"],
-      label:
-        listing === "rent" ? dictionary.home.filterRent : dictionary.home.filterBuy,
-      icon: ICON_BY_KIND.listing,
+      params: ["kind"],
+      label: rentalKindLabel(kind, dictionary),
+      icon: rentalKindIcon(kind),
+    });
+  }
+
+  const minStay = searchParams.get("minStay");
+  if (minStay) {
+    filters.push({
+      params: ["minStay"],
+      label: dictionary.rent.minStayChip.replace("{n}", minStay),
+      icon: "schedule",
+    });
+  }
+
+  const maxDeposit = searchParams.get("maxDeposit");
+  if (maxDeposit) {
+    filters.push({
+      params: ["maxDeposit"],
+      label: dictionary.rent.depositValue.replace("{n}", maxDeposit),
+      icon: "savings",
+    });
+  }
+
+  if (searchParams.get("furnished") === "true") {
+    filters.push({
+      params: ["furnished"],
+      label: dictionary.rent.furnished,
+      icon: "chair",
+    });
+  }
+
+  if (searchParams.get("utilities") === "true") {
+    filters.push({
+      params: ["utilities"],
+      label: dictionary.rent.utilitiesIncluded,
+      icon: "bolt",
+    });
+  }
+
+  const availableFrom = searchParams.get("availableFrom");
+  if (availableFrom) {
+    filters.push({
+      params: ["availableFrom"],
+      label: dictionary.rent.availableChip.replace("{date}", availableFrom),
+      icon: "event_available",
     });
   }
 
@@ -166,12 +232,14 @@ export function buildActiveFilters(
   if (!isNaN(minPrice) || !isNaN(maxPrice)) {
     let range: string;
     if (!isNaN(minPrice) && !isNaN(maxPrice)) {
-      range = `${formatPrice(minPrice)} – ${formatPrice(maxPrice)}`;
+      range = `${formatPrice(minPrice, variant)} – ${formatPrice(maxPrice, variant)}`;
     } else if (!isNaN(minPrice)) {
-      range = `${formatPrice(minPrice)}+`;
+      range = `${formatPrice(minPrice, variant)}+`;
     } else {
-      range = `≤ ${formatPrice(maxPrice)}`;
+      range = `≤ ${formatPrice(maxPrice, variant)}`;
     }
+    // A rent range is per month; a sale price is not
+    if (variant === "rent") range += dictionary.rent.perMonth;
     filters.push({
       params: ["minPrice", "maxPrice"],
       label: dictionary.search.priceChip.replace("{range}", range),

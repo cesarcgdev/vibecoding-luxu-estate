@@ -17,6 +17,8 @@ import {
   isValidLongitude,
   parseCoordinate,
 } from "@/lib/geo";
+import { RENTAL_KINDS, pricePeriodFor, type RentalKind } from "@/lib/rental-kinds";
+import type { PublicLandlord } from "@/lib/landlords";
 
 /* ─────────────────────────────────────────────
    Types
@@ -38,7 +40,23 @@ interface ImageItem {
 interface PropertyFormProps {
   /** If provided the form is in edit mode */
   property?: Record<string, unknown> | null;
+  /** Landlords available to assign. New profiles are added in Supabase. */
+  landlords?: PublicLandlord[];
 }
+
+/** Human-readable labels for the modality select */
+const RENTAL_KIND_LABELS: Record<RentalKind, string> = {
+  long: "Long term",
+  seasonal: "Short term",
+  student: "Students",
+  room: "Room",
+  coliving: "Coliving",
+  vacation: "Holiday",
+  corporate: "Corporate",
+  rent_to_own: "Rent to own",
+  commercial: "Commercial",
+  storage: "Garage / Storage",
+};
 
 const AMENITY_OPTIONS = [
   "Swimming Pool",
@@ -139,7 +157,10 @@ function Stepper({
    Main Component
 ───────────────────────────────────────────── */
 
-export default function PropertyForm({ property }: PropertyFormProps) {
+export default function PropertyForm({
+  property,
+  landlords = [],
+}: PropertyFormProps) {
   const isEdit = Boolean(property?.id);
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -188,6 +209,33 @@ export default function PropertyForm({ property }: PropertyFormProps) {
   const [amenities, setAmenities] = useState<string[]>(
     (property?.amenities as string[]) ?? []
   );
+
+  /* ── Rental state — written only when listingType is "rent" ── */
+  const [rentalKind, setRentalKind] = useState<RentalKind>(
+    (property?.rental_kind as RentalKind) ?? "long"
+  );
+  const [minStayMonths, setMinStayMonths] = useState(
+    (property?.min_stay_months as number | null)?.toString() ?? ""
+  );
+  const [depositMonths, setDepositMonths] = useState(
+    (property?.deposit_months as number | null)?.toString() ?? ""
+  );
+  const [utilitiesIncluded, setUtilitiesIncluded] = useState(
+    (property?.utilities_included as boolean) ?? false
+  );
+  const [furnished, setFurnished] = useState(
+    (property?.furnished as boolean) ?? false
+  );
+  const [availableFrom, setAvailableFrom] = useState(
+    (property?.available_from as string) ?? ""
+  );
+  const [landlordId, setLandlordId] = useState(
+    (property?.landlord_id as string) ?? ""
+  );
+
+  const isRental = listingType === "rent";
+  // The modality dictates the unit, so the two can never disagree
+  const pricePeriod = pricePeriodFor(rentalKind);
 
   /* ── Image state ────────────────────── */
   const existingImages = (property?.images as string[]) ?? [];
@@ -316,12 +364,32 @@ export default function PropertyForm({ property }: PropertyFormProps) {
         .map((img) => img.src);
       const allImageUrls = [...keepExisting, ...uploadedUrls];
 
+      // A rental price is meaningless without its unit, and price_display is
+      // what every card renders verbatim
+      const priceSuffix = isRental
+        ? pricePeriod === "night"
+          ? "/night"
+          : "/mo"
+        : "";
+
       const formData: PropertyFormData = {
         title: title.trim(),
         price_value: priceValue !== "" ? Number(priceValue) : null,
-        price_display: priceValue !== "" ? formatPrice(Number(priceValue)) : "Price on request",
+        price_display:
+          priceValue !== ""
+            ? `${formatPrice(Number(priceValue))}${priceSuffix}`
+            : "Price on request",
         listing_type: listingType,
         property_type: propertyType,
+        // The CHECK in migration 0004 rejects rental fields on a non-rental
+        rental_kind: isRental ? rentalKind : null,
+        price_period: isRental ? pricePeriod : null,
+        min_stay_months: isRental && minStayMonths ? Number(minStayMonths) : null,
+        deposit_months: isRental && depositMonths ? Number(depositMonths) : null,
+        utilities_included: isRental ? utilitiesIncluded : null,
+        furnished: isRental ? furnished : null,
+        available_from: isRental && availableFrom ? availableFrom : null,
+        landlord_id: landlordId || null,
         description: description.trim(),
         location: location.trim(),
         latitude: mapLatitude,
@@ -476,6 +544,145 @@ export default function PropertyForm({ property }: PropertyFormProps) {
                 </select>
               </div>
             </div>
+
+            {/* Landlord — the only way to attach a profile to a listing */}
+            <div>
+              <label
+                className="block text-sm font-medium text-nordic mb-1.5 font-sf-pro"
+                htmlFor="prop-landlord"
+              >
+                Landlord
+              </label>
+              <select
+                id="prop-landlord"
+                value={landlordId}
+                onChange={(e) => setLandlordId(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-md border border-gray-200 bg-white text-nordic focus:ring-1 focus:ring-mosque focus:border-mosque transition-all text-base font-sf-pro cursor-pointer outline-none"
+              >
+                <option value="">No landlord</option>
+                {landlords.map((landlord) => (
+                  <option key={landlord.id} value={landlord.id}>
+                    {landlord.display_name}
+                    {landlord.kind === "agency" ? " (agency)" : ""}
+                  </option>
+                ))}
+              </select>
+              <p className="text-xs text-gray-400 mt-1 font-sf-pro">
+                {landlords.length === 0
+                  ? "No landlords yet — add rows to the landlords table in Supabase, or run npm run seed:rentals."
+                  : "Shown on the public listing page, with contact details revealed on request."}
+              </p>
+            </div>
+
+            {/* Rental terms — only when the listing is a rental */}
+            {isRental && (
+              <div className="rounded-lg border border-mosque/20 bg-mosque/5 p-5 space-y-5">
+                <h3 className="text-sm font-semibold text-nordic font-sf-pro">
+                  Rental terms
+                </h3>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div>
+                    <label
+                      className="block text-sm font-medium text-nordic mb-1.5 font-sf-pro"
+                      htmlFor="prop-rental-kind"
+                    >
+                      Modality <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      id="prop-rental-kind"
+                      value={rentalKind}
+                      onChange={(e) => setRentalKind(e.target.value as RentalKind)}
+                      className="w-full px-4 py-2.5 rounded-md border border-gray-200 bg-white text-nordic focus:ring-1 focus:ring-mosque focus:border-mosque transition-all text-base font-sf-pro cursor-pointer outline-none"
+                    >
+                      {RENTAL_KINDS.map((definition) => (
+                        <option key={definition.value} value={definition.value}>
+                          {RENTAL_KIND_LABELS[definition.value]}
+                        </option>
+                      ))}
+                    </select>
+                    <p className="text-xs text-gray-400 mt-1 font-sf-pro">
+                      Sets the price unit: this listing is priced per{" "}
+                      {pricePeriod === "night" ? "night" : "month"}.
+                    </p>
+                  </div>
+
+                  <div>
+                    <label
+                      className="block text-sm font-medium text-nordic mb-1.5 font-sf-pro"
+                      htmlFor="prop-available-from"
+                    >
+                      Available from
+                    </label>
+                    <input
+                      id="prop-available-from"
+                      type="date"
+                      value={availableFrom}
+                      onChange={(e) => setAvailableFrom(e.target.value)}
+                      className="w-full text-base px-4 py-2.5 rounded-md border border-gray-200 bg-white text-nordic focus:ring-1 focus:ring-mosque focus:border-mosque transition-all font-sf-pro outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      className="block text-sm font-medium text-nordic mb-1.5 font-sf-pro"
+                      htmlFor="prop-min-stay"
+                    >
+                      Minimum stay (months)
+                    </label>
+                    <input
+                      id="prop-min-stay"
+                      type="number"
+                      min={0}
+                      value={minStayMonths}
+                      onChange={(e) => setMinStayMonths(e.target.value)}
+                      placeholder="12"
+                      className="w-full text-base px-4 py-2.5 rounded-md border border-gray-200 bg-white text-nordic placeholder-gray-400 focus:ring-1 focus:ring-mosque focus:border-mosque transition-all font-sf-pro outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      className="block text-sm font-medium text-nordic mb-1.5 font-sf-pro"
+                      htmlFor="prop-deposit"
+                    >
+                      Deposit (months of rent)
+                    </label>
+                    <input
+                      id="prop-deposit"
+                      type="number"
+                      min={0}
+                      step={0.5}
+                      value={depositMonths}
+                      onChange={(e) => setDepositMonths(e.target.value)}
+                      placeholder="2"
+                      className="w-full text-base px-4 py-2.5 rounded-md border border-gray-200 bg-white text-nordic placeholder-gray-400 focus:ring-1 focus:ring-mosque focus:border-mosque transition-all font-sf-pro outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-6">
+                  <label className="flex items-center gap-2 text-sm text-nordic font-sf-pro cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={furnished}
+                      onChange={(e) => setFurnished(e.target.checked)}
+                      className="w-4 h-4 accent-mosque"
+                    />
+                    Furnished
+                  </label>
+                  <label className="flex items-center gap-2 text-sm text-nordic font-sf-pro cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={utilitiesIncluded}
+                      onChange={(e) => setUtilitiesIncluded(e.target.checked)}
+                      className="w-4 h-4 accent-mosque"
+                    />
+                    Bills included
+                  </label>
+                </div>
+              </div>
+            )}
 
             {/* Slug */}
             <div>

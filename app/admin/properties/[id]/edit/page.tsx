@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getPropertyById } from "@/app/actions/properties";
 import PropertyForm from "@/components/admin/PropertyForm";
+import { getLandlordOptions } from "@/lib/landlords";
 
 export const metadata = {
   title: "Edit Property | LuxeEstate Admin",
@@ -15,7 +16,10 @@ export default async function EditPropertyPage({
   params,
 }: EditPropertyPageProps) {
   const { id } = await params;
-  const property = await getPropertyById(id);
+  const [property, landlords] = await Promise.all([
+    getPropertyById(id),
+    getLandlordOptions(),
+  ]);
 
   if (!property) {
     notFound();
@@ -78,7 +82,7 @@ export default async function EditPropertyPage({
         </div>
       </header>
 
-      <PropertyForm property={property} />
+      <PropertyForm property={property} landlords={landlords} />
     </div>
   );
 }
