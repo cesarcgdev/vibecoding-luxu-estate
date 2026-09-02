@@ -4,8 +4,10 @@ import PropertyGallery from "../../../components/PropertyGallery";
 import MapWrapper from "../../../components/MapWrapper";
 import LandlordCard from "../../../components/LandlordCard";
 import RentalConditions from "../../../components/RentalConditions";
+import SaveButton from "../../../components/SaveButton";
 import { getPropertyBySlug } from "../../../lib/properties";
 import { getLandlord } from "../../../lib/landlords";
+import { getSavedPropertyIds } from "../../../lib/saved-properties";
 import {
   rentalKindIcon,
   rentalKindLabel,
@@ -49,7 +51,10 @@ export default async function PropertyDetails({
 
   const isRental = property.listing_type === "rent";
   // Mock listings and anything created before landlords existed have none
-  const landlord = await getLandlord(property.landlord_id);
+  const [landlord, savedIds] = await Promise.all([
+    getLandlord(property.landlord_id),
+    getSavedPropertyIds(),
+  ]);
 
   const { amount: priceAmount, unit: priceUnit } = splitPriceDisplay(
     property.price_display,
@@ -71,26 +76,35 @@ export default async function PropertyDetails({
               <div className="bg-white p-6 rounded-xl shadow-sm border border-mosque/5">
                 <div className="mb-4">
                   {/* Operation and modality, same chips the cards use */}
-                  <div className="flex flex-wrap items-center gap-2 mb-3">
-                    <span
-                      className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded ${
-                        isRental
-                          ? "bg-mosque text-white"
-                          : "bg-nordic-dark text-white"
-                      }`}
-                    >
-                      {isRental
-                        ? dictionary.tags["FOR RENT"]
-                        : dictionary.tags["FOR SALE"]}
-                    </span>
-                    {isRental && property.rental_kind && (
-                      <span className="flex items-center gap-1 bg-mosque/10 text-mosque text-[10px] font-semibold px-2 py-1 rounded">
-                        <span className="material-icons text-[12px]">
-                          {rentalKindIcon(property.rental_kind)}
-                        </span>
-                        {rentalKindLabel(property.rental_kind, dictionary)}
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span
+                        className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded ${
+                          isRental
+                            ? "bg-mosque text-white"
+                            : "bg-nordic-dark text-white"
+                        }`}
+                      >
+                        {isRental
+                          ? dictionary.tags["FOR RENT"]
+                          : dictionary.tags["FOR SALE"]}
                       </span>
-                    )}
+                      {isRental && property.rental_kind && (
+                        <span className="flex items-center gap-1 bg-mosque/10 text-mosque text-[10px] font-semibold px-2 py-1 rounded">
+                          <span className="material-icons text-[12px]">
+                            {rentalKindIcon(property.rental_kind)}
+                          </span>
+                          {rentalKindLabel(property.rental_kind, dictionary)}
+                        </span>
+                      )}
+                    </div>
+                    <SaveButton
+                      propertyId={property.id}
+                      initialSaved={savedIds.has(property.id)}
+                      className="p-2 rounded-full hover:bg-mosque/10 text-nordic-muted hover:text-mosque transition-colors"
+                      iconClassName="text-2xl"
+                      iconHoverClassName="group-hover:text-mosque"
+                    />
                   </div>
                   <h1
                     className={`text-4xl font-display font-light mb-2 ${

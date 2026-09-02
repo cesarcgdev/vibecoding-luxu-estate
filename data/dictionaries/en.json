@@ -2,7 +2,6 @@
   "navbar": {
     "buy": "Buy",
     "rent": "Rent",
-    "sell": "Sell",
     "savedHomes": "Saved Homes",
     "login": "Log In",
     "logout": "Log Out"
@@ -164,5 +163,32 @@
     "loadingContact": "Loading…",
     "contactError": "Could not load the contact details.",
     "noLandlord": "No landlord assigned"
+  },
+  "auth": {
+    "modalTitle": "Sign in to save properties",
+    "modalSubtitle": "Create an account or sign in to save your favorite properties.",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithGithub": "Continue with GitHub"
+  },
+  "saved": {
+    "title": "Saved properties",
+    "desc": "Your favorite properties, all in one place.",
+    "resultsCount": "{count} saved",
+    "searchPlaceholder": "Search your saved properties...",
+    "filterAll": "All",
+    "filterBuy": "Buy",
+    "filterRent": "Rent",
+    "moreFilters": "More filters",
+    "loggedOutTitle": "Sign in to see your saved properties",
+    "loggedOutDesc": "Save your favorite properties and find them here anytime.",
+    "loggedOutCta": "Sign in",
+    "savedToast": "Property saved to favorites",
+    "removedToast": "Property removed from saved",
+    "saveError": "Could not update the saved property",
+    "noMatchesDesc": "No saved property matches these filters.",
+    "emptyTitle": "You haven't saved any properties yet",
+    "emptyDesc": "Tap the heart on any property to save it here.",
+    "emptyCtaBuy": "Browse properties for sale",
+    "emptyCtaRent": "Browse rentals"
   }
 }

@@ -4,6 +4,8 @@ import { cookies } from "next/headers";
 import { getDictionary, defaultLocale } from "@/lib/i18n/dictionaries";
 import { LanguageProvider } from "@/lib/i18n/LanguageContext";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import AuthGateModal from "@/components/AuthGateModal";
+import ToastHost from "@/components/ToastHost";
 import "./globals.css";
 
 const inter = Inter({
@@ -45,6 +47,8 @@ export default async function RootLayout({
         >
           <LanguageProvider initialLocale={locale} dictionary={dictionary}>
             {children}
+            <AuthGateModal />
+            <ToastHost />
           </LanguageProvider>
         </ThemeProvider>
       </body>

@@ -2,7 +2,6 @@
   "navbar": {
     "buy": "Acheter",
     "rent": "Louer",
-    "sell": "Vendre",
     "savedHomes": "Sauvegardés",
     "login": "Se Connecter",
     "logout": "Se Déconnecter"
@@ -164,5 +163,32 @@
     "loadingContact": "Chargement…",
     "contactError": "Impossible de charger le contact.",
     "noLandlord": "Aucun propriétaire associé"
+  },
+  "auth": {
+    "modalTitle": "Connectez-vous pour sauvegarder des propriétés",
+    "modalSubtitle": "Créez un compte ou connectez-vous pour sauvegarder vos propriétés préférées.",
+    "continueWithGoogle": "Continuer avec Google",
+    "continueWithGithub": "Continuer avec GitHub"
+  },
+  "saved": {
+    "title": "Propriétés sauvegardées",
+    "desc": "Vos propriétés préférées, toutes au même endroit.",
+    "resultsCount": "{count} sauvegardées",
+    "searchPlaceholder": "Rechercher dans vos propriétés sauvegardées...",
+    "filterAll": "Toutes",
+    "filterBuy": "Acheter",
+    "filterRent": "Louer",
+    "moreFilters": "Plus de filtres",
+    "loggedOutTitle": "Connectez-vous pour voir vos propriétés sauvegardées",
+    "loggedOutDesc": "Sauvegardez vos propriétés préférées et retrouvez-les ici à tout moment.",
+    "loggedOutCta": "Se connecter",
+    "savedToast": "Propriété ajoutée aux favoris",
+    "removedToast": "Propriété retirée des sauvegardes",
+    "saveError": "Impossible de mettre à jour la propriété sauvegardée",
+    "noMatchesDesc": "Aucune propriété sauvegardée ne correspond à ces filtres.",
+    "emptyTitle": "Vous n'avez encore sauvegardé aucune propriété",
+    "emptyDesc": "Touchez le cœur d'une propriété pour la sauvegarder ici.",
+    "emptyCtaBuy": "Voir les biens à vendre",
+    "emptyCtaRent": "Voir les locations"
   }
 }

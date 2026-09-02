@@ -14,6 +14,7 @@ import {
   getRentalProperties,
   type RentalFilters,
 } from "../../lib/rentals";
+import { getSavedPropertyIds } from "../../lib/saved-properties";
 
 const PAGE_SIZE = 8;
 
@@ -48,10 +49,11 @@ export default async function Rent({
     (value) => value !== undefined && value !== ""
   );
 
-  const [featuredRentals, { data: rentals, count }, facets] = await Promise.all([
+  const [featuredRentals, { data: rentals, count }, facets, savedIds] = await Promise.all([
     getFeaturedRentals(),
     getRentalProperties(currentPage, PAGE_SIZE, filters),
     getRentalFacets(),
+    getSavedPropertyIds(),
   ]);
 
   const totalPages = Math.ceil(count / PAGE_SIZE);
@@ -92,7 +94,11 @@ export default async function Rent({
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {featuredRentals.map((property) => (
-                <FeaturedPropertyCard key={property.id} property={property} />
+                <FeaturedPropertyCard
+                  key={property.id}
+                  property={property}
+                  initialSaved={savedIds.has(property.id)}
+                />
               ))}
             </div>
           </section>
@@ -117,7 +123,11 @@ export default async function Rent({
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {rentals.map((property) => (
-                <PropertyCard key={property.id} property={property} />
+                <PropertyCard
+                  key={property.id}
+                  property={property}
+                  initialSaved={savedIds.has(property.id)}
+                />
               ))}
             </div>
           )}

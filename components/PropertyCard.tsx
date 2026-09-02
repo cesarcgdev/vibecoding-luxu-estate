@@ -11,13 +11,21 @@ import {
   rentalKindLabel,
   splitPriceDisplay,
 } from "@/lib/rental-kinds";
+import SaveButton from "./SaveButton";
 
 interface Props {
   property: Property;
   className?: string;
+  initialSaved?: boolean;
+  onUnsaved?: () => void;
 }
 
-export default function PropertyCard({ property, className = "" }: Props) {
+export default function PropertyCard({
+  property,
+  className = "",
+  initialSaved = false,
+  onUnsaved,
+}: Props) {
   const { dictionary } = useLanguage();
   const isRental = property.listing_type === "rent";
 
@@ -76,9 +84,12 @@ export default function PropertyCard({ property, className = "" }: Props) {
           unoptimized
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
         />
-        <button className="absolute top-3 right-3 p-2 bg-white/90 dark:bg-nordic-dark/70 rounded-full hover:bg-mosque dark:hover:bg-hint-green hover:text-white dark:hover:text-nordic-dark transition-colors text-nordic-dark dark:text-white z-10">
-          <span className="material-icons text-lg">favorite_border</span>
-        </button>
+        <SaveButton
+          propertyId={property.id}
+          initialSaved={initialSaved}
+          onUnsaved={onUnsaved}
+          className="absolute top-3 right-3 p-2 bg-white/90 dark:bg-nordic-dark/70 rounded-full hover:bg-mosque dark:hover:bg-hint-green hover:text-white dark:hover:text-nordic-dark transition-colors text-nordic-dark dark:text-white z-10"
+        />
 
         {/* Operation first, modality second — what it is, then what kind */}
         <div className="absolute bottom-3 left-3 flex flex-wrap items-center gap-1.5">

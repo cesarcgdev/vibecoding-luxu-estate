@@ -2,7 +2,6 @@
   "navbar": {
     "buy": "Comprar",
     "rent": "Alquilar",
-    "sell": "Vender",
     "savedHomes": "Guardados",
     "login": "Iniciar Sesión",
     "logout": "Cerrar Sesión"
@@ -164,5 +163,32 @@
     "loadingContact": "Cargando…",
     "contactError": "No se pudo cargar el contacto.",
     "noLandlord": "Sin casero asignado"
+  },
+  "auth": {
+    "modalTitle": "Inicia sesión para guardar propiedades",
+    "modalSubtitle": "Crea una cuenta o inicia sesión para guardar tus propiedades favoritas.",
+    "continueWithGoogle": "Continuar con Google",
+    "continueWithGithub": "Continuar con GitHub"
+  },
+  "saved": {
+    "title": "Propiedades guardadas",
+    "desc": "Tus propiedades favoritas en un solo lugar.",
+    "resultsCount": "{count} guardadas",
+    "searchPlaceholder": "Buscar en tus guardados...",
+    "filterAll": "Todas",
+    "filterBuy": "Comprar",
+    "filterRent": "Alquilar",
+    "moreFilters": "Más filtros",
+    "loggedOutTitle": "Inicia sesión para ver tus guardados",
+    "loggedOutDesc": "Guarda tus propiedades favoritas y encuéntralas aquí cuando quieras.",
+    "loggedOutCta": "Iniciar sesión",
+    "savedToast": "Propiedad guardada en favoritos",
+    "removedToast": "Propiedad eliminada de guardados",
+    "saveError": "No se pudo actualizar la propiedad guardada",
+    "noMatchesDesc": "Ninguna propiedad guardada coincide con estos filtros.",
+    "emptyTitle": "Aún no has guardado ninguna propiedad",
+    "emptyDesc": "Pulsa el corazón de cualquier propiedad para guardarla aquí.",
+    "emptyCtaBuy": "Explorar en venta",
+    "emptyCtaRent": "Explorar en alquiler"
   }
 }
