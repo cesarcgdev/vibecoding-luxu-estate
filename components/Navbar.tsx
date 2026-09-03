@@ -6,10 +6,12 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import LanguageSelector from "./LanguageSelector";
+import CurrencySelector from "./CurrencySelector";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { createClient } from "@/lib/supabase/client";
 import { FOCUS_SEARCH_EVENT } from "@/lib/search-filters";
 import { describeSupabaseError } from "@/lib/supabase-errors";
+import NotificationBell from "./NotificationBell";
 
 export default function Navbar() {
   const { dictionary } = useLanguage();
@@ -122,7 +124,8 @@ export default function Navbar() {
           </div>
           <div className="flex items-center space-x-4 sm:space-x-6">
             <LanguageSelector />
-            
+            <CurrencySelector />
+
             {/* Theme Toggle Button */}
             {mounted && (
               <button
@@ -145,11 +148,8 @@ export default function Navbar() {
             >
               <span className="material-icons">search</span>
             </Link>
-            <button className="text-nordic-dark dark:text-gray-300 hover:text-mosque dark:hover:text-white transition-colors relative">
-              <span className="material-icons">notifications_none</span>
-              <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border-2 border-background-light dark:border-background-dark"></span>
-            </button>
-            
+            {userAvatar && <NotificationBell />}
+
             {loading ? (
               <div className="w-9 h-9 ml-2 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse border-l border-nordic-dark/10 dark:border-white/10 pl-2"></div>
             ) : userAvatar ? (

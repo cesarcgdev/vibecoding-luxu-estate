@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import { cookies } from "next/headers";
 import { getDictionary, defaultLocale } from "@/lib/i18n/dictionaries";
 import { LanguageProvider } from "@/lib/i18n/LanguageContext";
+import { defaultCurrency, type Currency } from "@/lib/currency/currency";
+import { CurrencyProvider } from "@/lib/currency/CurrencyContext";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import AuthGateModal from "@/components/AuthGateModal";
 import ToastHost from "@/components/ToastHost";
@@ -27,6 +29,8 @@ export default async function RootLayout({
   const cookieStore = await cookies();
   const locale = cookieStore.get("NEXT_LOCALE")?.value || defaultLocale;
   const dictionary = await getDictionary(locale);
+  const currency =
+    (cookieStore.get("NEXT_CURRENCY")?.value as Currency | undefined) || defaultCurrency;
 
   return (
     <html
@@ -46,9 +50,11 @@ export default async function RootLayout({
           disableTransitionOnChange={false}
         >
           <LanguageProvider initialLocale={locale} dictionary={dictionary}>
-            {children}
-            <AuthGateModal />
-            <ToastHost />
+            <CurrencyProvider initialCurrency={currency}>
+              {children}
+              <AuthGateModal />
+              <ToastHost />
+            </CurrencyProvider>
           </LanguageProvider>
         </ThemeProvider>
       </body>

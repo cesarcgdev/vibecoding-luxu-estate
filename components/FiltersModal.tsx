@@ -3,6 +3,8 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useCurrency } from "@/lib/currency/CurrencyContext";
+import { formatCurrency } from "@/lib/currency/currency";
 import type { FilterVariant } from "@/lib/search-filters";
 
 interface FiltersModalProps {
@@ -29,26 +31,23 @@ const PRICE_BOUNDS: Record<FilterVariant, { max: number; step: number }> = {
   rent: { max: 15000, step: 50 },
 };
 
-function formatPrice(value: number, variant: FilterVariant): string {
-  // Abbreviating a rent would drop the digits a tenant is comparing
-  if (variant === "rent") return `$${value.toLocaleString()}`;
-  if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
-  if (value >= 1000) return `$${(value / 1000).toFixed(0)}K`;
-  return `$${value}`;
-}
-
 export default function FiltersModal({
   isOpen,
   onClose,
   variant = "sale",
 }: FiltersModalProps) {
-  const { dictionary } = useLanguage();
+  const { dictionary, locale } = useLanguage();
+  const { currency } = useCurrency();
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
   const isRent = variant === "rent";
   const { max: maxPrice, step: priceStep } = PRICE_BOUNDS[variant];
+
+  // Abbreviating a rent would drop the digits a tenant is comparing
+  const formatPrice = (value: number) =>
+    formatCurrency(value, currency, locale, isRent ? "full" : "abbreviated")!;
 
   const initMin = parseInt(searchParams.get("minPrice") || "0", 10) || MIN_PRICE;
   const initMax = parseInt(searchParams.get("maxPrice") || "0", 10) || maxPrice;
@@ -214,7 +213,7 @@ export default function FiltersModal({
                 {dictionary.filters?.priceRange || "Price Range"}
               </label>
               <span className="text-sm font-semibold text-mosque dark:text-hint-green transition-colors">
-                {formatPrice(rangeMin, variant)} – {formatPrice(rangeMax, variant)}
+                {formatPrice(rangeMin)} – {formatPrice(rangeMax)}
                 {isRent && dictionary.rent.perMonth}
               </span>
             </div>

@@ -11,6 +11,8 @@ import {
   type PropertyFormData,
 } from "@/app/actions/properties";
 import LocationPicker from "./LocationPicker";
+import { useCurrency } from "@/lib/currency/CurrencyContext";
+import { formatCurrency } from "@/lib/currency/currency";
 import {
   coordinateToInput,
   isValidLatitude,
@@ -163,6 +165,7 @@ export default function PropertyForm({
 }: PropertyFormProps) {
   const isEdit = Boolean(property?.id);
   const router = useRouter();
+  const { currency } = useCurrency();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -500,6 +503,13 @@ export default function PropertyForm({
                     min={0}
                   />
                 </div>
+                {/* Stored price is always USD — this is a read-only preview,
+                    it never changes what gets submitted */}
+                {currency === "EUR" && priceValue !== "" && (
+                  <p className="mt-1.5 text-xs text-gray-400 font-sf-pro">
+                    ≈ {formatCurrency(Number(priceValue), "EUR", "en", "full")}
+                  </p>
+                )}
               </div>
 
               <div>

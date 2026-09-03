@@ -5,10 +5,12 @@ import MapWrapper from "../../../components/MapWrapper";
 import LandlordCard from "../../../components/LandlordCard";
 import RentalConditions from "../../../components/RentalConditions";
 import SaveButton from "../../../components/SaveButton";
+import PropertyAbout from "../../../components/PropertyAbout";
 import { getPropertyBySlug } from "../../../lib/properties";
 import { getLandlord } from "../../../lib/landlords";
 import { getSavedPropertyIds } from "../../../lib/saved-properties";
 import {
+  pricePeriodSuffix,
   rentalKindIcon,
   rentalKindLabel,
   splitPriceDisplay,
@@ -16,6 +18,7 @@ import {
 import { supabase } from "../../../lib/supabase";
 import { cookies } from "next/headers";
 import { getDictionary, defaultLocale } from "../../../lib/i18n/dictionaries";
+import { defaultCurrency, formatCurrency, type Currency } from "../../../lib/currency/currency";
 
 export const revalidate = 60; // ISR
 
@@ -38,6 +41,8 @@ export default async function PropertyDetails({
   const cookieStore = await cookies();
   const locale = cookieStore.get("NEXT_LOCALE")?.value || defaultLocale;
   const dictionary = await getDictionary(locale);
+  const currency =
+    (cookieStore.get("NEXT_CURRENCY")?.value as Currency | undefined) || defaultCurrency;
 
   const { slug } = await params;
   const property = await getPropertyBySlug(slug);
@@ -56,11 +61,13 @@ export default async function PropertyDetails({
     getSavedPropertyIds(),
   ]);
 
-  const { amount: priceAmount, unit: priceUnit } = splitPriceDisplay(
-    property.price_display,
-    isRental ? property.price_period : null,
-    dictionary
-  );
+  const priceAmount =
+    formatCurrency(property.price_value, currency, locale, "full") ??
+    splitPriceDisplay(property.price_display, null, dictionary).amount;
+  const priceUnit =
+    isRental && property.price_period
+      ? pricePeriodSuffix(property.price_period, dictionary)
+      : null;
 
   return (
     <>
@@ -106,7 +113,10 @@ export default async function PropertyDetails({
                       iconHoverClassName="group-hover:text-mosque"
                     />
                   </div>
-                  <h1
+                  <h1 className="text-2xl font-display font-semibold text-nordic-dark mb-1">
+                    {property.title}
+                  </h1>
+                  <p
                     className={`text-4xl font-display font-light mb-2 ${
                       isRental ? "text-mosque" : "text-nordic-dark"
                     }`}
@@ -115,7 +125,7 @@ export default async function PropertyDetails({
                     {priceUnit && (
                       <span className="text-xl text-nordic-muted ml-1">{priceUnit}</span>
                     )}
-                  </h1>
+                  </p>
                   <p className="text-nordic-muted font-medium flex items-center gap-1">
                     <span className="material-icons text-mosque text-sm">location_on</span>
                     {property.location}
@@ -201,23 +211,7 @@ export default async function PropertyDetails({
               </div>
             </div>
 
-            <div className="bg-white p-8 rounded-xl shadow-sm border border-mosque/5">
-              <h2 className="text-lg font-semibold mb-4 text-nordic-dark">{dictionary.property.about}</h2>
-              <div className="prose prose-slate max-w-none text-nordic-muted leading-relaxed">
-                <p className="mb-4">
-                  {dictionary.property.aboutDesc.replace("{title}", property.title).replace("{location}", property.location)}
-                </p>
-                {/* This used to interpolate listing_type, so a rental read
-                    "this rent offers spacious interiors" */}
-                <p>
-                  {dictionary.property.aboutDesc2.replace("{type}", property.property_type?.toLowerCase() || dictionary.property.home)}
-                </p>
-              </div>
-              <button className="mt-4 text-mosque font-semibold text-sm flex items-center gap-1 hover:gap-2 transition-all">
-                {dictionary.property.readMore}
-                <span className="material-icons text-sm">arrow_forward</span>
-              </button>
-            </div>
+            <PropertyAbout property={property} dictionary={dictionary} />
 
             {/* A mortgage estimate means nothing on a let; the move-in cost is
                 the equivalent decision for a tenant */}
@@ -226,6 +220,7 @@ export default async function PropertyDetails({
                 property={property}
                 dictionary={dictionary}
                 locale={locale}
+                currency={currency}
               />
             ) : (
               <div className="bg-mosque/5 p-6 rounded-xl border border-mosque/10 flex flex-col sm:flex-row items-center justify-between gap-6">
@@ -235,7 +230,7 @@ export default async function PropertyDetails({
                   </div>
                   <div>
                     <h3 className="font-semibold text-nordic-dark">{dictionary.property.estimatedPayment}</h3>
-                    <p className="text-sm text-nordic-muted">{dictionary.property.startingFrom} <strong className="text-mosque">{property.price_display}</strong></p>
+                    <p className="text-sm text-nordic-muted">{dictionary.property.startingFrom} <strong className="text-mosque">{priceAmount}</strong></p>
                   </div>
                 </div>
                 <button className="whitespace-nowrap px-4 py-2 bg-white border border-nordic-dark/10 rounded-lg text-sm font-semibold hover:border-mosque transition-colors text-nordic-dark">

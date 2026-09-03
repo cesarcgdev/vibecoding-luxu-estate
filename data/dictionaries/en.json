@@ -35,7 +35,10 @@
     "about": "About this home",
     "aboutDesc": "{title} is an exceptional property located in {location}. It perfectly balances modern luxury with comfort, offering an unparalleled living experience.",
     "aboutDesc2": "Ideal for those seeking an exclusive lifestyle, this {type} offers spacious interiors and premium finishes throughout.",
+    "aboutDesc3": "Located in one of {location}'s most sought-after areas, the property offers easy access to schools, public transport, and top-rated shops.",
+    "aboutDesc4": "With {beds} bedrooms, {baths} bathrooms, and {area} of living space, every corner has been designed to maximize natural light and everyday comfort.",
     "readMore": "Read more",
+    "readLess": "Read less",
     "agent": "Real Estate Agent",
     "topAgent": "Top Rated Agent",
     "schedule": "Schedule Visit",
@@ -190,5 +193,16 @@
     "emptyDesc": "Tap the heart on any property to save it here.",
     "emptyCtaBuy": "Browse properties for sale",
     "emptyCtaRent": "Browse rentals"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "No notifications yet",
+    "clearAll": "Clear all",
+    "delete": "Delete notification",
+    "priceUp": "The price of {title} went up: {old} → {new}",
+    "priceDown": "The price of {title} dropped: {old} → {new}",
+    "priceChanged": "The price of {title} changed: {old} → {new}",
+    "removed": "{title} is no longer available",
+    "availableAgain": "{title} is available again"
   }
 }

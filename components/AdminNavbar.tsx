@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
+import CurrencySelector from "./CurrencySelector";
 
 export default function AdminNavbar() {
   const pathname = usePathname();
@@ -75,6 +76,7 @@ export default function AdminNavbar() {
 
           {/* Admin Profile & Logout */}
           <div className="flex items-center gap-4">
+            <CurrencySelector />
             <div className="relative" ref={popoverRef}>
               <button 
                 onClick={() => setIsPopoverOpen(!isPopoverOpen)}

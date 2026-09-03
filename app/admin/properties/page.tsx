@@ -5,6 +5,8 @@ import DeletePropertyButton from "@/components/admin/DeletePropertyButton";
 import PropertyVisibilityButton from "@/components/admin/PropertyVisibilityButton";
 import PropertyAdminSearch from "@/components/admin/PropertyAdminSearch";
 import { normalize } from "@/lib/search-filters";
+import { defaultCurrency, formatCurrency, type Currency } from "@/lib/currency/currency";
+import { cookies } from "next/headers";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +21,10 @@ export default async function AdminPropertiesPage({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
+  const cookieStore = await cookies();
+  const currency =
+    (cookieStore.get("NEXT_CURRENCY")?.value as Currency | undefined) || defaultCurrency;
+
   const resolvedParams = await searchParams;
   const requestedPage = parseInt(resolvedParams.page as string, 10);
   const tab = resolvedParams.tab === "hidden" ? "hidden" : "active";
@@ -219,7 +225,8 @@ export default async function AdminPropertiesPage({
               {/* Price */}
               <div className="col-span-6 md:col-span-2">
                 <div className="text-base font-semibold text-nordic dark:text-gray-200">
-                  {property.price_display}
+                  {formatCurrency(property.price_value, currency, "en", "full") ??
+                    property.price_display}
                 </div>
                 <div className="text-xs text-gray-400">
                   Created:{" "}

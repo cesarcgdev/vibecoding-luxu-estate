@@ -35,7 +35,10 @@
     "about": "Acerca de esta casa",
     "aboutDesc": "{title} es una propiedad excepcional ubicada en {location}. Equilibra perfectamente el lujo moderno con la comodidad, ofreciendo una experiencia de vida incomparable.",
     "aboutDesc2": "Ideal para quienes buscan un estilo de vida exclusivo, este {type} ofrece interiores espaciosos y acabados de primera calidad.",
+    "aboutDesc3": "Ubicada en una de las zonas más solicitadas de {location}, la propiedad ofrece fácil acceso a colegios, transporte público y comercios de referencia.",
+    "aboutDesc4": "Con {beds} habitaciones, {baths} baños y {area} de superficie, cada rincón ha sido pensado para maximizar la luz natural y el confort diario.",
     "readMore": "Leer más",
+    "readLess": "Leer menos",
     "agent": "Agente Inmobiliario",
     "topAgent": "Agente Mejor Valorado",
     "schedule": "Programar Visita",
@@ -190,5 +193,16 @@
     "emptyDesc": "Pulsa el corazón de cualquier propiedad para guardarla aquí.",
     "emptyCtaBuy": "Explorar en venta",
     "emptyCtaRent": "Explorar en alquiler"
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "empty": "No tienes notificaciones",
+    "clearAll": "Borrar todas",
+    "delete": "Borrar notificación",
+    "priceUp": "El precio de {title} ha subido: {old} → {new}",
+    "priceDown": "El precio de {title} ha bajado: {old} → {new}",
+    "priceChanged": "El precio de {title} ha cambiado: {old} → {new}",
+    "removed": "{title} ya no está disponible",
+    "availableAgain": "{title} ha vuelto a estar disponible"
   }
 }

@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useCurrency } from "@/lib/currency/CurrencyContext";
 import {
   buildActiveFilters,
   facetIcon,
@@ -94,7 +95,8 @@ export default function SearchBar({
   /** Decides how price chips are formatted — rents are not abbreviated */
   variant?: FilterVariant;
 }) {
-  const { dictionary } = useLanguage();
+  const { dictionary, locale } = useLanguage();
+  const { currency } = useCurrency();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -149,9 +151,11 @@ export default function SearchBar({
       buildActiveFilters(
         new URLSearchParams(searchParams.toString()),
         dictionary,
-        variant
+        variant,
+        currency,
+        locale
       ),
-    [searchParams, dictionary, variant]
+    [searchParams, dictionary, variant, currency, locale]
   );
 
   const groups = useMemo<OptionGroup[]>(() => {

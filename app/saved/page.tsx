@@ -9,7 +9,7 @@ import { getDictionary, defaultLocale } from "../../lib/i18n/dictionaries";
 import { getSavedProperties, type SavedPropertyFilters } from "../../lib/saved-properties";
 import { createClient } from "../../lib/supabase/server";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 12;
 
 export default async function SavedPage({
   searchParams,

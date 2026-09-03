@@ -5,8 +5,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { Property } from "../lib/properties";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useCurrency } from "@/lib/currency/CurrencyContext";
+import { formatCurrency } from "@/lib/currency/currency";
 import {
   isSpaceOnly,
+  pricePeriodSuffix,
   rentalKindIcon,
   rentalKindLabel,
   splitPriceDisplay,
@@ -24,7 +27,8 @@ export default function FeaturedPropertyCard({
   initialSaved = false,
   onUnsaved,
 }: Props) {
-  const { dictionary } = useLanguage();
+  const { dictionary, locale } = useLanguage();
+  const { currency } = useCurrency();
   const isRental = property.listing_type === "rent";
 
   // Same accent system as PropertyCard, so a rental reads the same either way
@@ -46,11 +50,13 @@ export default function FeaturedPropertyCard({
         ? { label: dictionary.tags[property.tag], icon: "star" }
         : null;
 
-  const { amount, unit } = splitPriceDisplay(
-    property.price_display,
-    isRental ? property.price_period : null,
-    dictionary
-  );
+  const amount =
+    formatCurrency(property.price_value, currency, locale, "full") ??
+    splitPriceDisplay(property.price_display, null, dictionary).amount;
+  const unit =
+    isRental && property.price_period
+      ? pricePeriodSuffix(property.price_period, dictionary)
+      : null;
 
   const hidesRooms = isRental && isSpaceOnly(property.rental_kind);
 

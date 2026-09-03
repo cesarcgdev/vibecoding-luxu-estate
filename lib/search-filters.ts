@@ -1,5 +1,6 @@
-import type { Dictionary } from "./i18n/dictionaries";
+import type { Dictionary, Locale } from "./i18n/dictionaries";
 import { rentalKindIcon, rentalKindLabel } from "./rental-kinds";
+import { formatCurrency, type Currency } from "./currency/currency";
 
 /**
  * The categories a search suggestion can belong to.
@@ -64,11 +65,13 @@ export type FilterVariant = "sale" | "rent";
  * Sale prices are abbreviated because they run to seven figures. Rents do not:
  * rounding 1,200 to "$1K" loses the only digits a tenant is comparing.
  */
-function formatPrice(value: number, variant: FilterVariant): string {
-  if (variant === "rent") return `$${value.toLocaleString()}`;
-  if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
-  if (value >= 1000) return `$${(value / 1000).toFixed(0)}K`;
-  return `$${value}`;
+function formatPrice(
+  value: number,
+  variant: FilterVariant,
+  currency: Currency,
+  locale: Locale | string
+): string {
+  return formatCurrency(value, currency, locale, variant === "rent" ? "full" : "abbreviated")!;
 }
 
 /** Translates a facet for display — zone names are place names and stay as-is */
@@ -123,7 +126,9 @@ export interface ActiveFilter {
 export function buildActiveFilters(
   searchParams: URLSearchParams,
   dictionary: Dictionary,
-  variant: FilterVariant = "sale"
+  variant: FilterVariant = "sale",
+  currency: Currency = "USD",
+  locale: Locale | string = "en"
 ): ActiveFilter[] {
   const filters: ActiveFilter[] = [];
 
@@ -232,11 +237,11 @@ export function buildActiveFilters(
   if (!isNaN(minPrice) || !isNaN(maxPrice)) {
     let range: string;
     if (!isNaN(minPrice) && !isNaN(maxPrice)) {
-      range = `${formatPrice(minPrice, variant)} – ${formatPrice(maxPrice, variant)}`;
+      range = `${formatPrice(minPrice, variant, currency, locale)} – ${formatPrice(maxPrice, variant, currency, locale)}`;
     } else if (!isNaN(minPrice)) {
-      range = `${formatPrice(minPrice, variant)}+`;
+      range = `${formatPrice(minPrice, variant, currency, locale)}+`;
     } else {
-      range = `≤ ${formatPrice(maxPrice, variant)}`;
+      range = `≤ ${formatPrice(maxPrice, variant, currency, locale)}`;
     }
     // A rent range is per month; a sale price is not
     if (variant === "rent") range += dictionary.rent.perMonth;

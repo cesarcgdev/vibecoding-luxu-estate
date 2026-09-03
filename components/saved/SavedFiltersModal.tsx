@@ -3,6 +3,8 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useCurrency } from "@/lib/currency/CurrencyContext";
+import { formatCurrency } from "@/lib/currency/currency";
 
 interface Props {
   isOpen: boolean;
@@ -19,24 +21,22 @@ const PRICE_BOUNDS: Record<"sale" | "rent", { max: number; step: number }> = {
   rent: { max: 15000, step: 50 },
 };
 
-function formatPrice(value: number, isRent: boolean): string {
-  if (isRent) return `$${value.toLocaleString()}`;
-  if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
-  if (value >= 1000) return `$${(value / 1000).toFixed(0)}K`;
-  return `$${value}`;
-}
-
 /** A trimmed FiltersModal for /saved: price range + beds/baths only — no
  * location/property-type/amenities, and no rent-only fields, since the list
  * mixes sale and rental properties together. */
 export default function SavedFiltersModal({ isOpen, onClose, operation }: Props) {
-  const { dictionary } = useLanguage();
+  const { dictionary, locale } = useLanguage();
+  const { currency } = useCurrency();
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
   const isRent = operation === "rent";
   const { max: maxPrice, step: priceStep } = PRICE_BOUNDS[isRent ? "rent" : "sale"];
+
+  // Abbreviating a rent would drop the digits a tenant is comparing
+  const formatPrice = (value: number) =>
+    formatCurrency(value, currency, locale, isRent ? "full" : "abbreviated")!;
 
   const initMin = parseInt(searchParams.get("minPrice") || "0", 10) || MIN_PRICE;
   const initMax = parseInt(searchParams.get("maxPrice") || "0", 10) || maxPrice;
@@ -167,7 +167,7 @@ export default function SavedFiltersModal({ isOpen, onClose, operation }: Props)
                 {dictionary.filters.priceRange}
               </label>
               <span className="text-sm font-semibold text-mosque dark:text-hint-green transition-colors">
-                {formatPrice(rangeMin, isRent)} – {formatPrice(rangeMax, isRent)}
+                {formatPrice(rangeMin)} – {formatPrice(rangeMax)}
                 {isRent && dictionary.rent.perMonth}
               </span>
             </div>
