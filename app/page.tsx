@@ -11,6 +11,7 @@ import { cookies } from "next/headers";
 import { getDictionary, defaultLocale } from "../lib/i18n/dictionaries";
 import { getFeaturedProperties, getMarketProperties } from "../lib/properties";
 import { getSearchFacets } from "../lib/search-facets";
+import { getSavedPropertyIds } from "../lib/saved-properties";
 
 const PAGE_SIZE = 8;
 
@@ -37,11 +38,12 @@ export default async function Home({
   };
   const isSearchActive = Object.values(filters).some(val => val !== undefined && val !== "");
 
-  const [featuredProperties, { data: marketProperties, count }, facets] =
+  const [featuredProperties, { data: marketProperties, count }, facets, savedIds] =
     await Promise.all([
       getFeaturedProperties(),
       getMarketProperties(currentPage, PAGE_SIZE, filters),
       getSearchFacets(),
+      getSavedPropertyIds(),
     ]);
 
   const totalPages = Math.ceil(count / PAGE_SIZE);
@@ -85,7 +87,11 @@ export default async function Home({
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {featuredProperties.map((property) => (
-                <FeaturedPropertyCard key={property.id} property={property} />
+                <FeaturedPropertyCard
+                  key={property.id}
+                  property={property}
+                  initialSaved={savedIds.has(property.id)}
+                />
               ))}
             </div>
           </section>
@@ -121,7 +127,11 @@ export default async function Home({
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {marketProperties.map((property) => (
-                <PropertyCard key={property.id} property={property} />
+                <PropertyCard
+                  key={property.id}
+                  property={property}
+                  initialSaved={savedIds.has(property.id)}
+                />
               ))}
             </div>
           )}

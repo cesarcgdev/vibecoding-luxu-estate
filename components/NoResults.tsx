@@ -3,6 +3,7 @@
 import React from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useCurrency } from "@/lib/currency/CurrencyContext";
 import { buildActiveFilters, type FilterVariant } from "@/lib/search-filters";
 
 /** Shown instead of the property grid when no listing matches the active filters */
@@ -11,7 +12,8 @@ export default function NoResults({
 }: {
   variant?: FilterVariant;
 }) {
-  const { dictionary } = useLanguage();
+  const { dictionary, locale } = useLanguage();
+  const { currency } = useCurrency();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -19,7 +21,9 @@ export default function NoResults({
   const activeFilters = buildActiveFilters(
     new URLSearchParams(searchParams.toString()),
     dictionary,
-    variant
+    variant,
+    currency,
+    locale
   );
 
   const clearLast = () => {

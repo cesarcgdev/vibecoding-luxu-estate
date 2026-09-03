@@ -5,20 +5,32 @@ import Image from "next/image";
 import Link from "next/link";
 import { Property } from "../lib/properties";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useCurrency } from "@/lib/currency/CurrencyContext";
+import { formatCurrency } from "@/lib/currency/currency";
 import {
   isSpaceOnly,
+  pricePeriodSuffix,
   rentalKindIcon,
   rentalKindLabel,
   splitPriceDisplay,
 } from "@/lib/rental-kinds";
+import SaveButton from "./SaveButton";
 
 interface Props {
   property: Property;
   className?: string;
+  initialSaved?: boolean;
+  onUnsaved?: () => void;
 }
 
-export default function PropertyCard({ property, className = "" }: Props) {
-  const { dictionary } = useLanguage();
+export default function PropertyCard({
+  property,
+  className = "",
+  initialSaved = false,
+  onUnsaved,
+}: Props) {
+  const { dictionary, locale } = useLanguage();
+  const { currency } = useCurrency();
   const isRental = property.listing_type === "rent";
 
   /**
@@ -53,11 +65,13 @@ export default function PropertyCard({ property, className = "" }: Props) {
         ? { label: dictionary.tags[property.tag], icon: "star" }
         : null;
 
-  const { amount, unit } = splitPriceDisplay(
-    property.price_display,
-    isRental ? property.price_period : null,
-    dictionary
-  );
+  const amount =
+    formatCurrency(property.price_value, currency, locale, "full") ??
+    splitPriceDisplay(property.price_display, null, dictionary).amount;
+  const unit =
+    isRental && property.price_period
+      ? pricePeriodSuffix(property.price_period, dictionary)
+      : null;
 
   // A lock-up or a shop has no bedrooms to count
   const hidesRooms = isRental && isSpaceOnly(property.rental_kind);
@@ -76,9 +90,12 @@ export default function PropertyCard({ property, className = "" }: Props) {
           unoptimized
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
         />
-        <button className="absolute top-3 right-3 p-2 bg-white/90 dark:bg-nordic-dark/70 rounded-full hover:bg-mosque dark:hover:bg-hint-green hover:text-white dark:hover:text-nordic-dark transition-colors text-nordic-dark dark:text-white z-10">
-          <span className="material-icons text-lg">favorite_border</span>
-        </button>
+        <SaveButton
+          propertyId={property.id}
+          initialSaved={initialSaved}
+          onUnsaved={onUnsaved}
+          className="absolute top-3 right-3 p-2 bg-white/90 dark:bg-nordic-dark/70 rounded-full hover:bg-mosque dark:hover:bg-hint-green hover:text-white dark:hover:text-nordic-dark transition-colors text-nordic-dark dark:text-white z-10"
+        />
 
         {/* Operation first, modality second — what it is, then what kind */}
         <div className="absolute bottom-3 left-3 flex flex-wrap items-center gap-1.5">

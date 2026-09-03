@@ -5,19 +5,30 @@ import Image from "next/image";
 import Link from "next/link";
 import { Property } from "../lib/properties";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useCurrency } from "@/lib/currency/CurrencyContext";
+import { formatCurrency } from "@/lib/currency/currency";
 import {
   isSpaceOnly,
+  pricePeriodSuffix,
   rentalKindIcon,
   rentalKindLabel,
   splitPriceDisplay,
 } from "@/lib/rental-kinds";
+import SaveButton from "./SaveButton";
 
 interface Props {
   property: Property;
+  initialSaved?: boolean;
+  onUnsaved?: () => void;
 }
 
-export default function FeaturedPropertyCard({ property }: Props) {
-  const { dictionary } = useLanguage();
+export default function FeaturedPropertyCard({
+  property,
+  initialSaved = false,
+  onUnsaved,
+}: Props) {
+  const { dictionary, locale } = useLanguage();
+  const { currency } = useCurrency();
   const isRental = property.listing_type === "rent";
 
   // Same accent system as PropertyCard, so a rental reads the same either way
@@ -39,11 +50,13 @@ export default function FeaturedPropertyCard({ property }: Props) {
         ? { label: dictionary.tags[property.tag], icon: "star" }
         : null;
 
-  const { amount, unit } = splitPriceDisplay(
-    property.price_display,
-    isRental ? property.price_period : null,
-    dictionary
-  );
+  const amount =
+    formatCurrency(property.price_value, currency, locale, "full") ??
+    splitPriceDisplay(property.price_display, null, dictionary).amount;
+  const unit =
+    isRental && property.price_period
+      ? pricePeriodSuffix(property.price_period, dictionary)
+      : null;
 
   const hidesRooms = isRental && isSpaceOnly(property.rental_kind);
 
@@ -71,9 +84,13 @@ export default function FeaturedPropertyCard({ property }: Props) {
             </span>
           )}
         </div>
-        <button className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/90 dark:bg-[#1a3833]/90 backdrop-blur-sm flex items-center justify-center text-nordic-dark dark:text-white hover:bg-mosque dark:hover:bg-hint-green hover:text-white dark:hover:text-nordic-dark transition-all z-10">
-          <span className="material-icons text-xl">favorite_border</span>
-        </button>
+        <SaveButton
+          propertyId={property.id}
+          initialSaved={initialSaved}
+          onUnsaved={onUnsaved}
+          className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/90 dark:bg-[#1a3833]/90 backdrop-blur-sm flex items-center justify-center text-nordic-dark dark:text-white hover:bg-mosque dark:hover:bg-hint-green hover:text-white dark:hover:text-nordic-dark transition-all z-10"
+          iconClassName="text-xl"
+        />
         <div className="absolute bottom-0 inset-x-0 h-1/2 bg-gradient-to-t from-black/60 dark:from-[#0f231f]/80 to-transparent opacity-60"></div>
       </div>
       <div className="p-6 relative">

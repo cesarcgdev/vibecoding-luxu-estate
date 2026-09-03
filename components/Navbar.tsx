@@ -6,10 +6,12 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import LanguageSelector from "./LanguageSelector";
+import CurrencySelector from "./CurrencySelector";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { createClient } from "@/lib/supabase/client";
 import { FOCUS_SEARCH_EVENT } from "@/lib/search-filters";
 import { describeSupabaseError } from "@/lib/supabase-errors";
+import NotificationBell from "./NotificationBell";
 
 export default function Navbar() {
   const { dictionary } = useLanguage();
@@ -78,26 +80,20 @@ export default function Navbar() {
     window.dispatchEvent(new Event(FOCUS_SEARCH_EVENT));
   };
 
-  /**
-   * The sections, in order. Buy and Rent are real pages; Sell and Saved are
-   * not built yet and stay inert rather than pretending to navigate.
-   */
   const sections = [
     { href: "/", label: dictionary.navbar.buy },
     { href: "/rent", label: dictionary.navbar.rent },
-    { href: null, label: dictionary.navbar.sell },
-    { href: null, label: dictionary.navbar.savedHomes },
+    { href: "/saved", label: dictionary.navbar.savedHomes },
   ];
 
-  // Which tab is current was hardcoded to "Buy", so /rent still underlined it
-  const isCurrent = (href: string | null) => href !== null && pathname === href;
+  const isCurrent = (href: string) => pathname === href;
 
-  const desktopLinkClass = (href: string | null) =>
+  const desktopLinkClass = (href: string) =>
     isCurrent(href)
       ? "text-mosque dark:text-hint-green font-medium text-sm border-b-2 border-mosque dark:border-hint-green px-1 py-1 transition-colors"
       : "text-nordic-dark/70 dark:text-gray-400 hover:text-nordic-dark dark:hover:text-white font-medium text-sm hover:border-b-2 hover:border-nordic-dark/20 dark:hover:border-white/20 px-1 py-1 transition-all";
 
-  const mobileLinkClass = (href: string | null) =>
+  const mobileLinkClass = (href: string) =>
     isCurrent(href)
       ? "block px-3 py-2 rounded-md text-base font-medium text-mosque dark:text-hint-green bg-mosque/10 dark:bg-hint-green/10"
       : "block px-3 py-2 rounded-md text-base font-medium text-nordic-dark dark:text-gray-200 hover:bg-black/5 dark:hover:bg-white/5";
@@ -115,29 +111,21 @@ export default function Navbar() {
             </span>
           </Link>
           <div className="hidden md:flex items-center space-x-8">
-            {sections.map((section) =>
-              section.href ? (
-                <Link
-                  key={section.label}
-                  className={desktopLinkClass(section.href)}
-                  href={section.href}
-                  aria-current={isCurrent(section.href) ? "page" : undefined}
-                >
-                  {section.label}
-                </Link>
-              ) : (
-                <span
-                  key={section.label}
-                  className="text-nordic-dark/30 dark:text-gray-600 font-medium text-sm px-1 py-1 cursor-default"
-                >
-                  {section.label}
-                </span>
-              )
-            )}
+            {sections.map((section) => (
+              <Link
+                key={section.label}
+                className={desktopLinkClass(section.href)}
+                href={section.href}
+                aria-current={isCurrent(section.href) ? "page" : undefined}
+              >
+                {section.label}
+              </Link>
+            ))}
           </div>
           <div className="flex items-center space-x-4 sm:space-x-6">
             <LanguageSelector />
-            
+            <CurrencySelector />
+
             {/* Theme Toggle Button */}
             {mounted && (
               <button
@@ -160,11 +148,8 @@ export default function Navbar() {
             >
               <span className="material-icons">search</span>
             </Link>
-            <button className="text-nordic-dark dark:text-gray-300 hover:text-mosque dark:hover:text-white transition-colors relative">
-              <span className="material-icons">notifications_none</span>
-              <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border-2 border-background-light dark:border-background-dark"></span>
-            </button>
-            
+            {userAvatar && <NotificationBell />}
+
             {loading ? (
               <div className="w-9 h-9 ml-2 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse border-l border-nordic-dark/10 dark:border-white/10 pl-2"></div>
             ) : userAvatar ? (
@@ -207,25 +192,16 @@ export default function Navbar() {
       </div>
       <div className="md:hidden border-t border-nordic-dark/5 dark:border-white/5 bg-background-light dark:bg-background-dark overflow-hidden h-0 transition-all duration-300">
         <div className="px-4 py-2 space-y-1">
-          {sections.map((section) =>
-            section.href ? (
-              <Link
-                key={section.label}
-                className={mobileLinkClass(section.href)}
-                href={section.href}
-                aria-current={isCurrent(section.href) ? "page" : undefined}
-              >
-                {section.label}
-              </Link>
-            ) : (
-              <span
-                key={section.label}
-                className="block px-3 py-2 rounded-md text-base font-medium text-nordic-dark/30 dark:text-gray-600 cursor-default"
-              >
-                {section.label}
-              </span>
-            )
-          )}
+          {sections.map((section) => (
+            <Link
+              key={section.label}
+              className={mobileLinkClass(section.href)}
+              href={section.href}
+              aria-current={isCurrent(section.href) ? "page" : undefined}
+            >
+              {section.label}
+            </Link>
+          ))}
         </div>
       </div>
     </nav>

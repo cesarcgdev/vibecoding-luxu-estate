@@ -2,7 +2,6 @@
   "navbar": {
     "buy": "Acheter",
     "rent": "Louer",
-    "sell": "Vendre",
     "savedHomes": "Sauvegardés",
     "login": "Se Connecter",
     "logout": "Se Déconnecter"
@@ -36,7 +35,10 @@
     "about": "À propos de cette maison",
     "aboutDesc": "{title} est une propriété exceptionnelle située à {location}. Elle équilibre parfaitement le luxe moderne avec le confort, offrant une expérience de vie inégalée.",
     "aboutDesc2": "Idéal pour ceux qui recherchent un style de vie exclusif, ce {type} offre des intérieurs spacieux et des finitions haut de gamme.",
+    "aboutDesc3": "Situé dans l'un des quartiers les plus prisés de {location}, le bien offre un accès facile aux écoles, aux transports publics et aux commerces de référence.",
+    "aboutDesc4": "Avec {beds} chambres, {baths} salles de bain et {area} de surface habitable, chaque recoin a été pensé pour maximiser la lumière naturelle et le confort quotidien.",
     "readMore": "Lire la suite",
+    "readLess": "Lire moins",
     "agent": "Agent Immobilier",
     "topAgent": "Agent le Mieux Noté",
     "schedule": "Planifier une Visite",
@@ -164,5 +166,43 @@
     "loadingContact": "Chargement…",
     "contactError": "Impossible de charger le contact.",
     "noLandlord": "Aucun propriétaire associé"
+  },
+  "auth": {
+    "modalTitle": "Connectez-vous pour sauvegarder des propriétés",
+    "modalSubtitle": "Créez un compte ou connectez-vous pour sauvegarder vos propriétés préférées.",
+    "continueWithGoogle": "Continuer avec Google",
+    "continueWithGithub": "Continuer avec GitHub"
+  },
+  "saved": {
+    "title": "Propriétés sauvegardées",
+    "desc": "Vos propriétés préférées, toutes au même endroit.",
+    "resultsCount": "{count} sauvegardées",
+    "searchPlaceholder": "Rechercher dans vos propriétés sauvegardées...",
+    "filterAll": "Toutes",
+    "filterBuy": "Acheter",
+    "filterRent": "Louer",
+    "moreFilters": "Plus de filtres",
+    "loggedOutTitle": "Connectez-vous pour voir vos propriétés sauvegardées",
+    "loggedOutDesc": "Sauvegardez vos propriétés préférées et retrouvez-les ici à tout moment.",
+    "loggedOutCta": "Se connecter",
+    "savedToast": "Propriété ajoutée aux favoris",
+    "removedToast": "Propriété retirée des sauvegardes",
+    "saveError": "Impossible de mettre à jour la propriété sauvegardée",
+    "noMatchesDesc": "Aucune propriété sauvegardée ne correspond à ces filtres.",
+    "emptyTitle": "Vous n'avez encore sauvegardé aucune propriété",
+    "emptyDesc": "Touchez le cœur d'une propriété pour la sauvegarder ici.",
+    "emptyCtaBuy": "Voir les biens à vendre",
+    "emptyCtaRent": "Voir les locations"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "Aucune notification",
+    "clearAll": "Tout effacer",
+    "delete": "Supprimer la notification",
+    "priceUp": "Le prix de {title} a augmenté : {old} → {new}",
+    "priceDown": "Le prix de {title} a baissé : {old} → {new}",
+    "priceChanged": "Le prix de {title} a changé : {old} → {new}",
+    "removed": "{title} n'est plus disponible",
+    "availableAgain": "{title} est de nouveau disponible"
   }
 }

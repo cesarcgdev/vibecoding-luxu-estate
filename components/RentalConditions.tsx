@@ -3,10 +3,7 @@ import type { Property } from "../lib/properties";
 import type { Dictionary } from "../lib/i18n/dictionaries";
 import { entryCost } from "../lib/rentals";
 import { rentalKindIcon, rentalKindLabel } from "../lib/rental-kinds";
-
-function money(value: number): string {
-  return `$${value.toLocaleString("en-US")}`;
-}
+import { formatCurrency, type Currency } from "../lib/currency/currency";
 
 function formatDate(value: string, locale: string): string {
   const date = new Date(value);
@@ -35,11 +32,15 @@ export default function RentalConditions({
   property,
   dictionary,
   locale,
+  currency,
 }: {
   property: Property;
   dictionary: Dictionary;
   locale: string;
+  currency: Currency;
 }) {
+  const money = (value: number) => formatCurrency(value, currency, locale, "full")!;
+
   const rows: Row[] = [];
 
   if (property.rental_kind) {
