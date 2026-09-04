@@ -147,8 +147,8 @@ export default function SavedFiltersModal({ isOpen, onClose, operation }: Props)
         onSubmit={handleSubmit}
         className="relative z-20 w-full max-w-lg bg-white dark:bg-[#152e2a] rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] transition-colors"
       >
-        <header className="px-8 py-6 border-b border-gray-100 dark:border-white/10 flex justify-between items-center bg-white dark:bg-[#152e2a] sticky top-0 z-30 transition-colors">
-          <h1 className="text-2xl font-semibold tracking-tight text-nordic-dark dark:text-white transition-colors">
+        <header className="px-4 sm:px-8 py-4 sm:py-6 border-b border-gray-100 dark:border-white/10 flex justify-between items-center bg-white dark:bg-[#152e2a] sticky top-0 z-30 transition-colors">
+          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-nordic-dark dark:text-white transition-colors">
             {dictionary.filters.title}
           </h1>
           <button
@@ -160,7 +160,7 @@ export default function SavedFiltersModal({ isOpen, onClose, operation }: Props)
           </button>
         </header>
 
-        <div className="flex-1 overflow-y-auto hide-scroll p-8 space-y-10">
+        <div className="flex-1 overflow-y-auto hide-scroll p-4 sm:p-8 space-y-8 sm:space-y-10">
           <section>
             <div className="flex justify-between items-end mb-5">
               <label className="block text-xs font-semibold text-nordic-muted dark:text-gray-400 uppercase tracking-wider transition-colors">
@@ -246,17 +246,17 @@ export default function SavedFiltersModal({ isOpen, onClose, operation }: Props)
           </section>
         </div>
 
-        <footer className="bg-white dark:bg-[#152e2a] border-t border-gray-100 dark:border-white/10 px-8 py-6 sticky bottom-0 z-30 flex items-center justify-between transition-colors">
+        <footer className="bg-white dark:bg-[#152e2a] border-t border-gray-100 dark:border-white/10 px-4 sm:px-8 py-4 sm:py-6 sticky bottom-0 z-30 flex items-center justify-between gap-3 transition-colors">
           <button
             type="button"
             onClick={handleClear}
-            className="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-nordic-dark dark:hover:text-white transition-colors underline decoration-gray-300 dark:decoration-gray-600 underline-offset-4"
+            className="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-nordic-dark dark:hover:text-white transition-colors underline decoration-gray-300 dark:decoration-gray-600 underline-offset-4 whitespace-nowrap"
           >
             {dictionary.filters.clearAll}
           </button>
           <button
             type="submit"
-            className="bg-mosque dark:bg-hint-green hover:bg-mosque/90 dark:hover:bg-hint-green/90 text-white dark:text-nordic-dark px-8 py-3 rounded-lg font-medium shadow-lg shadow-mosque/30 dark:shadow-hint-green/30 transition-all hover:shadow-mosque/40 dark:hover:shadow-hint-green/40 flex items-center gap-2 active:scale-95"
+            className="bg-mosque dark:bg-hint-green hover:bg-mosque/90 dark:hover:bg-hint-green/90 text-white dark:text-nordic-dark px-5 sm:px-8 py-2.5 sm:py-3 rounded-lg font-medium shadow-lg shadow-mosque/30 dark:shadow-hint-green/30 transition-all hover:shadow-mosque/40 dark:hover:shadow-hint-green/40 flex items-center gap-2 active:scale-95 whitespace-nowrap"
           >
             {dictionary.filters.showProperties}
             <span className="material-icons text-sm">arrow_forward</span>

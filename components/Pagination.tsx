@@ -27,34 +27,34 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
   return (
     <nav
       aria-label="Property listings pagination"
-      className="mt-12 flex items-center justify-center gap-2"
+      className="mt-12 flex items-center justify-center gap-2 px-4"
     >
       {/* Previous */}
       {currentPage > 1 ? (
         <Link
           href={hrefForPage(currentPage - 1)}
-          className="flex items-center gap-1 px-4 py-2 rounded-lg bg-white border border-nordic-dark/10 text-nordic-dark text-sm font-medium hover:border-mosque hover:text-mosque transition-all hover:shadow-md"
+          className="shrink-0 flex items-center gap-1 px-3 sm:px-4 py-2 rounded-lg bg-white border border-nordic-dark/10 text-nordic-dark text-sm font-medium hover:border-mosque hover:text-mosque transition-all hover:shadow-md"
           aria-label="Previous page"
         >
           <span className="material-icons text-base">chevron_left</span>
-          {dictionary.pagination.previous}
+          <span className="hidden sm:inline">{dictionary.pagination.previous}</span>
         </Link>
       ) : (
-        <span className="flex items-center gap-1 px-4 py-2 rounded-lg bg-white border border-nordic-dark/5 text-nordic-muted/40 text-sm font-medium cursor-not-allowed select-none">
+        <span className="shrink-0 flex items-center gap-1 px-3 sm:px-4 py-2 rounded-lg bg-white border border-nordic-dark/5 text-nordic-muted/40 text-sm font-medium cursor-not-allowed select-none">
           <span className="material-icons text-base">chevron_left</span>
-          {dictionary.pagination.previous}
+          <span className="hidden sm:inline">{dictionary.pagination.previous}</span>
         </span>
       )}
 
       {/* Page numbers */}
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1 min-w-0 overflow-x-auto hide-scroll">
         {pages.map((page) => {
           const isActive = page === currentPage;
           return isActive ? (
             <span
               key={page}
               aria-current="page"
-              className="w-10 h-10 flex items-center justify-center rounded-lg bg-mosque text-white text-sm font-semibold shadow-md shadow-mosque/20"
+              className="shrink-0 w-10 h-10 flex items-center justify-center rounded-lg bg-mosque text-white text-sm font-semibold shadow-md shadow-mosque/20"
             >
               {page}
             </span>
@@ -62,7 +62,7 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
             <Link
               key={page}
               href={hrefForPage(page)}
-              className="w-10 h-10 flex items-center justify-center rounded-lg bg-white border border-nordic-dark/10 text-nordic-dark text-sm font-medium hover:border-mosque hover:text-mosque transition-all hover:shadow-md"
+              className="shrink-0 w-10 h-10 flex items-center justify-center rounded-lg bg-white border border-nordic-dark/10 text-nordic-dark text-sm font-medium hover:border-mosque hover:text-mosque transition-all hover:shadow-md"
               aria-label={`Page ${page}`}
             >
               {page}
@@ -75,15 +75,15 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
       {currentPage < totalPages ? (
         <Link
           href={hrefForPage(currentPage + 1)}
-          className="flex items-center gap-1 px-4 py-2 rounded-lg bg-white border border-nordic-dark/10 text-nordic-dark text-sm font-medium hover:border-mosque hover:text-mosque transition-all hover:shadow-md"
+          className="shrink-0 flex items-center gap-1 px-3 sm:px-4 py-2 rounded-lg bg-white border border-nordic-dark/10 text-nordic-dark text-sm font-medium hover:border-mosque hover:text-mosque transition-all hover:shadow-md"
           aria-label="Next page"
         >
-          {dictionary.pagination.next}
+          <span className="hidden sm:inline">{dictionary.pagination.next}</span>
           <span className="material-icons text-base">chevron_right</span>
         </Link>
       ) : (
-        <span className="flex items-center gap-1 px-4 py-2 rounded-lg bg-white border border-nordic-dark/5 text-nordic-muted/40 text-sm font-medium cursor-not-allowed select-none">
-          {dictionary.pagination.next}
+        <span className="shrink-0 flex items-center gap-1 px-3 sm:px-4 py-2 rounded-lg bg-white border border-nordic-dark/5 text-nordic-muted/40 text-sm font-medium cursor-not-allowed select-none">
+          <span className="hidden sm:inline">{dictionary.pagination.next}</span>
           <span className="material-icons text-base">chevron_right</span>
         </span>
       )}

@@ -37,7 +37,7 @@ export default function RentalKindBar() {
 
   return (
     <>
-      <div className="flex items-center justify-center gap-3 overflow-x-auto hide-scroll py-2 px-4 -mx-4">
+      <div className="flex items-center justify-start sm:justify-center gap-3 overflow-x-auto hide-scroll py-2 px-4 -mx-4">
         <button onClick={() => handleKindClick("")} className={buttonClass("")}>
           {dictionary.rent.allKinds}
         </button>

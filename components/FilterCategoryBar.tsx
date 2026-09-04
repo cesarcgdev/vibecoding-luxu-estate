@@ -33,7 +33,7 @@ export default function FilterCategoryBar() {
 
   return (
     <>
-      <div className="flex items-center justify-center gap-3 overflow-x-auto hide-scroll py-2 px-4 -mx-4">
+      <div className="flex items-center justify-start sm:justify-center gap-3 overflow-x-auto hide-scroll py-2 px-4 -mx-4">
         <button onClick={() => handleTypeClick('All')} className={getButtonClass('All')}>
           {dictionary.filters.all}
         </button>

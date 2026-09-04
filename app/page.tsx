@@ -51,7 +51,7 @@ export default async function Home({
   return (
     <>
       <Navbar />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+      <main className="w-full min-w-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
         <section className="py-12 md:py-16">
           <div className="max-w-3xl mx-auto text-center space-y-8">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-light text-nordic-dark dark:text-white leading-tight transition-colors">
