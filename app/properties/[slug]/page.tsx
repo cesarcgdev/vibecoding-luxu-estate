@@ -80,7 +80,7 @@ export default async function PropertyDetails({
 
           <div className="lg:col-span-4 relative">
             <div className="lg:sticky lg:top-28 space-y-6">
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-mosque/5">
+              <div className="bg-white dark:bg-[#152e2a] p-6 rounded-xl shadow-sm border border-mosque/5 dark:border-white/10 transition-colors">
                 <div className="mb-4">
                   {/* Operation and modality, same chips the cards use */}
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
@@ -97,7 +97,7 @@ export default async function PropertyDetails({
                           : dictionary.tags["FOR SALE"]}
                       </span>
                       {isRental && property.rental_kind && (
-                        <span className="flex items-center gap-1 bg-mosque/10 text-mosque text-[10px] font-semibold px-2 py-1 rounded">
+                        <span className="flex items-center gap-1 bg-mosque/10 dark:bg-hint-green/10 text-mosque dark:text-hint-green text-[10px] font-semibold px-2 py-1 rounded">
                           <span className="material-icons text-[12px]">
                             {rentalKindIcon(property.rental_kind)}
                           </span>
@@ -108,41 +108,41 @@ export default async function PropertyDetails({
                     <SaveButton
                       propertyId={property.id}
                       initialSaved={savedIds.has(property.id)}
-                      className="p-2 rounded-full hover:bg-mosque/10 text-nordic-muted hover:text-mosque transition-colors"
+                      className="p-2 rounded-full hover:bg-mosque/10 dark:hover:bg-hint-green/10 text-nordic-muted dark:text-gray-400 hover:text-mosque dark:hover:text-hint-green transition-colors"
                       iconClassName="text-2xl"
-                      iconHoverClassName="group-hover:text-mosque"
+                      iconHoverClassName="group-hover:text-mosque dark:group-hover:text-hint-green"
                     />
                   </div>
-                  <h1 className="text-2xl font-display font-semibold text-nordic-dark mb-1">
+                  <h1 className="text-2xl font-display font-semibold text-nordic-dark dark:text-white mb-1">
                     {property.title}
                   </h1>
                   <p
                     className={`text-4xl font-display font-light mb-2 ${
-                      isRental ? "text-mosque" : "text-nordic-dark"
+                      isRental ? "text-mosque dark:text-hint-green" : "text-nordic-dark dark:text-white"
                     }`}
                   >
                     {priceAmount}
                     {priceUnit && (
-                      <span className="text-xl text-nordic-muted ml-1">{priceUnit}</span>
+                      <span className="text-xl text-nordic-muted dark:text-gray-400 ml-1">{priceUnit}</span>
                     )}
                   </p>
-                  <p className="text-nordic-muted font-medium flex items-center gap-1">
-                    <span className="material-icons text-mosque text-sm">location_on</span>
+                  <p className="text-nordic-muted dark:text-gray-400 font-medium flex items-center gap-1">
+                    <span className="material-icons text-mosque dark:text-hint-green text-sm">location_on</span>
                     {property.location}
                   </p>
                 </div>
 
-                <div className="h-px bg-slate-100 my-6"></div>
+                <div className="h-px bg-slate-100 dark:bg-white/10 my-6"></div>
 
                 {/* Listings created before landlords existed keep the generic block */}
                 {!landlord && (
                   <div className="flex items-center gap-4 mb-6">
-                    <div className="w-14 h-14 rounded-full bg-mosque/10 flex items-center justify-center border-2 border-white shadow-sm overflow-hidden text-mosque">
+                    <div className="w-14 h-14 rounded-full bg-mosque/10 flex items-center justify-center border-2 border-white dark:border-white/10 shadow-sm overflow-hidden text-mosque dark:text-hint-green">
                       <span className="material-icons text-2xl">person</span>
                     </div>
                     <div>
-                      <h3 className="font-semibold text-nordic-dark">{dictionary.property.agent}</h3>
-                      <div className="flex items-center gap-1 text-xs text-mosque font-medium">
+                      <h3 className="font-semibold text-nordic-dark dark:text-white">{dictionary.property.agent}</h3>
+                      <div className="flex items-center gap-1 text-xs text-mosque dark:text-hint-green font-medium">
                         <span className="material-icons text-[14px]">star</span>
                         <span>{dictionary.property.topAgent}</span>
                       </div>
@@ -155,7 +155,7 @@ export default async function PropertyDetails({
                     <span className="material-icons text-xl group-hover:scale-110 transition-transform">calendar_today</span>
                     {dictionary.property.schedule}
                   </button>
-                  <button className="w-full bg-transparent border border-nordic-dark/10 hover:border-mosque text-nordic-muted hover:text-mosque py-4 px-6 rounded-lg font-medium transition-all flex items-center justify-center gap-2">
+                  <button className="w-full bg-transparent border border-nordic-dark/10 dark:border-white/10 hover:border-mosque dark:hover:border-hint-green text-nordic-muted dark:text-gray-400 hover:text-mosque dark:hover:text-hint-green py-4 px-6 rounded-lg font-medium transition-all flex items-center justify-center gap-2">
                     <span className="material-icons text-xl">mail_outline</span>
                     {dictionary.property.contact}
                   </button>
@@ -164,15 +164,15 @@ export default async function PropertyDetails({
 
               {landlord && <LandlordCard landlord={landlord} />}
 
-              <div className="bg-white p-2 rounded-xl shadow-sm border border-mosque/5">
-                <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden bg-slate-100">
+              <div className="bg-white dark:bg-[#152e2a] p-2 rounded-xl shadow-sm border border-mosque/5 dark:border-white/10 transition-colors">
+                <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden bg-slate-100 dark:bg-[#0f2320]">
                   <MapWrapper
                     location={property.location}
                     latitude={property.latitude}
                     longitude={property.longitude}
                   />
                   <a
-                    className="absolute bottom-2 right-2 bg-white/90 text-xs font-medium px-2 py-1 rounded shadow-sm text-nordic-dark hover:text-mosque z-[1000]"
+                    className="absolute bottom-2 right-2 bg-white/90 dark:bg-[#1a3833]/90 text-xs font-medium px-2 py-1 rounded shadow-sm text-nordic-dark dark:text-white hover:text-mosque dark:hover:text-hint-green z-[1000]"
                     href="#"
                   >
                     {dictionary.property.viewMap}
@@ -185,28 +185,28 @@ export default async function PropertyDetails({
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-8 space-y-8 -mt-8">
-            <div className="bg-white p-8 rounded-xl shadow-sm border border-mosque/5">
-              <h2 className="text-lg font-semibold mb-6 text-nordic-dark">{dictionary.property.features}</h2>
+            <div className="bg-white dark:bg-[#152e2a] p-8 rounded-xl shadow-sm border border-mosque/5 dark:border-white/10 transition-colors">
+              <h2 className="text-lg font-semibold mb-6 text-nordic-dark dark:text-white">{dictionary.property.features}</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div className="flex flex-col items-center justify-center p-4 bg-mosque/5 rounded-lg border border-mosque/10">
-                  <span className="material-icons text-mosque text-2xl mb-2">square_foot</span>
-                  <span className="text-xl font-bold text-nordic-dark">{property.area}</span>
-                  <span className="text-xs uppercase tracking-wider text-nordic-muted text-center">{dictionary.property.size}</span>
+                <div className="flex flex-col items-center justify-center p-4 bg-mosque/5 dark:bg-hint-green/5 rounded-lg border border-mosque/10 dark:border-hint-green/10">
+                  <span className="material-icons text-mosque dark:text-hint-green text-2xl mb-2">square_foot</span>
+                  <span className="text-xl font-bold text-nordic-dark dark:text-white">{property.area}</span>
+                  <span className="text-xs uppercase tracking-wider text-nordic-muted dark:text-gray-400 text-center">{dictionary.property.size}</span>
                 </div>
-                <div className="flex flex-col items-center justify-center p-4 bg-mosque/5 rounded-lg border border-mosque/10">
-                  <span className="material-icons text-mosque text-2xl mb-2">bed</span>
-                  <span className="text-xl font-bold text-nordic-dark">{property.beds}</span>
-                  <span className="text-xs uppercase tracking-wider text-nordic-muted">{dictionary.property.bedrooms}</span>
+                <div className="flex flex-col items-center justify-center p-4 bg-mosque/5 dark:bg-hint-green/5 rounded-lg border border-mosque/10 dark:border-hint-green/10">
+                  <span className="material-icons text-mosque dark:text-hint-green text-2xl mb-2">bed</span>
+                  <span className="text-xl font-bold text-nordic-dark dark:text-white">{property.beds}</span>
+                  <span className="text-xs uppercase tracking-wider text-nordic-muted dark:text-gray-400">{dictionary.property.bedrooms}</span>
                 </div>
-                <div className="flex flex-col items-center justify-center p-4 bg-mosque/5 rounded-lg border border-mosque/10">
-                  <span className="material-icons text-mosque text-2xl mb-2">shower</span>
-                  <span className="text-xl font-bold text-nordic-dark">{property.baths}</span>
-                  <span className="text-xs uppercase tracking-wider text-nordic-muted">{dictionary.property.bathrooms}</span>
+                <div className="flex flex-col items-center justify-center p-4 bg-mosque/5 dark:bg-hint-green/5 rounded-lg border border-mosque/10 dark:border-hint-green/10">
+                  <span className="material-icons text-mosque dark:text-hint-green text-2xl mb-2">shower</span>
+                  <span className="text-xl font-bold text-nordic-dark dark:text-white">{property.baths}</span>
+                  <span className="text-xs uppercase tracking-wider text-nordic-muted dark:text-gray-400">{dictionary.property.bathrooms}</span>
                 </div>
-                <div className="flex flex-col items-center justify-center p-4 bg-mosque/5 rounded-lg border border-mosque/10">
-                  <span className="material-icons text-mosque text-2xl mb-2">directions_car</span>
-                  <span className="text-xl font-bold text-nordic-dark">{property.parking ?? 0}</span>
-                  <span className="text-xs uppercase tracking-wider text-nordic-muted">{dictionary.property.garage}</span>
+                <div className="flex flex-col items-center justify-center p-4 bg-mosque/5 dark:bg-hint-green/5 rounded-lg border border-mosque/10 dark:border-hint-green/10">
+                  <span className="material-icons text-mosque dark:text-hint-green text-2xl mb-2">directions_car</span>
+                  <span className="text-xl font-bold text-nordic-dark dark:text-white">{property.parking ?? 0}</span>
+                  <span className="text-xs uppercase tracking-wider text-nordic-muted dark:text-gray-400">{dictionary.property.garage}</span>
                 </div>
               </div>
             </div>
@@ -223,17 +223,17 @@ export default async function PropertyDetails({
                 currency={currency}
               />
             ) : (
-              <div className="bg-mosque/5 p-6 rounded-xl border border-mosque/10 flex flex-col sm:flex-row items-center justify-between gap-6">
+              <div className="bg-mosque/5 dark:bg-hint-green/5 p-6 rounded-xl border border-mosque/10 dark:border-hint-green/10 flex flex-col sm:flex-row items-center justify-between gap-6">
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-white rounded-full text-mosque shadow-sm">
+                  <div className="p-3 bg-white dark:bg-[#152e2a] rounded-full text-mosque dark:text-hint-green shadow-sm">
                     <span className="material-icons">calculate</span>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-nordic-dark">{dictionary.property.estimatedPayment}</h3>
-                    <p className="text-sm text-nordic-muted">{dictionary.property.startingFrom} <strong className="text-mosque">{priceAmount}</strong></p>
+                    <h3 className="font-semibold text-nordic-dark dark:text-white">{dictionary.property.estimatedPayment}</h3>
+                    <p className="text-sm text-nordic-muted dark:text-gray-400">{dictionary.property.startingFrom} <strong className="text-mosque dark:text-hint-green">{priceAmount}</strong></p>
                   </div>
                 </div>
-                <button className="whitespace-nowrap px-4 py-2 bg-white border border-nordic-dark/10 rounded-lg text-sm font-semibold hover:border-mosque transition-colors text-nordic-dark">
+                <button className="whitespace-nowrap px-4 py-2 bg-white dark:bg-[#152e2a] border border-nordic-dark/10 dark:border-white/10 rounded-lg text-sm font-semibold hover:border-mosque dark:hover:border-hint-green transition-colors text-nordic-dark dark:text-white">
                   {dictionary.property.calcMortgage}
                 </button>
               </div>
@@ -242,9 +242,9 @@ export default async function PropertyDetails({
         </div>
       </main>
 
-      <footer className="bg-white border-t border-slate-200 mt-12 py-12">
+      <footer className="bg-white dark:bg-[#152e2a] border-t border-slate-200 dark:border-white/10 mt-12 py-12 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="text-sm text-nordic-muted">
+          <div className="text-sm text-nordic-muted dark:text-gray-400">
             © 2026 LuxeEstate Inc. All rights reserved.
           </div>
         </div>

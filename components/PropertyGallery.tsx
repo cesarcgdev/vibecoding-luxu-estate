@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import PropertyLightbox from "./PropertyLightbox";
 
 interface PropertyGalleryProps {
   images: string[];
@@ -11,17 +12,23 @@ interface PropertyGalleryProps {
 
 export default function PropertyGallery({ images, title }: PropertyGalleryProps) {
   const { dictionary } = useLanguage();
-  const [mainImage, setMainImage] = useState(images[0] || "");
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   if (!images || images.length === 0) {
     return (
-      <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-gray-200 animate-pulse" />
+      <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-gray-200 dark:bg-[#152e2a] animate-pulse" />
     );
   }
 
+  const mainImage = images[activeIndex] || images[0];
+
   return (
     <div className="space-y-4">
-      <div className="relative aspect-[16/10] overflow-hidden rounded-xl shadow-sm group">
+      <div
+        className="relative aspect-[16/10] overflow-hidden rounded-xl shadow-sm group cursor-pointer"
+        onClick={() => setLightboxOpen(true)}
+      >
         <Image
           src={mainImage}
           alt={title}
@@ -38,7 +45,14 @@ export default function PropertyGallery({ images, title }: PropertyGalleryProps)
             {dictionary.gallery?.new || "New"}
           </span>
         </div>
-        <button className="absolute bottom-4 right-4 bg-white/90 hover:bg-white text-nordic-dark px-4 py-2 rounded-lg text-sm font-medium shadow-lg backdrop-blur transition-all flex items-center gap-2">
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setLightboxOpen(true);
+          }}
+          className="absolute bottom-4 right-4 bg-white/90 hover:bg-white text-nordic-dark px-4 py-2 rounded-lg text-sm font-medium shadow-lg backdrop-blur transition-all flex items-center gap-2"
+        >
           <span className="material-icons text-sm">grid_view</span>
           {dictionary.gallery?.viewAll || "View All Photos"}
         </button>
@@ -49,10 +63,10 @@ export default function PropertyGallery({ images, title }: PropertyGalleryProps)
           {images.map((img, idx) => (
             <div
               key={idx}
-              onClick={() => setMainImage(img)}
+              onClick={() => setActiveIndex(idx)}
               className={`flex-none w-48 aspect-[4/3] rounded-lg overflow-hidden cursor-pointer snap-start transition-opacity ${
-                mainImage === img
-                  ? "ring-2 ring-mosque ring-offset-2 ring-offset-background-light opacity-100"
+                idx === activeIndex
+                  ? "ring-2 ring-mosque ring-offset-2 ring-offset-background-light dark:ring-offset-background-dark opacity-100"
                   : "opacity-70 hover:opacity-100"
               }`}
             >
@@ -66,6 +80,20 @@ export default function PropertyGallery({ images, title }: PropertyGalleryProps)
             </div>
           ))}
         </div>
+      )}
+
+      {lightboxOpen && (
+        <PropertyLightbox
+          images={images}
+          title={title}
+          initialIndex={activeIndex}
+          onClose={() => setLightboxOpen(false)}
+          labels={{
+            close: dictionary.gallery?.close || "Close",
+            previous: dictionary.gallery?.previousPhoto || "Previous photo",
+            next: dictionary.gallery?.nextPhoto || "Next photo",
+          }}
+        />
       )}
     </div>
   );
