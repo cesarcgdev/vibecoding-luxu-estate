@@ -29,7 +29,7 @@ export default async function SavedPage({
     return (
       <>
         <Navbar />
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <main className="w-full min-w-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="flex flex-col items-center text-center py-20 px-6 rounded-2xl border border-dashed border-nordic-dark/10 dark:border-white/10 transition-colors">
             <span className="material-icons text-5xl text-nordic-muted/50 dark:text-gray-500">
               favorite_border
@@ -78,7 +78,7 @@ export default async function SavedPage({
   return (
     <>
       <Navbar />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-20">
+      <main className="w-full min-w-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-20">
         <div className="mb-8">
           <h1 className="text-3xl font-light text-nordic-dark dark:text-white transition-colors">
             {dictionary.saved.title}

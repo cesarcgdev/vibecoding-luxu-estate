@@ -23,6 +23,11 @@ export default function Navbar() {
   const [userAvatar, setUserAvatar] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  // The slide-open animation needs overflow-hidden to clip the growing panel,
+  // but that same clipping cuts off LanguageSelector's dropdown once open —
+  // so overflow only switches to visible after the slide finishes.
+  const [mobilePanelSettled, setMobilePanelSettled] = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
@@ -57,6 +62,20 @@ export default function Navbar() {
       subscription.unsubscribe();
     };
   }, [supabase]);
+
+  // A route change means navigation already happened, so collapse the mobile panel
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) {
+      setMobilePanelSettled(false);
+      return;
+    }
+    const timer = setTimeout(() => setMobilePanelSettled(true), 300);
+    return () => clearTimeout(timer);
+  }, [mobileMenuOpen]);
 
   const handleLogout = async () => {
     try {
@@ -99,7 +118,7 @@ export default function Navbar() {
       : "block px-3 py-2 rounded-md text-base font-medium text-nordic-dark dark:text-gray-200 hover:bg-black/5 dark:hover:bg-white/5";
 
   return (
-    <nav className="sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md border-b border-nordic-dark/10 dark:border-white/10 transition-colors duration-300">
+    <nav className="min-w-0 sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md border-b border-nordic-dark/10 dark:border-white/10 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           <Link href="/" className="flex-shrink-0 flex items-center gap-2 cursor-pointer">
@@ -110,7 +129,7 @@ export default function Navbar() {
               LuxeEstate
             </span>
           </Link>
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-8 md:ml-8 lg:ml-0">
             {sections.map((section) => (
               <Link
                 key={section.label}
@@ -122,22 +141,24 @@ export default function Navbar() {
               </Link>
             ))}
           </div>
-          <div className="flex items-center space-x-4 sm:space-x-6">
-            <LanguageSelector />
-            <CurrencySelector />
+          <div className="flex items-center space-x-3 sm:space-x-4 md:space-x-6">
+            <div className="hidden lg:flex items-center space-x-6">
+              <LanguageSelector />
+              <CurrencySelector />
 
-            {/* Theme Toggle Button */}
-            {mounted && (
-              <button
-                onClick={toggleTheme}
-                className="text-nordic-dark dark:text-gray-300 hover:text-mosque dark:hover:text-white transition-colors flex items-center justify-center w-8 h-8 rounded-full hover:bg-black/5 dark:hover:bg-white/10"
-                aria-label="Toggle Dark Mode"
-              >
-                <span className="material-symbols-outlined text-[20px]">
-                  {theme === 'dark' ? 'light_mode' : 'dark_mode'}
-                </span>
-              </button>
-            )}
+              {/* Theme Toggle Button */}
+              {mounted && (
+                <button
+                  onClick={toggleTheme}
+                  className="text-nordic-dark dark:text-gray-300 hover:text-mosque dark:hover:text-white transition-colors flex items-center justify-center w-8 h-8 rounded-full hover:bg-black/5 dark:hover:bg-white/10"
+                  aria-label="Toggle Dark Mode"
+                >
+                  <span className="material-symbols-outlined text-[20px]">
+                    {theme === 'dark' ? 'light_mode' : 'dark_mode'}
+                  </span>
+                </button>
+              )}
+            </div>
 
             <Link
               href={pathname === "/rent" ? "/rent#search" : "/#search"}
@@ -187,11 +208,27 @@ export default function Navbar() {
                 <span className="hidden sm:inline">{dictionary.navbar.login}</span>
               </Link>
             )}
+
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen((open) => !open)}
+              aria-label="Toggle menu"
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-menu"
+              className="lg:hidden flex items-center justify-center w-9 h-9 rounded-full text-nordic-dark dark:text-gray-300 hover:text-mosque dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+            >
+              <span className="material-icons">{mobileMenuOpen ? "close" : "menu"}</span>
+            </button>
           </div>
         </div>
       </div>
-      <div className="md:hidden border-t border-nordic-dark/5 dark:border-white/5 bg-background-light dark:bg-background-dark overflow-hidden h-0 transition-all duration-300">
-        <div className="px-4 py-2 space-y-1">
+      <div
+        id="mobile-menu"
+        className={`lg:hidden border-t border-nordic-dark/5 dark:border-white/5 bg-background-light dark:bg-background-dark transition-[max-height] duration-300 ease-in-out ${
+          mobileMenuOpen ? "max-h-[28rem]" : "max-h-0"
+        } ${mobilePanelSettled ? "overflow-visible" : "overflow-hidden"}`}
+      >
+        <div className="px-4 py-2 space-y-1 md:hidden">
           {sections.map((section) => (
             <Link
               key={section.label}
@@ -202,6 +239,27 @@ export default function Navbar() {
               {section.label}
             </Link>
           ))}
+        </div>
+        <div className="flex items-center px-4 py-3 border-t border-nordic-dark/5 dark:border-white/5">
+          <div className="flex-1 flex justify-start">
+            <LanguageSelector align="left" />
+          </div>
+          <div className="flex-1 flex justify-center">
+            <CurrencySelector />
+          </div>
+          <div className="flex-1 flex justify-end">
+            {mounted && (
+              <button
+                onClick={toggleTheme}
+                className="text-nordic-dark dark:text-gray-300 hover:text-mosque dark:hover:text-white transition-colors flex items-center justify-center w-9 h-9 rounded-full hover:bg-black/5 dark:hover:bg-white/10"
+                aria-label="Toggle Dark Mode"
+              >
+                <span className="material-symbols-outlined text-[20px]">
+                  {theme === "dark" ? "light_mode" : "dark_mode"}
+                </span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </nav>

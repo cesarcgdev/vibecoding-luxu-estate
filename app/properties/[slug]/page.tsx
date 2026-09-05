@@ -72,14 +72,14 @@ export default async function PropertyDetails({
   return (
     <>
       <Navbar />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-20">
+      <main className="w-full min-w-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-20">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
           <div className="lg:col-span-8 space-y-4">
             <PropertyGallery images={images} title={property.title} />
           </div>
 
           <div className="lg:col-span-4 relative">
-            <div className="sticky top-28 space-y-6">
+            <div className="lg:sticky lg:top-28 space-y-6">
               <div className="bg-white p-6 rounded-xl shadow-sm border border-mosque/5">
                 <div className="mb-4">
                   {/* Operation and modality, same chips the cards use */}

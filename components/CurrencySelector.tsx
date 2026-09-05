@@ -19,7 +19,7 @@ export default function CurrencySelector() {
       type="button"
       onClick={() => changeCurrency(OTHER[currency])}
       disabled={isPending}
-      className="flex items-center gap-1 px-3 py-1.5 rounded-full hover:bg-nordic-dark/5 transition-colors text-sm font-medium text-nordic-dark disabled:opacity-60"
+      className="flex items-center gap-1 px-3 py-1.5 rounded-full hover:bg-nordic-dark/5 dark:hover:bg-white/10 transition-colors text-sm font-medium text-nordic-dark dark:text-gray-300 disabled:opacity-60"
       aria-label={`Switch currency to ${OTHER[currency]}`}
       title={`Switch currency to ${OTHER[currency]}`}
     >
