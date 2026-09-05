@@ -52,7 +52,10 @@
   "gallery": {
     "premium": "Premium",
     "new": "New",
-    "viewAll": "View All Photos"
+    "viewAll": "View All Photos",
+    "close": "Close",
+    "previousPhoto": "Previous photo",
+    "nextPhoto": "Next photo"
   },
   "tags": {
     "Exclusive": "Exclusive",
