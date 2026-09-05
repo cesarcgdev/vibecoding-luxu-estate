@@ -129,7 +129,7 @@ export default function Navbar() {
               LuxeEstate
             </span>
           </Link>
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-8 md:ml-8 lg:ml-0">
             {sections.map((section) => (
               <Link
                 key={section.label}
@@ -142,7 +142,7 @@ export default function Navbar() {
             ))}
           </div>
           <div className="flex items-center space-x-3 sm:space-x-4 md:space-x-6">
-            <div className="hidden md:flex items-center space-x-4 lg:space-x-6">
+            <div className="hidden lg:flex items-center space-x-6">
               <LanguageSelector />
               <CurrencySelector />
 
@@ -215,7 +215,7 @@ export default function Navbar() {
               aria-label="Toggle menu"
               aria-expanded={mobileMenuOpen}
               aria-controls="mobile-menu"
-              className="md:hidden flex items-center justify-center w-9 h-9 rounded-full text-nordic-dark dark:text-gray-300 hover:text-mosque dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+              className="lg:hidden flex items-center justify-center w-9 h-9 rounded-full text-nordic-dark dark:text-gray-300 hover:text-mosque dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
             >
               <span className="material-icons">{mobileMenuOpen ? "close" : "menu"}</span>
             </button>
@@ -224,11 +224,11 @@ export default function Navbar() {
       </div>
       <div
         id="mobile-menu"
-        className={`md:hidden border-t border-nordic-dark/5 dark:border-white/5 bg-background-light dark:bg-background-dark transition-[max-height] duration-300 ease-in-out ${
+        className={`lg:hidden border-t border-nordic-dark/5 dark:border-white/5 bg-background-light dark:bg-background-dark transition-[max-height] duration-300 ease-in-out ${
           mobileMenuOpen ? "max-h-[28rem]" : "max-h-0"
         } ${mobilePanelSettled ? "overflow-visible" : "overflow-hidden"}`}
       >
-        <div className="px-4 py-2 space-y-1">
+        <div className="px-4 py-2 space-y-1 md:hidden">
           {sections.map((section) => (
             <Link
               key={section.label}
